@@ -8,65 +8,65 @@
 **/node_modules/
 **/bower_components/
 **/app/bower_components/
-**/target/**/dist/
+**/target/**/dist
 **/.tmp/
 **/.sass-cache
 **/test-results.xml
 
-# Local configuration file (sdk path, etc) 
-# ############################################ 
-local.properties 
-project.properties 
-build.xml 
-proguard-project.txt 
+# Local configuration file (sdk path, etc)
+# ############################################
+local.properties
+project.properties
+build.xml
+proguard-project.txt
 
-# Built application files 
-# ########################### 
-*.apk 
-*.ap_ 
+# Built application files
+# ###########################
+*.apk
+*.ap_
 
-# Generated files 
-# ################### 
-bin/ 
-gen/ 
-build/ 
+# Generated files
+# ###################
+bin/
+gen/
+build/
 
-# Eclipse project files 
-# ######################### 
-.classpath 
-.project 
-.settings/ 
-proguard/ 
+# Eclipse project files
+# #########################
+.classpath
+.project
+.settings/
+proguard/
 
-# Intellij project files 
-# ########################## 
-**.iml 
-*.eml 
-*.ipr 
-*.iws 
-*.userlibraries 
-.idea/ 
-.gradle/ 
+# Intellij project files
+# ##########################
+**.iml
+*.eml
+*.ipr
+*.iws
+*.userlibraries
+.idea/
+.gradle/
 
-# Compiled source 
-# ################### 
-*.com 
-*.class 
-*.dll 
-*.exe 
-*.o 
-*.so 
+# Compiled source
+# ###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
 
-# OS generated files 
-# ###################### 
-.DS_Store 
-._* 
-.Spotlight-V100 
-.Trashes 
-Thumbs.db 
+# OS generated files
+# ######################
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
 
-# Other 
-# ######### 
+# Other
+# #########
 tmp/
 **/*.orig
 
@@ -81,3 +81,9 @@ web/node_modules/
 .travis.yml
 
 **/target/**
+
+
+# Added by WebStorm for HTML5 template
+
+archive
+#node_modules

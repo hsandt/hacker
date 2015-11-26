@@ -1,0 +1,7 @@
+.borderexample {
+    display: inline;
+    border-collapse: collapse;
+    border-style: solid;
+    border-color: #287EC7;
+    border-width: 3px;
+}
