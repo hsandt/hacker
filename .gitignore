@@ -87,3 +87,7 @@ web/node_modules/
 
 archive
 #node_modules
+
+
+# No need for dist until production
+/dist/
