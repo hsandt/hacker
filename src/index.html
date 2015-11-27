@@ -12,6 +12,8 @@
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/screen.css">
+        <link rel="stylesheet" href="fonts/font-awesome-4.5.0/css/font-awesome.min.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
     <body>
@@ -19,11 +21,42 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-        <!-- Add your site or application content here -->
-        <p>Narration</p>
-        <div id="narration" class="borderexample">Text</div>
-        <button onclick="changeNarration();">Next</button>
+        <!-- Content -->
 
+        <!-- Chatbox -->
+        <section id="chat-screen" class="screen clearfix">
+
+            <div class="chat-header clearfix">
+                <span class="fa fa-weixin"></span> To daughter
+            </div>
+
+            <div class="chat-history">
+                <ul>
+                    <li class="self">
+                        <div class="avatar">
+                            <img src="apple-touch-icon.png">
+                        </div>
+                        <div class="message">
+                            <p>Talk. And say. Hi again. Ouch!gre</p>
+                            <span class="message-time">1 min ago</span>
+                        </div>
+                    </li>
+                    <li class="other">
+                        <div class="message">
+                            <p>Talk</p>
+                            <span class="message-time">1 min ago</span>
+                        </div>
+                        <div class="avatar">
+                            <img src="apple-touch-icon.png">
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+
+        </section>
+
+        <!-- Scripts -->
         <script src="../node_modules/jquery/dist/jquery.min.js"></script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>

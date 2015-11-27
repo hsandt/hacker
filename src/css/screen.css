@@ -1,7 +1,72 @@
-.borderexample {
-    display: inline;
-    border-collapse: collapse;
+body {
+    background-color: #fee98c;
+    padding: 40px 0;
+}
+
+.screen {
+    background: white;
+    margin: 0 auto;
+    width: 400px;
     border-style: solid;
-    border-color: #287EC7;
-    border-width: 3px;
+    border-color: black;
+    border-width: 1px;
+}
+
+.chat-header {
+    background-color: rosybrown;
+    padding: 20px;
+}
+
+.chat-history {
+    /*display: flex;  !* removes whitespace *!*/
+    background-color: cyan;
+    padding: 30px 30px 20px;
+    margin-top: 6px;
+    border-bottom: 2px solid red;
+    height: 500px;
+    /*vertical-align: top;*/
+
+}
+
+span.message-time {
+    font-style: italic;
+    font-size: smaller;
+}
+
+.conversation li {
+    display: flex;
+}
+
+.avatar {
+    width: 40px;
+}
+
+.avatar img {
+    width: 40px;
+    display: block;
+}
+
+.self {
+    /* switch horizontal layout */
+    justify-content: flex-end;
+    /* switch vertical layout */
+    align-items: flex-end;
+}
+
+.self .message {
+    display: flex;
+    background-color: lawngreen;
+}
+
+.other .message {
+    background-color: pink;
+}
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
 }
