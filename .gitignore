@@ -84,10 +84,13 @@ web/node_modules/
 
 
 # Added by WebStorm for HTML5 template
-
 archive
 #node_modules
 
-
 # No need for dist until production
 /dist/
+
+# Ignore JS files compiled with CoffeeScript
+#/src/js/
+# or ignore at least JS maps only used for debug
+/src/js/*.js.map

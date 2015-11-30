@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
+        <title>Hacker Revolution Chat Screen</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -11,32 +11,99 @@
         <!-- Place favicon.ico in the root directory -->
 
         <link rel="stylesheet" href="css/normalize.css">
+        <!--<link rel="stylesheet" href="css/reset.css">  &lt;!&ndash; debug &ndash;&gt;-->
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/screen.css">
+        <link rel="stylesheet" href="fonts/font-awesome-4.5.0/css/font-awesome.min.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
     <body>
-        <!--[if lt IE 8]>
+    <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-        <!-- Add your site or application content here -->
-        <p>Narration</p>
-        <div id="narration" class="borderexample">Text</div>
-        <button onclick="changeNarration();">Next</button>
+        <!-- Content -->
 
+        <!-- Chatbox -->
+        <section id="chat-screen" class="screen clearfix">
+
+            <div class="chat-header clearfix">
+                <span class="fa fa-weixin"></span> To daughter
+            </div>
+
+            <div class="chat-history">
+                <ul>
+                    <li class="clearfix">
+                        <div class="message-data align-right">
+                            <span class="message-data-time">10:10, Today</span>
+                            <span class="message-data-name">Elsa</span>
+                        </div>
+                        <div class="message other-message float-right">
+                            Talk. And say. Hi again. Ouchfrefew!
+                        </div>
+                    </li>
+                    <li>
+                        <div class="message-data">
+                            <span class="message-data-time">10:10, Today</span>
+                            <span class="message-data-name">Me</span>
+                        </div>
+                        <div class="message my-message">
+                            test
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="chat-message clearfix">
+                <textarea name="message-to-send" id="message-to-send" placeholder="type here" rows="3"></textarea>
+                <button>Send</button>
+            </div>
+
+        </section>
+
+        <!-- Message template -->
+        <script id="message-template" type="text/x-handlebars-template">
+            <li class="clearfix">
+                <div class="message-data align-right">
+                    <span class="message-data-time">{{time}}, Today</span> &nbsp; &nbsp;
+                    <span class="message-data-name">Olia</span> <i class="fa fa-circle me"></i>
+                </div>
+                <div class="message other-message float-right">
+                    {{messageOutput}}
+                </div>
+            </li>
+        </script>
+
+        <script id="message-response-template" type="text/x-handlebars-template">
+            <li>
+                <div class="message-data">
+                    <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
+                    <span class="message-data-time">{{time}}, Today</span>
+                </div>
+                <div class="message my-message">
+                    {{response}}
+                </div>
+            </li>
+        </script>
+
+        <!-- Scripts -->
         <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="../node_modules/handlebars/dist/handlebars.min.js"></script>
         <script src="js/plugins.js"></script>
+
+        <!-- Game scripts -->
         <script src="js/main.js"></script>
         <script src="js/game.js"></script>
+        <script src="js/chat.js"></script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='https://www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X','auto');ga('send','pageview');
-        </script>
+        <!--<script>-->
+            <!--(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=-->
+            <!--function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;-->
+            <!--e=o.createElement(i);r=o.getElementsByTagName(i)[0];-->
+            <!--e.src='https://www.google-analytics.com/analytics.js';-->
+            <!--r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));-->
+            <!--ga('create','UA-XXXXX-X','auto');ga('send','pageview');-->
+        <!--</script>-->
     </body>
 </html>
