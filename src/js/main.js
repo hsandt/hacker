@@ -4,7 +4,7 @@
     var chat;
     console.log("[GAME] Ready");
     chat = new Chat($("#chat-screen"));
-    chat.displayMessageSequence(3, 2000);
+    chat.receiveAllMessages(3, 2000);
     return chat.showMessageInputChoiceList();
   });
 

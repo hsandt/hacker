@@ -12,38 +12,15 @@
 
     function Chat(chatScreen) {
       this.showMessageInputChoiceList = bind(this.showMessageInputChoiceList, this);
+      this.sendMessage = bind(this.sendMessage, this);
+      this.receiveAllMessages = bind(this.receiveAllMessages, this);
+      this.receiveNextMessage = bind(this.receiveNextMessage, this);
       this.scrollToBottom = bind(this.scrollToBottom, this);
-      this.displayMessageSequence = bind(this.displayMessageSequence, this);
-      this.displayNextMessage = bind(this.displayNextMessage, this);
       this.chatHistory = chatScreen.find(".chat-history");
       this.chatHistoryList = this.chatHistory.find("ul");
       this.chatInput = chatScreen.find(".chat-input");
       this.chatInputList = this.chatInput.find("ul");
     }
-
-    Chat.prototype.displayNextMessage = function() {
-      var context, template;
-      template = Handlebars.compile($("#message-template").html());
-      context = {
-        messageOutput: Chat.incomingMessageSequence[this.nextIncomingMessageIdx],
-        time: "12:00"
-      };
-      this.chatHistoryList.append(template(context));
-      ++this.nextIncomingMessageIdx;
-      return this.scrollToBottom();
-    };
-
-    Chat.prototype.displayMessageSequence = function(nbMessages, timeInterval) {
-      if (nbMessages === 0) {
-        return;
-      }
-      this.displayNextMessage();
-      return setTimeout(((function(_this) {
-        return function() {
-          return _this.displayMessageSequence(nbMessages - 1, timeInterval);
-        };
-      })(this)), timeInterval);
-    };
 
     Chat.prototype.scrollToBottom = function() {
       return this.chatHistory.animate({
@@ -51,16 +28,51 @@
       }, 200, "swing");
     };
 
+    Chat.prototype.receiveNextMessage = function() {
+      var context, template;
+      template = Handlebars.compile($("#message-received-template").html());
+      context = {
+        message: Chat.incomingMessageSequence[this.nextIncomingMessageIdx],
+        time: "12:00"
+      };
+      this.chatHistoryList.append(template(context));
+      this.scrollToBottom();
+      return ++this.nextIncomingMessageIdx;
+    };
+
+    Chat.prototype.receiveAllMessages = function(nbMessages, timeInterval) {
+      if (nbMessages === 0) {
+        return;
+      }
+      this.receiveNextMessage();
+      return setTimeout(((function(_this) {
+        return function() {
+          return _this.receiveAllMessages(nbMessages - 1, timeInterval);
+        };
+      })(this)), timeInterval);
+    };
+
+    Chat.prototype.sendMessage = function(messageIdx) {
+      var template;
+      template = Handlebars.compile($("#message-sent-template").html());
+      this.chatHistoryList.append(template({
+        message: this.choices[messageIdx].message
+      }));
+      return this.scrollToBottom();
+    };
+
     Chat.prototype.showMessageInputChoiceList = function() {
       var choice, choiceLi, choiceMessages, fn, i, j, results, template;
       this.choices.length = 0;
       template = Handlebars.compile($("#message-input-choice-template").html());
       choiceMessages = ["Okay", "Get lost!"];
-      fn = function(i) {
-        return choiceLi.click(function() {
-          return console.log(i);
-        });
-      };
+      fn = (function(_this) {
+        return function(i) {
+          return choiceLi.click(function() {
+            return _this.sendMessage(i);
+          });
+        };
+      })(this);
       results = [];
       for (i = j = 0; j < 2; i = ++j) {
         console.log(i);
@@ -80,8 +92,8 @@
   })();
 
   Choice = (function() {
-    function Choice(id, message) {
-      this.id = id;
+    function Choice(idx, message) {
+      this.idx = idx;
       this.message = message;
     }
 

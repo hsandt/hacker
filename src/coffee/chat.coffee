@@ -20,31 +20,37 @@ class @Chat
     @chatInput = chatScreen.find(".chat-input");
     @chatInputList = @chatInput.find("ul");
 
-  # display the next message
-  displayNextMessage: =>
-    template = Handlebars.compile $("#message-template").html()
-    context =
-      messageOutput: Chat.incomingMessageSequence[@nextIncomingMessageIdx],
-      time: "12:00"
-    @chatHistoryList.append template(context)
-    ++@nextIncomingMessageIdx
-
-    @scrollToBottom();
-
-  # display nbMessages every timeInterval in ms
-  displayMessageSequence: (nbMessages, timeInterval) =>
-    if nbMessages == 0
-      return
-    @displayNextMessage()
-    setTimeout (=> @displayMessageSequence(nbMessages - 1, timeInterval)), timeInterval
-
   # scroll chat history to bottom
   scrollToBottom: =>
     @chatHistory.animate scrollTop: @chatHistory[0].scrollHeight, 200, "swing"
 
-  # show possible lines / answers the player can send
+  # display the next message
+  receiveNextMessage: =>
+    template = Handlebars.compile $("#message-received-template").html()
+    context =
+      message: Chat.incomingMessageSequence[@nextIncomingMessageIdx],
+      time: "12:00"
+    @chatHistoryList.append template(context)
+    @scrollToBottom()
+
+    ++@nextIncomingMessageIdx
+
+  # display nbMessages every timeInterval in ms
+  receiveAllMessages: (nbMessages, timeInterval) =>
+    if nbMessages == 0
+      return
+    @receiveNextMessage()
+    setTimeout (=> @receiveAllMessages(nbMessages - 1, timeInterval)), timeInterval
+
+  # send player message
+  sendMessage: (messageIdx) =>
+    template = Handlebars.compile $("#message-sent-template").html()
+    @chatHistoryList.append template(message: @choices[messageIdx].message)
+    @scrollToBottom()
+
+# show possible lines / answers the player can send
   showMessageInputChoiceList: =>
-  # clear previous choices
+    # clear previous choices
     @choices.length = 0
 
     # add choices from template
@@ -55,13 +61,16 @@ class @Chat
       choice = new Choice i, choiceMessages[i]
       @choices.push choice
       choiceLi = $(template(choiceMessage: choice.message))
-      do (i) ->
-        choiceLi.click -> console.log i
-      @chatInputList.append choiceLi
       # add onclick event
+      do (i) =>
+        choiceLi.click => @sendMessage i
+      @chatInputList.append choiceLi
+
 
 class Choice
 
-  constructor: (@id, @message) ->
+  # idx (int): choice index
+  # message (string): message content
+  constructor: (@idx, @message) ->
 
 
