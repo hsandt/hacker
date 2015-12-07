@@ -170,3 +170,11 @@ span.message-data-time {
     clear: both;
     height: 0;
 }
+
+ul.message-input-choice-list {
+    list-style-type: decimal;
+}
+
+li.message-input-choice {
+    cursor: pointer;
+}

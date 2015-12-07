@@ -54,14 +54,17 @@
                 </ul>
             </div>
 
-            <div class="chat-message clearfix">
-                <textarea name="message-to-send" id="message-to-send" placeholder="type here" rows="3"></textarea>
-                <button>Send</button>
+            <div class="chat-input clearfix">
+                <ul class="message-input-choice-list">
+                    <!--<li>A</li>-->
+                </ul>
+                <!--<textarea name="message-to-send" id="message-to-send" placeholder="type here" rows="3"></textarea>-->
+                <!--<button>Send</button>-->
             </div>
 
         </section>
 
-        <!-- Message template -->
+        <!-- Message templates -->
         <script id="message-template" type="text/x-handlebars-template">
             <li class="clearfix">
                 <div class="message-data align-right">
@@ -84,6 +87,11 @@
                     {{response}}
                 </div>
             </li>
+        </script>
+
+        <!-- Message send template -->
+        <script id="message-input-choice-template" type="text/x-handlebars-template">
+            <li class="message-input-choice">{{choiceMessage}}</li>
         </script>
 
         <!-- Scripts -->
