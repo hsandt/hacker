@@ -75,8 +75,8 @@ web/node_modules/
 
 */app/.buildignore
 */app/.htaccess
-.editorconfig
-.gitattributes
+#.editorconfig
+#.gitattributes
 .jshintrc
 .travis.yml
 

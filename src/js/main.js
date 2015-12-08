@@ -3,8 +3,9 @@
   $(function() {
     var chat;
     console.log("[GAME] Ready");
-    chat = new Chat;
-    return chat.displayMessageSequence(3, 2000);
+    chat = new Chat($("#chat-screen"));
+    chat.receiveAllMessages(3, 2000);
+    return chat.showMessageInputChoiceList();
   });
 
 }).call(this);
