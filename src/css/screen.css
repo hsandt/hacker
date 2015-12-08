@@ -3,10 +3,10 @@
 }
 
 body {
-    background-color: #fee98c;
+    background-color: #fff9d8;
     font: 14px/20px Verdana;
     padding: 40px 0;
-    color: white;
+    /*color: white;*/
 }
 
 ul {
@@ -14,7 +14,7 @@ ul {
 }
 
 .screen {
-    background: white;
+    background: #ffffff;
     margin: 0 auto;
     width: 400px;
     border: 1px solid black;
@@ -22,16 +22,17 @@ ul {
 }
 
 .chat-header {
-    background-color: rosybrown;
+    background-color: #bef4fe;
     padding: 20px;
 }
 
 .chat-history {
     /*display: flex;  !* removes whitespace *!*/
-    background-color: cyan;
+    background-color: #ffffff;
     padding: 30px 30px 20px;
-    margin-top: 3px;
-    border-bottom: 2px solid purple;
+    margin-top: 0px;
+    border-top: 2px solid #000000;
+    border-bottom: 2px solid #000000;
     height: 500px;
     overflow-y: scroll;
     /*vertical-align: top;*/
@@ -103,15 +104,6 @@ span.message-data-time {
     justify-content: flex-end;
     /* switch vertical layout */
     align-items: flex-end;
-}
-
-.self .message {
-    display: flex;
-    background-color: lawngreen;
-}
-
-.other .message {
-    background-color: pink;
 }
 
 .chat-message {
