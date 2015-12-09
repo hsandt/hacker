@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+
+    <script>document.documentElement.className = 'js';</script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+    <!-- Force latest IE rendering engine & Chrome Frame -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <!-- Make IE recognise HTML5 elements for styling -->
+    <noscript>
+        <strong>Warning!</strong>
+        Your browser does not support HTML5 so some elements on this page are simulated using JScript. Unfortunately your browser has JScript disabled. Please enable it in order to display this page.
+    </noscript>
+    <![endif]-->
+    <!-- Disable image toolbar in IE6 -->
+    <!--[if lte IE 6]><meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+
+    <style type="text/css" media="screen, projection">
+        .parallax-viewport {
+            bottom: 0px;
+            width: 100%;
+            height: 100%;
+
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .diagram {
+            margin-top: -0.75em;
+        }
+
+        small {
+            text-transform: uppercase;
+        }
+    </style>
+
+    <link rel="stylesheet" href="../css/jquery.parallax.css" />
+    <link rel="stylesheet" type="text/css" href="../css/dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../css/dialog-sally.css" />
+
+    <script src="../js/modernizr.custom.js"></script>
+</head>
+<body>
+
+<div class="parallax-viewport" id="parallax">
+    <div class="parallax-layer" style="width:128%; height:104%; background-image: url('../images/fond.jpg');"></div>
+    <div class="parallax-layer" style="width:135%; height:105%">
+        <div id="table"  style="position:absolute; top:68%; left:5%; border-bottom: 280px solid #562b09;
+	border-left: 100px solid transparent;
+	border-right: 100px solid transparent;
+	height: 10%;
+	width: 80%;">
+
+        </div>
+    </div>
+    <div class="parallax-layer" style="width:130%; height:105%;">
+        <div id ="phone" style="position:absolute; top:80%; left:25%; width: 5%; height: 10%; background-color: #449b3c; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="phoneDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        </div>
+        <div id ="notes" style="position:absolute; top:80%; left:70%; width: 5%; height: 10%; background-color: #fff900; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="noteDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>>
+        </div>
+        <div id ="chat" style="position:absolute; top:45%; left:5%; width: 20%; height: 30%; background-color: #9b9465; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="chatDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        </div>
+        <div id ="other" style="position:absolute; top:5%; left:5%; width: 20%; height: 30%; background-color: #66999b; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="otherDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        </div>
+        <div id ="actu" style="position:absolute; top:5%; left:75%; width: 20%; height: 70%; background-color: #9b4400; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="actuDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        </div>
+        <div id ="main-screen" style="position:absolute; top:30%; left:30%; width: 40%; height: 45%; background-color: #282e9b; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="somedialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        </div>
+        <div id ="cameras" style="position:absolute; top:5%; left:30%; width: 40%; height: 20%; background-color: #80569b; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="camerasDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">cameras</button>
+        </div>
+    </div>
+</div>
+<div id="somedialog" class="dialog">
+    <div class="dialog__overlay"></div>
+    <div class="dialog__content">
+        main<br/><div><button class="action" data-dialog-close>Close</button></div>
+    </div>
+</div>
+<div id="camerasDialog" class="dialog">
+    <div class="dialog__overlay"></div>
+    <div class="dialog__content">
+        cameras<br/><button class="action" data-dialog-close>Close</button></div>
+    </div>
+</div>
+<div id="phoneDialog" class="dialog">
+    <div class="dialog__overlay"></div>
+    <div class="dialog__content">
+        phone<br/><div><button class="action" data-dialog-close>Close</button></div>
+    </div>
+</div>
+<div id="noteDialog" class="dialog">
+    <div class="dialog__overlay"></div>
+    <div class="dialog__content">
+        notes<br/><div><button class="action" data-dialog-close>Close</button></div>
+    </div>
+</div>
+<div id="actuDialog" class="dialog">
+    <div class="dialog__overlay"></div>
+    <div class="dialog__content">
+        actu<br/><div><button class="action" data-dialog-close>Close</button></div>
+    </div>
+</div>
+<div id="chatDialog" class="dialog">
+    <div class="dialog__overlay"></div>
+    <div class="dialog__content">
+        chat<br/><div><button class="action" data-dialog-close>Close</button></div>
+    </div>
+</div>
+<div id="otherDialog" class="dialog">
+    <div class="dialog__overlay"></div>
+    <div class="dialog__content">
+        other<br/><div><button class="action" data-dialog-close>Close</button></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.3.min.js"></script>
+<script src="../js/jquery.parallax.js"></script>
+<script>
+    jQuery(document).ready(function(){
+        jQuery('#parallax .parallax-layer')
+                .parallax({
+                    mouseport: jQuery('#parallax')
+                });
+    });
+</script>
+<script src="../js/classie.js"></script>
+<script src="../js/dialogFx.js"></script>
+<script>
+    (function() {
+
+        var dlgtrigger = document.querySelectorAll( '[data-dialog]' );
+        for (var i = 0 ; i < dlgtrigger.length; i++) {
+            console.log(i);
+            somedialog = document.getElementById( dlgtrigger[i].getAttribute( 'data-dialog' ) );
+            dlg = new DialogFx( somedialog );
+
+
+            dlgtrigger[i].addEventListener( 'click', dlg.toggle.bind(dlg) );
+        }
+    })();
+</script>
+</body>
+</html>
