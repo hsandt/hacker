@@ -20,6 +20,10 @@ class @Chat
     @chatInput = chatScreen.find(".chat-input");
     @chatInputList = @chatInput.find("ul");
 
+  # Start a dialogue graph
+  startDialogue: (dialogueGraph) =>
+
+
   # scroll chat history to bottom
   scrollToBottom: =>
     @chatHistory.animate scrollTop: @chatHistory[0].scrollHeight, 200, "swing"
@@ -66,7 +70,18 @@ class @Chat
         choiceLi.click => @sendMessage i
       @chatInputList.append choiceLi
 
-class DialogueNode
+
+class @DialogueGraph
+
+  # Construct a dialogue node
+  #
+  # @param id [int] messages to receive
+  # @param messages [string[]] messages to receive
+  # @param choices [DialogueChoice[]] available choices after all messages have been received
+  constructor: () ->
+
+
+class @DialogueNode
 
   # Construct a dialogue node
   #
@@ -75,14 +90,15 @@ class DialogueNode
   # @param choices [DialogueChoice[]] available choices after all messages have been received
   constructor: (@id, @messages, @choices) ->
 
-class DialogueChoice
+
+class @DialogueChoice
 
   # Construct a dialogue choice
   #
   # @param idx [int] choice index
   # @param message [string] message content
   # @param nextNodeId [int] ID of the dialogue node this choice leads to
-  constructor: (@idx, @message) ->
+  constructor: (@idx, @message, @nextNodeId) ->
 
 
 
