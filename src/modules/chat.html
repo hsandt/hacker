@@ -1,0 +1,69 @@
+<!-- Chatbox -->
+<section id="chat-screen" class="screen clearfix">
+
+    <div class="chat-header clearfix">
+        <span class="fa fa-weixin"></span> To daughter
+    </div>
+
+    <div class="chat-history">
+        <ul>
+            <li class="clearfix">
+                <div class="message-data align-right">
+                    <span class="message-data-time">10:10, Today</span>
+                    <span class="message-data-name">Elsa</span>
+                </div>
+                <div class="message other-message float-right">
+                    Talk. And say. Hi again. Ouchfrefew!
+                </div>
+            </li>
+            <li>
+                <div class="message-data">
+                    <span class="message-data-time">10:10, Today</span>
+                    <span class="message-data-name">Me</span>
+                </div>
+                <div class="message my-message">
+                    test
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="chat-input clearfix">
+        <ul class="message-input-choice-list">
+            <!--<li>A</li>-->
+        </ul>
+        <!--<textarea name="message-to-send" id="message-to-send" placeholder="type here" rows="3"></textarea>-->
+        <!--<button>Send</button>-->
+    </div>
+
+</section>
+
+<!-- Message templates -->
+<script id="message-sent-template" type="text/x-handlebars-template">
+    <li>
+        <div class="message-data">
+            <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
+            <span class="message-data-time">{{time}}, Today</span>
+        </div>
+        <div class="message my-message">
+            {{message}}
+        </div>
+    </li>
+</script>
+
+<script id="message-received-template" type="text/x-handlebars-template">
+    <li class="clearfix">
+        <div class="message-data align-right">
+            <span class="message-data-time">{{time}}, Today</span> &nbsp; &nbsp;
+            <span class="message-data-name">Olia</span> <i class="fa fa-circle me"></i>
+        </div>
+        <div class="message other-message float-right">
+            {{message}}
+        </div>
+    </li>
+</script>
+
+<!-- Message send template -->
+<script id="message-input-choice-template" type="text/x-handlebars-template">
+    <li class="message-input-choice">{{choiceMessage}}</li>
+</script>

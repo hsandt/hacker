@@ -58,7 +58,7 @@ class @Chat
     choiceMessages = ["Okay", "Get lost!"]
     for i in [0...2]
       console.log i
-      choice = new Choice i, choiceMessages[i]
+      choice = new DialogueChoice i, choiceMessages[i]
       @choices.push choice
       choiceLi = $(template(choiceMessage: choice.message))
       # add onclick event
@@ -66,11 +66,24 @@ class @Chat
         choiceLi.click => @sendMessage i
       @chatInputList.append choiceLi
 
+class DialogueNode
 
-class Choice
+  # Construct a dialogue node
+  #
+  # @param id [int] messages to receive
+  # @param messages [string[]] messages to receive
+  # @param choices [DialogueChoice[]] available choices after all messages have been received
+  constructor: (@id, @messages, @choices) ->
 
-  # idx (int): choice index
-  # message (string): message content
+class DialogueChoice
+
+  # Construct a dialogue choice
+  #
+  # @param idx [int] choice index
+  # @param message [string] message content
+  # @param nextNodeId [int] ID of the dialogue node this choice leads to
   constructor: (@idx, @message) ->
+
+
 
 
