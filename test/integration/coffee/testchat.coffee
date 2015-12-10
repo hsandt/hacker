@@ -28,7 +28,8 @@ testChat = ->
         "Nice!"
       ],
       [
-
+        new DialogueChoice 0, "What about you?", 3
+        new DialogueChoice 1, "Okay, time to start business", 5
       ]
 
   dialogueGraph.addNode new DialogueNode 2,
@@ -36,7 +37,32 @@ testChat = ->
       "Oh, sorry for you."
     ],
     [
+      new DialogueChoice 0, "Thanks.", 5
+      new DialogueChoice 1, "As if you would ever...", 4
+      new DialogueChoice 2, "Anyway, time to start business", 5
+    ]
 
+  dialogueGraph.addNode new DialogueNode 3,
+    [
+      "I am fine, thanks."
+    ],
+    [
+      new DialogueChoice 0, "Fine, time to start business", 5
+    ]
+
+  dialogueGraph.addNode new DialogueNode 4,
+    [
+      "No, really, I mean it!"
+    ],
+    [
+      new DialogueChoice 0, "Anyway, time to start business", 5
+    ]
+
+  dialogueGraph.addNode new DialogueNode 5,
+    [
+      "So what about talking about our next project?"
+    ],
+    [
     ]
 
   chat.startDialogue dialogueGraph
