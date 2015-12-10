@@ -1,11 +1,5 @@
 class @Chat
 
-  @incomingMessageSequence = [
-    "Hi!",
-    "How are you?",
-    "Is everything alright?"
-  ]
-
   # [int] index of next message to receive
   nextIncomingMessageIdx: 0
 

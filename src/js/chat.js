@@ -3,8 +3,6 @@
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.Chat = (function() {
-    Chat.incomingMessageSequence = ["Hi!", "How are you?", "Is everything alright?"];
-
     Chat.prototype.nextIncomingMessageIdx = 0;
 
     function Chat(chatScreen) {
