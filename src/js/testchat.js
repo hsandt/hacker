@@ -15,13 +15,11 @@
   });
 
   testChat = function() {
-    var chat, dialogueGraph;
+    var chat, dialogueNode0, dialogueNode1, dialogueNode2;
     chat = new Chat($("#chat-screen"));
-    dialogueGraph = new DialogueGraph;
-    dialogueGraph.addNode(new DialogueNode(0, ["Hi!", "How are you?"], [new DialogueChoice(0, "Fine, thanks.", 1), new DialogueChoice(1, "Not very good today.", 2)]));
-    dialogueGraph.addNode(new DialogueNode(1, ["Nice!"], []));
-    dialogueGraph.addNode(new DialogueNode(2, ["Oh, sorry for you."], []));
-    return chat.startDialogue(dialogueGraph);
+    dialogueNode0 = new DialogueNode(0, ["Hi!", "How are you?"], [new DialogueChoice(0, "Fine, thanks.", 1), new DialogueChoice(1, "Not very good today.", 2)]);
+    dialogueNode1 = new DialogueNode(1, ["Nice!"], []);
+    return dialogueNode2 = new DialogueNode(2, ["Oh, sorry for you."], []);
   };
 
 }).call(this);

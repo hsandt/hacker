@@ -24,5 +24,8 @@
   ],
   "dependencies": {
     "modularized-normalize-scss": "~3.0.3"
+  },
+  "devDependencies": {
+    "sass-mixins": "~0.12.0"
   }
 }

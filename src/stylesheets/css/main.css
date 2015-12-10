@@ -1046,10 +1046,13 @@ span.message-data-time {
   clear: both;
   height: 0; }
 
+.chat-input {
+  height: 100px; }
+
 ul.message-input-choice-list {
   list-style-type: decimal; }
 
-li.message-input-choice {
+li.message-choice {
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;

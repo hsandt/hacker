@@ -11,7 +11,9 @@ $("document").ready ->
 testChat = ->
   chat = new Chat $("#chat-screen")
 
-  dialogueNode0 = new DialogueNode 0,
+  dialogueGraph = new DialogueGraph
+
+  dialogueGraph.addNode new DialogueNode 0,
     [
       "Hi!",
       "How are you?"
@@ -21,7 +23,7 @@ testChat = ->
       new DialogueChoice 1, "Not very good today.", 2
     ]
 
-  dialogueNode1 = new DialogueNode 1,
+  dialogueGraph.addNode new DialogueNode 1,
       [
         "Nice!"
       ],
@@ -29,13 +31,15 @@ testChat = ->
 
       ]
 
-  dialogueNode2 = new DialogueNode 2,
+  dialogueGraph.addNode new DialogueNode 2,
     [
       "Oh, sorry for you."
     ],
     [
 
     ]
+
+  chat.startDialogue dialogueGraph
 
 #  chat.receiveAllMessages 3, 2000
 #  chat.showMessageInputChoiceList()
