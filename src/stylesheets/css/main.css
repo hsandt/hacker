@@ -914,15 +914,6 @@ td {
  *     @include x-user-select;
  *   }
  */
-*, *:before, *:after {
-  box-sizing: border-box; }
-
-body {
-  background-color: #fff9d8;
-  font: 14px/20px Verdana;
-  padding: 40px 0; }
-
-/*color: white; */
 ul {
   list-style-type: none; }
 
@@ -1058,5 +1049,18 @@ li.message-choice {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none; }
+
+*, *:before, *:after {
+  box-sizing: border-box; }
+
+.terminal-screen {
+  background-color: black;
+  font: 14px/20px Verdana;
+  padding: 40px 0; }
+  .terminal-screen .input {
+    border: none;
+    background-color: black;
+    color: white;
+    resize: none; }
 
 /*# sourceMappingURL=main.css.map */

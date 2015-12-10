@@ -2,7 +2,7 @@
 (function() {
   var testChat;
 
-  $("document").ready(function() {
+  $(function() {
     console.log("[TEST] Chat");
     return $("#content").load("../../src/modules/chat.html", function(response, status, xhr) {
       if (status !== "success") {
