@@ -3,8 +3,8 @@
 
 .terminal-screen
   background-color: black
-  font: 14px/20px Verdana
-  padding: 40px 0
+  font: 14px/20px "Inconsolata" "Courier"
+  padding: 40px 40px
   color: white
 
   .output
@@ -15,12 +15,14 @@
     form
       input
         &[type="text"]
+          resize: none
+          outline: none
           border: none
           background-color: black
-          resize: none
 
         &[type="submit"]
-          border: none
-          background-color: black
+          display: none
+          //border: none
+          //background-color: black
 
 

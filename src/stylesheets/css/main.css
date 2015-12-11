@@ -914,6 +914,11 @@ td {
  *     @include x-user-select;
  *   }
  */
+@font-face {
+  font-family: "Inconsolata";
+  src: url("../fonts/Inconsolata.otf");
+  font-weight: normal;
+  font-style: normal; }
 ul {
   list-style-type: none; }
 
@@ -1055,17 +1060,17 @@ li.message-choice {
 
 .terminal-screen {
   background-color: black;
-  font: 14px/20px Verdana;
-  padding: 40px 0;
+  font: 14px/20px "Inconsolata" "Courier";
+  padding: 40px 40px;
   color: white; }
   .terminal-screen .output ul {
     list-style-type: none; }
   .terminal-screen .prompt form input[type="text"] {
-    border: none;
-    background-color: black;
-    resize: none; }
-  .terminal-screen .prompt form input[type="submit"] {
+    resize: none;
+    outline: none;
     border: none;
     background-color: black; }
+  .terminal-screen .prompt form input[type="submit"] {
+    display: none; }
 
 /*# sourceMappingURL=main.css.map */
