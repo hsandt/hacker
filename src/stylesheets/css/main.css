@@ -1056,11 +1056,16 @@ li.message-choice {
 .terminal-screen {
   background-color: black;
   font: 14px/20px Verdana;
-  padding: 40px 0; }
-  .terminal-screen .input {
+  padding: 40px 0;
+  color: white; }
+  .terminal-screen .output ul {
+    list-style-type: none; }
+  .terminal-screen .prompt form input[type="text"] {
     border: none;
     background-color: black;
-    color: white;
     resize: none; }
+  .terminal-screen .prompt form input[type="submit"] {
+    border: none;
+    background-color: black; }
 
 /*# sourceMappingURL=main.css.map */
