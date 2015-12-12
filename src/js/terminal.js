@@ -2,6 +2,7 @@
 (function() {
   var CommandStrings, Commands,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    slice = [].slice,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
@@ -41,8 +42,15 @@
       return this.interpreter.execute(syntaxTree, this);
     };
 
-    Terminal.prototype.print = function(text) {
-      return this.outputDiv.append(document.createTextNode(text) + '<br>');
+    Terminal.prototype.print = function() {
+      var i, len, line, lines, results;
+      lines = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+      results = [];
+      for (i = 0, len = lines.length; i < len; i++) {
+        line = lines[i];
+        results.push(this.outputDiv.append(document.createTextNode(line)).append('<br>'));
+      }
+      return results;
     };
 
     return Terminal;
@@ -96,7 +104,7 @@
     }
 
     HelpCommand.prototype.execute = function(terminal) {
-      return terminal.print("List of available commands:<br> help -- show this help menu");
+      return terminal.print("List of available commands:", "help -- show this help menu", "ls -- show files and subdirectories in current directory");
     };
 
     HelpCommand.prototype.toString = function() {
@@ -107,9 +115,29 @@
 
   })(Command);
 
+  this.LsCommand = (function(superClass) {
+    extend(LsCommand, superClass);
+
+    function LsCommand() {
+      this.execute = bind(this.execute, this);
+      return LsCommand.__super__.constructor.apply(this, arguments);
+    }
+
+    LsCommand.prototype.execute = function(terminal) {
+      return terminal.print("bin", "etc", "home", "usr");
+    };
+
+    LsCommand.prototype.toString = function() {
+      return "LS command";
+    };
+
+    return LsCommand;
+
+  })(Command);
+
   Commands = {
     HELP: new HelpCommand(),
-    LS: "LS"
+    LS: new LsCommand()
   };
 
   CommandStrings = {

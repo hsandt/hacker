@@ -42,8 +42,9 @@ class @Terminal
     @interpreter.execute syntaxTree, @
 
   # Send a text to the terminal output, on one line
-  print: (text) =>
-    @outputDiv.append document.createTextNode(text) + '<br>'
+  print: (lines...) =>
+    for line in lines
+      @outputDiv.append(document.createTextNode(line)).append '<br>'
 
 # Class responsible for syntax analysis (parsing) and execution
 # of the command-lines in the terminal
@@ -83,18 +84,29 @@ class @HelpCommand extends Command
 
   # Show available commands information
   execute: (terminal) =>
-    terminal.print "List of available commands:<br>
-      help -- show this help menu"
+    terminal.print "List of available commands:",
+      "help -- show this help menu",
+      "ls -- show files and subdirectories in current directory"
 
   toString: ->
     "HELP command"
+
+
+class @LsCommand extends Command
+
+  # Show files and subdirectories in current directory
+  execute: (terminal) =>
+    terminal.print "bin", "etc", "home", "usr"
+
+  toString: ->
+    "LS command"
 
 
 # IMPROVE: initialize this in some function, so that you can put this code
 # anywhere not only after the class definitions
 Commands =
   HELP: new HelpCommand(),
-  LS: "LS"
+  LS: new LsCommand()
 
 CommandStrings =
   "help": Commands.HELP,
