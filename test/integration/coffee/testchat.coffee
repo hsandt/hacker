@@ -1,4 +1,4 @@
-$("document").ready ->
+$ ->
   console.log "[TEST] Chat"
 
   $("#content").load "../../src/modules/chat.html", (response, status, xhr) ->

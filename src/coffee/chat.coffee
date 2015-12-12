@@ -6,10 +6,10 @@ class @Chat
   # store references of chat DOM elements as jQuery
   constructor: (chatScreen) ->
     # jQuery element for the list of messages
-    @chatHistory = chatScreen.find(".chat-history");
-    @chatHistoryList = @chatHistory.find("ul");
-    @chatInput = chatScreen.find(".chat-input");
-    @chatInputList = @chatInput.find("ul");
+    @chatHistory = chatScreen.find ".chat-history"
+    @chatHistoryList = @chatHistory.find "ul"
+    @chatInput = chatScreen.find ".chat-input"
+    @chatInputList = @chatInput.find "ul"
 
     @receivedMessageTemplate = Handlebars.compile $("#message-received-template").html()
     @sentMessageTemplate = Handlebars.compile $("#message-sent-template").html()

@@ -1,0 +1,28 @@
+*, *:before, *:after
+  box-sizing: border-box
+
+.terminal-screen
+  background-color: black
+  font: 14px/20px "Inconsolata" "Courier"
+  padding: 40px 40px
+  color: white
+
+  .output
+    ul
+      list-style-type: none
+
+  .prompt
+    form
+      input
+        &[type="text"]
+          resize: none
+          outline: none
+          border: none
+          background-color: black
+
+        &[type="submit"]
+          display: none
+          //border: none
+          //background-color: black
+
+
