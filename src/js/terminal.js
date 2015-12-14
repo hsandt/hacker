@@ -29,7 +29,7 @@
     }
 
     Terminal.prototype.enterCommand = function(command) {
-      var error, error1, syntaxTree;
+      var error, error1, error2, syntaxTree;
       this.promptInput.val("");
       this.print('> ' + command);
       try {
@@ -39,7 +39,12 @@
         this.print(error.message);
         return;
       }
-      return this.interpreter.execute(syntaxTree, this);
+      try {
+        return this.interpreter.execute(syntaxTree, this);
+      } catch (error2) {
+        error = error2;
+        return this.print(error.message);
+      }
     };
 
     Terminal.prototype.print = function() {
@@ -61,24 +66,56 @@
     function CommandInterpreter() {
       this.execute = bind(this.execute, this);
       this.parse = bind(this.parse, this);
+      this.commandObjects = {};
+      this.commandObjects[Commands.HELP] = new HelpCommand;
+      this.commandObjects[Commands.LS] = new LsCommand;
+      this.commandObjects[Commands.CONNECT] = new ConnectCommand;
     }
 
-    CommandInterpreter.prototype.parse = function(command) {
-      var word;
-      console.log("[TERMINAL] Parse '" + command + "'");
-      word = command;
-      if (!(word in CommandStrings)) {
-        throw SyntaxError(word + " is not a known command.");
+    CommandInterpreter.prototype.parse = function(commandLine) {
+      var command, commandArgs, words;
+      console.log("[TERMINAL] Parse '" + commandLine + "'");
+      words = commandLine.trim().split(' ');
+      command = words[0];
+      commandArgs = words.slice(1);
+      if (!(command in CommandStrings)) {
+        throw SyntaxError(command + " is not a known command.");
       }
-      return CommandStrings[word];
+      return new SyntaxTree([CommandStrings[command], commandArgs]);
     };
 
     CommandInterpreter.prototype.execute = function(syntaxTree, terminal) {
       console.log("[TERMINAL] Execute " + syntaxTree);
-      return syntaxTree.execute(terminal);
+      console.log(this.commandObjects["help"]);
+      console.log;
+      return this.commandObjects[syntaxTree.getCommand()].execute(syntaxTree.getArgs(), terminal);
     };
 
     return CommandInterpreter;
+
+  })();
+
+  this.SyntaxTree = (function() {
+    function SyntaxTree(nodes) {
+      this.nodes = nodes;
+      this.toString = bind(this.toString, this);
+      this.getArgs = bind(this.getArgs, this);
+      this.getCommand = bind(this.getCommand, this);
+    }
+
+    SyntaxTree.prototype.getCommand = function() {
+      return this.nodes[0];
+    };
+
+    SyntaxTree.prototype.getArgs = function() {
+      return this.nodes[1];
+    };
+
+    SyntaxTree.prototype.toString = function() {
+      return this.nodes[0] + " -> " + this.nodes[1].length;
+    };
+
+    return SyntaxTree;
 
   })();
 
@@ -87,7 +124,7 @@
       this.execute = bind(this.execute, this);
     }
 
-    Command.prototype.execute = function(terminal) {
+    Command.prototype.execute = function(args, terminal) {
       throw this + " has not implemented the 'execute' method.";
     };
 
@@ -103,7 +140,7 @@
       return HelpCommand.__super__.constructor.apply(this, arguments);
     }
 
-    HelpCommand.prototype.execute = function(terminal) {
+    HelpCommand.prototype.execute = function(args, terminal) {
       return terminal.print("List of available commands:", "help -- show this help menu", "ls -- show files and subdirectories in current directory");
     };
 
@@ -123,7 +160,7 @@
       return LsCommand.__super__.constructor.apply(this, arguments);
     }
 
-    LsCommand.prototype.execute = function(terminal) {
+    LsCommand.prototype.execute = function(args, terminal) {
       return terminal.print("bin", "etc", "home", "usr");
     };
 
@@ -135,15 +172,40 @@
 
   })(Command);
 
+  this.ConnectCommand = (function(superClass) {
+    extend(ConnectCommand, superClass);
+
+    function ConnectCommand() {
+      this.execute = bind(this.execute, this);
+      return ConnectCommand.__super__.constructor.apply(this, arguments);
+    }
+
+    ConnectCommand.prototype.execute = function(args, terminal) {
+      if (args.length < 1) {
+        throw SyntaxError("The connect command required 1 argument: the domain URL or IP");
+      }
+      return terminal.print("Connecting to " + args[0] + ",,,");
+    };
+
+    ConnectCommand.prototype.toString = function() {
+      return "CONNECT command";
+    };
+
+    return ConnectCommand;
+
+  })(Command);
+
   Commands = {
-    HELP: new HelpCommand(),
-    LS: new LsCommand()
+    HELP: "help",
+    LS: "ls",
+    CONNECT: "connect"
   };
 
   CommandStrings = {
     "help": Commands.HELP,
     "ls": Commands.LS,
-    "dir": Commands.LS
+    "dir": Commands.LS,
+    "connect": Commands.CONNECT
   };
 
 }).call(this);

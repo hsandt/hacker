@@ -12,7 +12,7 @@ class @Terminal
     @history = []  # command history
     @promptInput = terminalScreen.find ".prompt-input"
 
-    # set focus and prevent losing focus by brute-force
+    # set initial focus and prevent losing focus by brute-force
     @promptInput.focus()
     @promptInput.blur =>
       @promptInput.focus()
@@ -27,7 +27,7 @@ class @Terminal
     # empty input field
     @promptInput.val("")
 
-    # output entered command with prompt symbol
+    # output entered command with prompt symbol (multiple whitespaces will be reduced to one by HTML)
     @print '> ' + command
 
     # interpret command if you can, else show error message
@@ -37,53 +37,89 @@ class @Terminal
       @print error.message
       return
 
-    # pass the current process to execute the syntax tree (here, the terminal object)
-    # so that the child process can print to output, open another interpreter inside, etc.
-    @interpreter.execute syntaxTree, @
+    try
+      # pass the current process to execute the syntax tree (here, the terminal object)
+      # so that the child process can print to output, open another interpreter inside, etc.
+      @interpreter.execute syntaxTree, @
+    catch error
+      @print error.message
 
   # Send a text to the terminal output, on one line
   print: (lines...) =>
     for line in lines
       @outputDiv.append(document.createTextNode(line)).append '<br>'
 
+
 # Class responsible for syntax analysis (parsing) and execution
 # of the command-lines in the terminal
 class @CommandInterpreter
 
   constructor: ->
+    # fill command objects with actual instances (we use bound methods for convenience
+    # for debug, but static methods would work too)
+    @commandObjects = {}
+    @commandObjects[Commands.HELP] = new HelpCommand
+    @commandObjects[Commands.LS] = new LsCommand
+    @commandObjects[Commands.CONNECT] = new ConnectCommand
 
   # Parse a command and return a syntax tree made of tokens
   # Throw an exception if a parsing error occurs
   #
-  # command [string] command sent to shell
-  parse: (command) =>
-    console.log "[TERMINAL] Parse '#{command}'"
-    # one-world analysis
-    word = command
-    if !(word of CommandStrings)
-      throw SyntaxError "#{word} is not a known command."
-    CommandStrings[word]
+  # commandLine [string] command sent to shell
+  parse: (commandLine) =>
+    console.log "[TERMINAL] Parse '#{commandLine}'"
+    # multi-word analysis
+    # trim whitespaces and separate command from arguments
+    # IMPROVE: Python-like sequence getter?
+    words = commandLine.trim().split ' '
+    command = words[0]
+    commandArgs = words[1..]
+    if !(command of CommandStrings)
+      throw SyntaxError "#{command} is not a known command."
+    new SyntaxTree [CommandStrings[command], commandArgs]
 
-  # Execute commands in syntax tree
+  # Execute command with arguments provided in syntax tree
   #
-  # syntaxTree [SyntaxTree] : for now, just a string
+  # syntaxTree [SyntaxTree] : multi-dimensional array containing the command line tokens
   # terminal [Terminal] : represents the parent process
   execute: (syntaxTree, terminal) =>
     console.log "[TERMINAL] Execute #{syntaxTree}"
-    syntaxTree.execute terminal
+    console.log @commandObjects["help"]
+    console.log
+    @commandObjects[syntaxTree.getCommand()].execute syntaxTree.getArgs(), terminal
+
+class @SyntaxTree
+
+  constructor: (@nodes) ->
+
+  # TODO: add array getter proxy to access nodes directly
+
+  # Return single command string
+  getCommand: =>
+    @nodes[0]
+
+  # Return list of argument strings, assuming a single command
+  getArgs: =>
+    @nodes[1]
+
+  toString: =>
+    # IMPROVE: pretty print the MD array
+    "#{@nodes[0]} -> #{@nodes[1].length}"
 
 class @Command
 
-  # [virtual] Behavior of the command on execution
+  # (virtual) Behavior of the command on execution
+  #
+  # args [Terminal] : arguments of the invoked command
   # terminal [Terminal] : represents the parent process
-  execute: (terminal) =>
+  execute: (args, terminal) =>
     throw "#{this} has not implemented the 'execute' method."
 
 
 class @HelpCommand extends Command
 
   # Show available commands information
-  execute: (terminal) =>
+  execute: (args, terminal) =>
     terminal.print "List of available commands:",
       "help -- show this help menu",
       "ls -- show files and subdirectories in current directory"
@@ -95,23 +131,33 @@ class @HelpCommand extends Command
 class @LsCommand extends Command
 
   # Show files and subdirectories in current directory
-  execute: (terminal) =>
+  execute: (args, terminal) =>
     terminal.print "bin", "etc", "home", "usr"
 
   toString: ->
     "LS command"
 
+class @ConnectCommand extends Command
 
-# IMPROVE: initialize this in some function, so that you can put this code
-# anywhere not only after the class definitions
+  # Connect to server by domain URL or IP
+  execute: (args, terminal) =>
+    if args.length < 1
+      throw SyntaxError "The connect command required 1 argument: the domain URL or IP"
+    terminal.print "Connecting to #{args[0]},,,"
+
+
+  toString: ->
+    "CONNECT command"
+
+# IMPROVE: use strings instead of "enum" tokens and just use a dictionary to match
+# each string to a command object in CommandInterpreter constructor
 Commands =
-  HELP: new HelpCommand(),
-  LS: new LsCommand()
+  HELP: "help",
+  LS: "ls",
+  CONNECT: "connect"
 
 CommandStrings =
   "help": Commands.HELP,
   "ls": Commands.LS,
-  "dir": Commands.LS
-
-
-#  execute: ->
+  "dir": Commands.LS,
+  "connect": Commands.CONNECT,
