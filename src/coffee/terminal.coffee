@@ -6,11 +6,13 @@ class @Terminal
   constructor: (terminalScreen) ->
     @interpreter = new CommandInterpreter
 
-    @output = []  # output lines, including commands entered by the player
+    @output = []  # [String[]] output lines, including commands entered by the player
     @outputDiv = terminalScreen.find ".output"
 
-    @history = []  # command history
+    @history = []  # [String[]] command history
     @promptInput = terminalScreen.find ".prompt-input"
+
+    @connectionStack = [Game.servers["local"]]  # [Server[]] stack of servers through which you connected, last is current server
 
     # set initial focus and prevent losing focus by brute-force
     @promptInput.focus()
@@ -19,6 +21,9 @@ class @Terminal
 
     # replace normal submit behavior for prompt
     terminalScreen.find(".prompt-submit").click => @enterCommand @promptInput.val()
+
+    # bind up/down arrow press to history navigation
+    # TODO
 
   # Send command to fictive shell
   #
@@ -45,6 +50,8 @@ class @Terminal
       @print error.message
 
   # Send a text to the terminal output, on one line
+  #
+  # lines [String...]
   print: (lines...) =>
     for line in lines
       @outputDiv.append(document.createTextNode(line)).append '<br>'
@@ -84,8 +91,6 @@ class @CommandInterpreter
   # terminal [Terminal] : represents the parent process
   execute: (syntaxTree, terminal) =>
     console.log "[TERMINAL] Execute #{syntaxTree}"
-    console.log @commandObjects["help"]
-    console.log
     @commandObjects[syntaxTree.getCommand()].execute syntaxTree.getArgs(), terminal
 
 class @SyntaxTree
@@ -104,7 +109,7 @@ class @SyntaxTree
 
   toString: =>
     # IMPROVE: pretty print the MD array
-    "#{@nodes[0]} -> #{@nodes[1].length}"
+    "#{@nodes[0]} -> #{@nodes[1].length} argument(s)"
 
 class @Command
 
@@ -132,7 +137,9 @@ class @LsCommand extends Command
 
   # Show files and subdirectories in current directory
   execute: (args, terminal) =>
-    terminal.print "bin", "etc", "home", "usr"
+    # IMPROVE: get last element of array in coffeescript
+    for file in terminal.connectionStack[terminal.connectionStack.length - 1].files
+      terminal.print file
 
   toString: ->
     "LS command"
@@ -143,7 +150,14 @@ class @ConnectCommand extends Command
   execute: (args, terminal) =>
     if args.length < 1
       throw SyntaxError "The connect command required 1 argument: the domain URL or IP"
-    terminal.print "Connecting to #{args[0]},,,"
+    address = args[0]
+    terminal.print "Connecting to #{address}..."
+    server = Server.find(address)
+    if !server?
+      terminal.print "Could not resolve hostname / IP #{address}"
+      return
+    terminal.print "Connected to #{server.mainURL}"  # FIXME: in reality url is not given from IP
+    terminal.connectionStack.push server
 
 
   toString: ->

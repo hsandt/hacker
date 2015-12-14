@@ -15,6 +15,7 @@
       this.outputDiv = terminalScreen.find(".output");
       this.history = [];
       this.promptInput = terminalScreen.find(".prompt-input");
+      this.connectionStack = [Game.servers["local"]];
       this.promptInput.focus();
       this.promptInput.blur((function(_this) {
         return function() {
@@ -86,8 +87,6 @@
 
     CommandInterpreter.prototype.execute = function(syntaxTree, terminal) {
       console.log("[TERMINAL] Execute " + syntaxTree);
-      console.log(this.commandObjects["help"]);
-      console.log;
       return this.commandObjects[syntaxTree.getCommand()].execute(syntaxTree.getArgs(), terminal);
     };
 
@@ -112,7 +111,7 @@
     };
 
     SyntaxTree.prototype.toString = function() {
-      return this.nodes[0] + " -> " + this.nodes[1].length;
+      return this.nodes[0] + " -> " + this.nodes[1].length + " argument(s)";
     };
 
     return SyntaxTree;
@@ -161,7 +160,14 @@
     }
 
     LsCommand.prototype.execute = function(args, terminal) {
-      return terminal.print("bin", "etc", "home", "usr");
+      var file, i, len, ref, results;
+      ref = terminal.connectionStack[terminal.connectionStack.length - 1].files;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        file = ref[i];
+        results.push(terminal.print(file));
+      }
+      return results;
     };
 
     LsCommand.prototype.toString = function() {
@@ -181,10 +187,19 @@
     }
 
     ConnectCommand.prototype.execute = function(args, terminal) {
+      var address, server;
       if (args.length < 1) {
         throw SyntaxError("The connect command required 1 argument: the domain URL or IP");
       }
-      return terminal.print("Connecting to " + args[0] + ",,,");
+      address = args[0];
+      terminal.print("Connecting to " + address + "...");
+      server = Server.find(address);
+      if (server == null) {
+        terminal.print("Could not resolve hostname / IP " + address);
+        return;
+      }
+      terminal.print("Connected to " + server.mainURL);
+      return terminal.connectionStack.push(server);
     };
 
     ConnectCommand.prototype.toString = function() {

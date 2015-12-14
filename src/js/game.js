@@ -5,13 +5,17 @@
       "player_is_dead": false
     },
     servers: {
-      "google": new Server("google.com", "256.241.23.02", [
+      "local": new Server("N/A", "456.231.24.57", ["home"]),
+      "google": new Server("google.com", "256.241.23.02", ["etc", "home", "var"], [
         new DatabaseSim([
           new Table("user_table", {
-            0: new User(0, "john", "dd6x5few961few68fq4wd6", "California")
+            0: new Google.User(0, "john", "dd6x5few961few68fq4wd6", "California")
           })
         ])
       ])
+    },
+    dns: {
+      "google.com": "256.241.23.02"
     }
   };
 

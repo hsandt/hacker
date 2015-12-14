@@ -3,11 +3,43 @@
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.Server = (function() {
-    function Server(url, ip, databaseList) {
-      this.url = url;
-      this.ip = ip;
-      this.databaseList = databaseList;
+    Server.find = function(address) {
+      var server;
+      server = this.getByURL(address);
+      if (server != null) {
+        return server;
+      } else {
+        return this.getByIP(address);
+      }
+    };
+
+    Server.getByURL = function(url) {
+      return this.getByIP(Game.dns[url]);
+    };
+
+    Server.getByIP = function(ip) {
+      var _, ref, server;
+      ref = Game.servers;
+      for (_ in ref) {
+        server = ref[_];
+        if (server.ip === ip) {
+          return server;
+        }
+      }
+      return null;
+    };
+
+    function Server(mainURL, ip1, files, databaseList) {
+      this.mainURL = mainURL;
+      this.ip = ip1;
+      this.files = files;
+      this.databaseList = databaseList != null ? databaseList : [];
+      this.toString = bind(this.toString, this);
     }
+
+    Server.prototype.toString = function() {
+      return "Server " + this.mainURL + " (" + this.ip + ")";
+    };
 
     return Server;
 
