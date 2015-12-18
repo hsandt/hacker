@@ -9,7 +9,9 @@ class @Terminal
     @output = []  # [String[]] output lines, including commands entered by the player
     @outputDiv = terminalScreen.find ".output"
 
-    @history = []  # [String[]] command history
+    @history = [""]  # [String[]] command history, as a reversed queue, with last buffer as 1st element
+    @historyIndex = 0  # [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
+    @inputBuffer = ""  # [string] text typed in the prompt before navigating history, useful if the user goes back to the present
     @promptInput = terminalScreen.find ".prompt-input"
 
     @connectionStack = [Game.servers["local"]]  # [Server[]] stack of servers through which you connected, last is current server
@@ -19,25 +21,47 @@ class @Terminal
     @promptInput.blur =>
       @promptInput.focus()
 
+    # bind up/down arrow press to history navigation
+    @promptInput.keydown (event) =>
+      switch event.which
+        when Keycode.UP then @navigateHistory 1
+        when Keycode.DOWN then @navigateHistory -1
+
     # replace normal submit behavior for prompt
     terminalScreen.find(".prompt-submit").click => @enterCommand @promptInput.val()
 
-    # bind up/down arrow press to history navigation
-    # TODO
+  # Navigate in command-line history up or down as much as possible
+  #
+  # delta [int] 1 to go to next command, -1 to go to previous command
+  navigateHistory: (delta) =>
+    if @historyIndex > 0 and delta == -1
+      --@historyIndex
+      @promptInput.text @history[@historyIndex]
+    if @historyIndex < @history.length - 1 and delta == 1
+      if @historyIndex == 0
+        # if you enter history navigation mode, remember current input for later
+        @inputBuffer = promptInput.text
+      ++@historyIndex
+      @promptInput.text @history[@historyIndex]
+
 
   # Send command to fictive shell
   #
   # command [string] command sent to shell
-  enterCommand: (command) =>
+  enterCommand: (commandLine) =>
+    # record command in history
+    @history[0] = commandLine
+    @history.unshift ""
+
     # empty input field
     @promptInput.val("")
 
     # output entered command with prompt symbol (multiple whitespaces will be reduced to one by HTML)
-    @print '> ' + command
+    @print '> ' + commandLine
 
     # interpret command if you can, else show error message
     try
-      syntaxTree = @interpreter.parse command
+      syntaxTree = @interpreter.parse commandLine
     catch error
       @print error.message
       return
@@ -78,9 +102,7 @@ class @CommandInterpreter
     # multi-word analysis
     # trim whitespaces and separate command from arguments
     # IMPROVE: Python-like sequence getter?
-    words = commandLine.trim().split ' '
-    command = words[0]
-    commandArgs = words[1..]
+    [command, commandArgs...] = commandLine.trim().split ' '
     if !(command of CommandStrings)
       throw SyntaxError "#{command} is not a known command."
     new SyntaxTree [CommandStrings[command], commandArgs]
@@ -95,9 +117,8 @@ class @CommandInterpreter
 
 class @SyntaxTree
 
+  # nodes [string[]] array of syntax elements (no deep hierarchy)
   constructor: (@nodes) ->
-
-  # TODO: add array getter proxy to access nodes directly
 
   # Return single command string
   getCommand: =>
@@ -108,8 +129,7 @@ class @SyntaxTree
     @nodes[1]
 
   toString: =>
-    # IMPROVE: pretty print the MD array
-    "#{@nodes[0]} -> #{@nodes[1].length} argument(s)"
+    "#{@nodes[0]} -> #{@nodes[1].join ', '}"
 
 class @Command
 
@@ -149,7 +169,7 @@ class @ConnectCommand extends Command
   # Connect to server by domain URL or IP
   execute: (args, terminal) =>
     if args.length < 1
-      throw SyntaxError "The connect command required 1 argument: the domain URL or IP"
+      throw SyntaxError "The connect command requires 1 argument: the domain URL or IP"
     address = args[0]
     terminal.print "Connecting to #{address}..."
     server = Server.find(address)

@@ -10,16 +10,29 @@
     function Terminal(terminalScreen) {
       this.print = bind(this.print, this);
       this.enterCommand = bind(this.enterCommand, this);
+      this.navigateHistory = bind(this.navigateHistory, this);
       this.interpreter = new CommandInterpreter;
       this.output = [];
       this.outputDiv = terminalScreen.find(".output");
-      this.history = [];
+      this.history = [""];
+      this.historyIndex = 0;
+      this.inputBuffer = "";
       this.promptInput = terminalScreen.find(".prompt-input");
       this.connectionStack = [Game.servers["local"]];
       this.promptInput.focus();
       this.promptInput.blur((function(_this) {
         return function() {
           return _this.promptInput.focus();
+        };
+      })(this));
+      this.promptInput.keydown((function(_this) {
+        return function(event) {
+          switch (event.which) {
+            case Keycode.UP:
+              return _this.navigateHistory(1);
+            case Keycode.DOWN:
+              return _this.navigateHistory(-1);
+          }
         };
       })(this));
       terminalScreen.find(".prompt-submit").click((function(_this) {
@@ -29,12 +42,28 @@
       })(this));
     }
 
-    Terminal.prototype.enterCommand = function(command) {
+    Terminal.prototype.navigateHistory = function(delta) {
+      if (this.historyIndex > 0 && delta === -1) {
+        --this.historyIndex;
+        this.promptInput.text(this.history[this.historyIndex]);
+      }
+      if (this.historyIndex < this.history.length - 1 && delta === 1) {
+        if (this.historyIndex === 0) {
+          this.inputBuffer = promptInput.text;
+        }
+        ++this.historyIndex;
+        return this.promptInput.text(this.history[this.historyIndex]);
+      }
+    };
+
+    Terminal.prototype.enterCommand = function(commandLine) {
       var error, error1, error2, syntaxTree;
+      this.history[0] = commandLine;
+      this.history.unshift("");
       this.promptInput.val("");
-      this.print('> ' + command);
+      this.print('> ' + commandLine);
       try {
-        syntaxTree = this.interpreter.parse(command);
+        syntaxTree = this.interpreter.parse(commandLine);
       } catch (error1) {
         error = error1;
         this.print(error.message);
@@ -74,11 +103,9 @@
     }
 
     CommandInterpreter.prototype.parse = function(commandLine) {
-      var command, commandArgs, words;
+      var command, commandArgs, ref;
       console.log("[TERMINAL] Parse '" + commandLine + "'");
-      words = commandLine.trim().split(' ');
-      command = words[0];
-      commandArgs = words.slice(1);
+      ref = commandLine.trim().split(' '), command = ref[0], commandArgs = 2 <= ref.length ? slice.call(ref, 1) : [];
       if (!(command in CommandStrings)) {
         throw SyntaxError(command + " is not a known command.");
       }
@@ -111,7 +138,7 @@
     };
 
     SyntaxTree.prototype.toString = function() {
-      return this.nodes[0] + " -> " + this.nodes[1].length + " argument(s)";
+      return this.nodes[0] + " -> " + (this.nodes[1].join(', '));
     };
 
     return SyntaxTree;
@@ -189,7 +216,7 @@
     ConnectCommand.prototype.execute = function(args, terminal) {
       var address, server;
       if (args.length < 1) {
-        throw SyntaxError("The connect command required 1 argument: the domain URL or IP");
+        throw SyntaxError("The connect command requires 1 argument: the domain URL or IP");
       }
       address = args[0];
       terminal.print("Connecting to " + address + "...");
