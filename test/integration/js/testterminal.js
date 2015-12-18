@@ -15,8 +15,7 @@
   });
 
   testTerminal = function() {
-    var terminal;
-    return terminal = new Terminal($("#terminal-screen"));
+    return this.terminal = new Terminal($("#terminal-screen"));
   };
 
 }).call(this);

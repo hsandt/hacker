@@ -9,4 +9,4 @@ $ ->
     testTerminal()
 
 testTerminal = ->
-  terminal = new Terminal $("#terminal-screen")
+  @terminal = new Terminal $("#terminal-screen")

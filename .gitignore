@@ -91,6 +91,8 @@ archive
 /dist/
 
 # Ignore JS files compiled with CoffeeScript
-#/src/js/
+/src/js/*.js
+/test/integration/js/*.js
 # or ignore at least JS maps only used for debug
 /src/js/*.js.map
+/test/integration/js/*.js.map

@@ -9,7 +9,8 @@ class @Terminal
     @output = []  # [String[]] output lines, including commands entered by the player
     @outputDiv = terminalScreen.find ".output"
 
-    @history = []  # [String[]] command history
+    @history = [""]  # [String[]] command history, as a reversed queue, with last buffer as 1st element
+    @historyIndex = 0  # [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
     @promptInput = terminalScreen.find ".prompt-input"
 
     @connectionStack = [Game.servers["local"]]  # [Server[]] stack of servers through which you connected, last is current server
@@ -19,25 +20,53 @@ class @Terminal
     @promptInput.blur =>
       @promptInput.focus()
 
+    # bind up/down arrow press to history navigation
+    @promptInput.keydown (event) =>
+      switch event.which
+        when Keycode.UP
+          @navigateHistory 1
+          false  # stop propagation
+        when Keycode.DOWN
+          @navigateHistory -1
+          false  # stop propagation
+
     # replace normal submit behavior for prompt
     terminalScreen.find(".prompt-submit").click => @enterCommand @promptInput.val()
 
-    # bind up/down arrow press to history navigation
-    # TODO
+  # Navigate in command-line history up or down as much as possible
+  #
+  # delta [int] 1 to go to next command, -1 to go to previous command
+  navigateHistory: (delta) =>
+    if @historyIndex > 0 and delta == -1
+      console.log "-1"
+      --@historyIndex
+      @promptInput.val @history[@historyIndex]
+    else if @historyIndex < @history.length - 1 and delta == 1
+      console.log "+1"
+      if @historyIndex == 0
+        # if you enter history navigation mode, remember current input for later
+        @history[0] = @promptInput.val()
+      ++@historyIndex
+    else return
+    @promptInput.val @history[@historyIndex]
 
   # Send command to fictive shell
   #
   # command [string] command sent to shell
-  enterCommand: (command) =>
+  enterCommand: (commandLine) =>
+    # record command in history
+    @history[0] = commandLine
+    @history.unshift ""
+
     # empty input field
     @promptInput.val("")
 
     # output entered command with prompt symbol (multiple whitespaces will be reduced to one by HTML)
-    @print '> ' + command
+    @print '> ' + commandLine
 
     # interpret command if you can, else show error message
     try
-      syntaxTree = @interpreter.parse command
+      syntaxTree = @interpreter.parse commandLine
     catch error
       @print error.message
       return
@@ -64,10 +93,11 @@ class @CommandInterpreter
   constructor: ->
     # fill command objects with actual instances (we use bound methods for convenience
     # for debug, but static methods would work too)
-    @commandObjects = {}
-    @commandObjects[Commands.HELP] = new HelpCommand
-    @commandObjects[Commands.LS] = new LsCommand
-    @commandObjects[Commands.CONNECT] = new ConnectCommand
+    @commandObjects =
+      "VOID": new VoidCommand
+      "HELP": new HelpCommand
+      "LS": new LsCommand
+      "CONNECT": new ConnectCommand
 
   # Parse a command and return a syntax tree made of tokens
   # Throw an exception if a parsing error occurs
@@ -77,13 +107,13 @@ class @CommandInterpreter
     console.log "[TERMINAL] Parse '#{commandLine}'"
     # multi-word analysis
     # trim whitespaces and separate command from arguments
-    # IMPROVE: Python-like sequence getter?
-    words = commandLine.trim().split ' '
-    command = words[0]
-    commandArgs = words[1..]
-    if !(command of CommandStrings)
+    console.log(commandLine)
+    [command, commandArgs...] = commandLine.trim().split(/\s+/)
+    if command == ""
+      return new SyntaxTree [CommandToken.VOID, []]
+    if !(command of CommandTokenFromString)
       throw SyntaxError "#{command} is not a known command."
-    new SyntaxTree [CommandStrings[command], commandArgs]
+    new SyntaxTree [CommandTokenFromString[command], commandArgs]
 
   # Execute command with arguments provided in syntax tree
   #
@@ -95,9 +125,8 @@ class @CommandInterpreter
 
 class @SyntaxTree
 
+  # nodes [string[]] array of syntax elements (no deep hierarchy)
   constructor: (@nodes) ->
-
-  # TODO: add array getter proxy to access nodes directly
 
   # Return single command string
   getCommand: =>
@@ -108,8 +137,7 @@ class @SyntaxTree
     @nodes[1]
 
   toString: =>
-    # IMPROVE: pretty print the MD array
-    "#{@nodes[0]} -> #{@nodes[1].length} argument(s)"
+    "#{@nodes[0]} -> #{@nodes[1].join ', '}"
 
 class @Command
 
@@ -120,6 +148,13 @@ class @Command
   execute: (args, terminal) =>
     throw "#{this} has not implemented the 'execute' method."
 
+class @VoidCommand extends Command
+
+  # do nothing
+  execute: (args, terminal) =>
+
+  toString: ->
+    "VOID command"
 
 class @HelpCommand extends Command
 
@@ -149,7 +184,7 @@ class @ConnectCommand extends Command
   # Connect to server by domain URL or IP
   execute: (args, terminal) =>
     if args.length < 1
-      throw SyntaxError "The connect command required 1 argument: the domain URL or IP"
+      throw SyntaxError "The connect command requires 1 argument: the domain URL or IP"
     address = args[0]
     terminal.print "Connecting to #{address}..."
     server = Server.find(address)
@@ -165,13 +200,15 @@ class @ConnectCommand extends Command
 
 # IMPROVE: use strings instead of "enum" tokens and just use a dictionary to match
 # each string to a command object in CommandInterpreter constructor
-Commands =
-  HELP: "help",
-  LS: "ls",
-  CONNECT: "connect"
+CommandToken =
+  VOID: "VOID"
+  HELP: "HELP"
+  LS: "LS"
+  CONNECT: "CONNECT"
 
-CommandStrings =
-  "help": Commands.HELP,
-  "ls": Commands.LS,
-  "dir": Commands.LS,
-  "connect": Commands.CONNECT,
+CommandTokenFromString =
+  "void": CommandToken.VOID
+  "help": CommandToken.HELP
+  "ls": CommandToken.LS
+  "dir": CommandToken.LS
+  "connect": CommandToken.CONNECT
