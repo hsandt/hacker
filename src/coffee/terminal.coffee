@@ -93,10 +93,11 @@ class @CommandInterpreter
   constructor: ->
     # fill command objects with actual instances (we use bound methods for convenience
     # for debug, but static methods would work too)
-    @commandObjects = {}
-    @commandObjects[Commands.HELP] = new HelpCommand
-    @commandObjects[Commands.LS] = new LsCommand
-    @commandObjects[Commands.CONNECT] = new ConnectCommand
+    @commandObjects =
+      "VOID": new VoidCommand
+      "HELP": new HelpCommand
+      "LS": new LsCommand
+      "CONNECT": new ConnectCommand
 
   # Parse a command and return a syntax tree made of tokens
   # Throw an exception if a parsing error occurs
@@ -106,11 +107,13 @@ class @CommandInterpreter
     console.log "[TERMINAL] Parse '#{commandLine}'"
     # multi-word analysis
     # trim whitespaces and separate command from arguments
-    # IMPROVE: Python-like sequence getter?
-    [command, commandArgs...] = commandLine.trim().split ' '
-    if !(command of CommandStrings)
+    console.log(commandLine)
+    [command, commandArgs...] = commandLine.trim().split(/\s+/)
+    if command == ""
+      return new SyntaxTree [CommandToken.VOID, []]
+    if !(command of CommandTokenFromString)
       throw SyntaxError "#{command} is not a known command."
-    new SyntaxTree [CommandStrings[command], commandArgs]
+    new SyntaxTree [CommandTokenFromString[command], commandArgs]
 
   # Execute command with arguments provided in syntax tree
   #
@@ -145,6 +148,13 @@ class @Command
   execute: (args, terminal) =>
     throw "#{this} has not implemented the 'execute' method."
 
+class @VoidCommand extends Command
+
+  # do nothing
+  execute: (args, terminal) =>
+
+  toString: ->
+    "VOID command"
 
 class @HelpCommand extends Command
 
@@ -190,13 +200,15 @@ class @ConnectCommand extends Command
 
 # IMPROVE: use strings instead of "enum" tokens and just use a dictionary to match
 # each string to a command object in CommandInterpreter constructor
-Commands =
-  HELP: "help",
-  LS: "ls",
-  CONNECT: "connect"
+CommandToken =
+  VOID: "VOID"
+  HELP: "HELP"
+  LS: "LS"
+  CONNECT: "CONNECT"
 
-CommandStrings =
-  "help": Commands.HELP,
-  "ls": Commands.LS,
-  "dir": Commands.LS,
-  "connect": Commands.CONNECT,
+CommandTokenFromString =
+  "void": CommandToken.VOID
+  "help": CommandToken.HELP
+  "ls": CommandToken.LS
+  "dir": CommandToken.LS
+  "connect": CommandToken.CONNECT
