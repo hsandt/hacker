@@ -11,7 +11,6 @@ class @Terminal
 
     @history = [""]  # [String[]] command history, as a reversed queue, with last buffer as 1st element
     @historyIndex = 0  # [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
-    @inputBuffer = ""  # [string] text typed in the prompt before navigating history, useful if the user goes back to the present
     @promptInput = terminalScreen.find ".prompt-input"
 
     @connectionStack = [Game.servers["local"]]  # [Server[]] stack of servers through which you connected, last is current server
@@ -24,8 +23,12 @@ class @Terminal
     # bind up/down arrow press to history navigation
     @promptInput.keydown (event) =>
       switch event.which
-        when Keycode.UP then @navigateHistory 1
-        when Keycode.DOWN then @navigateHistory -1
+        when Keycode.UP
+          @navigateHistory 1
+          false  # stop propagation
+        when Keycode.DOWN
+          @navigateHistory -1
+          false  # stop propagation
 
     # replace normal submit behavior for prompt
     terminalScreen.find(".prompt-submit").click => @enterCommand @promptInput.val()
@@ -35,15 +38,17 @@ class @Terminal
   # delta [int] 1 to go to next command, -1 to go to previous command
   navigateHistory: (delta) =>
     if @historyIndex > 0 and delta == -1
+      console.log "-1"
       --@historyIndex
-      @promptInput.text @history[@historyIndex]
-    if @historyIndex < @history.length - 1 and delta == 1
+      @promptInput.val @history[@historyIndex]
+    else if @historyIndex < @history.length - 1 and delta == 1
+      console.log "+1"
       if @historyIndex == 0
         # if you enter history navigation mode, remember current input for later
-        @inputBuffer = promptInput.text
+        @history[0] = @promptInput.val()
       ++@historyIndex
-      @promptInput.text @history[@historyIndex]
-
+    else return
+    @promptInput.val @history[@historyIndex]
 
   # Send command to fictive shell
   #

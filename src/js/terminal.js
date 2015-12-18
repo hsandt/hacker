@@ -16,7 +16,6 @@
       this.outputDiv = terminalScreen.find(".output");
       this.history = [""];
       this.historyIndex = 0;
-      this.inputBuffer = "";
       this.promptInput = terminalScreen.find(".prompt-input");
       this.connectionStack = [Game.servers["local"]];
       this.promptInput.focus();
@@ -29,9 +28,11 @@
         return function(event) {
           switch (event.which) {
             case Keycode.UP:
-              return _this.navigateHistory(1);
+              _this.navigateHistory(1);
+              return false;
             case Keycode.DOWN:
-              return _this.navigateHistory(-1);
+              _this.navigateHistory(-1);
+              return false;
           }
         };
       })(this));
@@ -44,16 +45,19 @@
 
     Terminal.prototype.navigateHistory = function(delta) {
       if (this.historyIndex > 0 && delta === -1) {
+        console.log("-1");
         --this.historyIndex;
-        this.promptInput.text(this.history[this.historyIndex]);
-      }
-      if (this.historyIndex < this.history.length - 1 && delta === 1) {
+        this.promptInput.val(this.history[this.historyIndex]);
+      } else if (this.historyIndex < this.history.length - 1 && delta === 1) {
+        console.log("+1");
         if (this.historyIndex === 0) {
-          this.inputBuffer = promptInput.text;
+          this.history[0] = this.promptInput.val();
         }
         ++this.historyIndex;
-        return this.promptInput.text(this.history[this.historyIndex]);
+      } else {
+        return;
       }
+      return this.promptInput.val(this.history[this.historyIndex]);
     };
 
     Terminal.prototype.enterCommand = function(commandLine) {
