@@ -355,6 +355,9 @@ th,
 td {
   padding: 0; }
 
+.background {
+  background-image: url("../../img/fond.jpg"); }
+
 /*! sass-mixins - v0.11.0 - 2014-10-20 */
                                         /**
 * @description
@@ -657,9 +660,9 @@ td {
  *
  * @dependency helper-gradient-angle
  * @param direction {'to bottom'|'to right'|'to top'|'to left'|<degree>}
- *┬á@param fallback {color}
- *┬á@param from {color}
- *┬á@param to {color}
+ * @param fallback {color}
+ * @param from {color}
+ * @param to {color}
  * @default 'to bottom', #ccc, #ccc, #aaa
  *
  * @returns
