@@ -657,9 +657,9 @@ td {
  *
  * @dependency helper-gradient-angle
  * @param direction {'to bottom'|'to right'|'to top'|'to left'|<degree>}
- *┬á@param fallback {color}
- *┬á@param from {color}
- *┬á@param to {color}
+ * @param fallback {color}
+ * @param from {color}
+ * @param to {color}
  * @default 'to bottom', #ccc, #ccc, #aaa
  *
  * @returns
@@ -919,6 +919,9 @@ td {
   src: url("../fonts/Inconsolata.otf");
   font-weight: normal;
   font-style: normal; }
+.background {
+  background-image: url("../../img/fond.jpg"); }
+
 ul {
   list-style-type: none; }
 
