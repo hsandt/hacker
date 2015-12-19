@@ -4,6 +4,7 @@ class @Terminal
   #
   # terminalScreen [jQuery] jQuery element for the terminal-screen div
   constructor: (terminalScreen) ->
+    @container = terminalScreen
     @interpreter = new CommandInterpreter
 
     @output = []  # [String[]] output lines, including commands entered by the player
@@ -69,6 +70,7 @@ class @Terminal
       syntaxTree = @interpreter.parse commandLine
     catch error
       @print error.message
+      @scrollToBottom()
       return
 
     try
@@ -78,13 +80,18 @@ class @Terminal
     catch error
       @print error.message
 
-  # Send a text to the terminal output, on one line
+    @scrollToBottom()
+
+# Send a text to the terminal output, on one line
   #
   # lines [String...]
   print: (lines...) =>
     for line in lines
       @outputDiv.append(document.createTextNode(line)).append '<br>'
 
+  scrollToBottom: =>
+    console.log "scroll #{@container[0].scrollHeight}"
+    @container.animate scrollTop: @container[0].scrollHeight, 200, "swing"
 
 # Class responsible for syntax analysis (parsing) and execution
 # of the command-lines in the terminal
