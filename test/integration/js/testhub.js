@@ -4,13 +4,14 @@
 
   $("document").ready(function() {
     console.log("[TEST] Hub");
-    return $("#content").load("../../src/modules/hub.html", function(response, status, xhr) {
-      if (status !== "success") {
-        console.log("Loading HTML failed.");
-        return;
-      }
-      console.log("Loaded HTML");
-      return testHub();
+    return $.get("../../src/modules/hub.html", function(data) {
+      $("#content").html(data);
+      console.log("DONE");
+      return $.get("../../src/modules/chat.html", function(data) {
+        $("#phoneDialog .dialog__content").html(data);
+        console.log("CHAT DONE");
+        return testHub();
+      });
     });
   });
 
