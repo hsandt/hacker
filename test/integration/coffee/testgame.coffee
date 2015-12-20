@@ -36,9 +36,45 @@ testGame = ->
   # start story
   storyGraph = new StoryGraph
 
-  storyGraph.addNode new StoryNode "introduction", [
-      "chapter1"
+  # create dialogue
+
+  dialogueGraph = new DialogueGraph
+
+  dialogueGraph.addNode new DialogueNode 0,
+    [
+      "Hi! I have a mission for you.",
+    ],
+    [
+      new DialogueChoice 0, "What is it?", 1
+      new DialogueChoice 1, "I refuse.", 2
     ]
+
+  dialogueGraph.addNode new DialogueNode 1,
+    [
+      "You have to hack into Moogle's server and tell me what John did yesterday."
+    ],
+    [
+      new DialogueChoice 0, "I accept.", 3, ["mission01.accepted"]
+      new DialogueChoice 1, "I refuse.", 2
+    ]
+
+  dialogueGraph.addNode new DialogueNode 2,
+    [
+      "Goodbye, then."
+    ],
+    [
+    ]
+
+  dialogueGraph.addNode new DialogueNode 3,
+    [
+      "Okay, then connect to moogle.com and read the activity log of John."
+    ],
+    [
+    ]
+
+  storyGraph.addNode new StoryNode("introduction", (-> game.chat.startDialogue(dialogueGraph)),
+    ["chapter1"]
+  )
 
   storyGraph.addNode new StoryNode "chapter1", [
       "option",

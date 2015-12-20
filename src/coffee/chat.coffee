@@ -17,15 +17,15 @@ class @Chat
     @sentMessageTemplate = Handlebars.compile $("#message-sent-template").html()
     @messageChoiceTemplate = Handlebars.compile $("#message-choice-template").html()
 
-    @storyGraph = null
+    @dialogueGraph = null
     @currentDialogueNode = null
 
   # Start a dialogue graph
   #
   # @param dialogueGraph [DialogueGraph]
   startDialogue: (dialogueGraph) =>
-    @storyGraph = storyGraph
-    @enterDialogueNode storyGraph.getInitialNode()
+    @dialogueGraph = dialogueGraph
+    @enterDialogueNode dialogueGraph.getInitialNode()
 
   # Continue dialogue on given node
   enterDialogueNode: (dialogueNode) =>
@@ -48,6 +48,15 @@ class @Chat
     @chatHistoryList.append @receivedMessageTemplate context
     @scrollToBottom()
 
+  # Choose given choice, triggering all associated events
+  #
+  # @choice [DialogueChoice]
+  choose: (choice) =>
+    for event in choice.events
+      console.log "Game event #{event} -> true"
+      game.events[event] = true
+    @sendMessage choice
+
   # Send message choice to chat
   #
   # @choice [DialogueChoice] message choice to send
@@ -60,7 +69,7 @@ class @Chat
     @scrollToBottom()
 
     # continue dialogue graph following choice consequence
-    @enterDialogueNode @storyGraph.getNode(choice.nextNodeId)
+    @enterDialogueNode @dialogueGraph.getNode(choice.nextNodeId)
 
   # Scroll chat history to bottom
   scrollToBottom: =>
@@ -75,7 +84,7 @@ class @Chat
       # create <li> jQuery element from template
       choiceEntry = $(@messageChoiceTemplate(choiceMessage: choice.message))
       # add onclick event with choice inside forEach's closure
-      choiceEntry.click => @sendMessage choice
+      choiceEntry.click => @choose choice
       @chatInputList.append choiceEntry
 
   # Remove choices from input area
@@ -140,6 +149,9 @@ class @DialogueNode
 
 class @DialogueChoice
 
+  # @param idx [int] index in the list of choices, from 0
+  # @param message [String] message content
   # @param nextNodeId [int] ID of the dialogue node this choice leads to
-  constructor: (@idx, @message, @nextNodeId) ->
+  # @param events [String[]] optional list of named events that trigger when this choice is made
+  constructor: (@idx, @message, @nextNodeId, @events = []) ->
 
