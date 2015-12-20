@@ -10,3 +10,4 @@ $ ->
 
 testTerminal = ->
   @terminal = new Terminal $("#terminal-screen")
+

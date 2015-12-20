@@ -3,7 +3,9 @@ class @Chat
   # [int] index of next message to receive
   nextIncomingMessageIdx: 0
 
-  # store references of chat DOM elements as jQuery
+  # Store references of chat DOM elements as jQuery
+  #
+  # chatScreen [jQuery] chat-screen div/section
   constructor: (chatScreen) ->
     # jQuery element for the list of messages
     @chatHistory = chatScreen.find ".chat-history"

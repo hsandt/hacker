@@ -1,5 +1,5 @@
 $("document").ready ->
-  console.log "[TEST] Hub"
+  console.log "[DOCUMENT] Ready"
 
   $.get "../../src/modules/hub.html", (data) ->
     $("#content").html(data)
@@ -20,7 +20,7 @@ incrementNbModulesAndStartIfReady = ->
   ++Game.nbReadyModules
   if Game.nbReadyModules == 2
     console.log "[MODULES] Ready, start test"
-    testHub()
+    testGame()
 
 #  $("#content").load "../../src/modules/hub.html", (response, status, xhr) ->
 #    if status != "success"
@@ -29,6 +29,10 @@ incrementNbModulesAndStartIfReady = ->
 #    console.log "Loaded HTML"
 #    testHub()
 
-testHub = ->
-  initHub()
+testGame = ->
+  @game = new Game
+  game.initModules()
+  game.start()
+
+
 

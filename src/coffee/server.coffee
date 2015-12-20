@@ -18,7 +18,7 @@ class @Server
 
   # Return server in game data with given ip
   @getByIP = (ip) ->
-    for _, server of Game.servers
+    for _, server of game.servers
       if server.ip == ip
         return server
     return null
