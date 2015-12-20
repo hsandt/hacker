@@ -1,5 +1,10 @@
-@Game =
-  # associative array of event [string]: hasHappened [bool]
+class @Game
+
+  # domain table of URL [string]: IP [string]
+  @dns =
+    "google.com": "256.241.23.02"
+
+    # associative array of event [string]: hasHappened [bool]
   events:
     "player_is_dead": false
 
@@ -16,6 +21,14 @@
         ]
       ]
 
-  # domain table of URL [string]: IP [string]
-  dns:
-    "google.com": "256.241.23.02"
+  constructor: ->
+
+  initModules: =>
+    initHub()
+    @terminal = new Terminal $("#terminal-screen")
+    @chat = new Chat $("#chat-screen")
+
+  start: =>
+    # connect terminal to local server
+    @terminal.connect @servers["local"]
+

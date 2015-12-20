@@ -1066,14 +1066,17 @@ li.message-choice {
   font: 14px/20px "Inconsolata" "Courier";
   padding: 40px 40px;
   color: white; }
-  .terminal-screen .output ul {
-    list-style-type: none; }
+  .terminal-screen .output {
+    text-align: left; }
+    .terminal-screen .output ul {
+      list-style-type: none; }
   .terminal-screen .prompt form input[type="text"] {
     resize: none;
     outline: none;
     border: none;
     background-color: black; }
   .terminal-screen .prompt form input[type="submit"] {
-    display: none; }
+    border: none;
+    background-color: black; }
 
 /*# sourceMappingURL=main.css.map */

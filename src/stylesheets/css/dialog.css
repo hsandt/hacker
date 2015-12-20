@@ -39,7 +39,7 @@
 	background: purple;
 	/*padding: 4em;*/
     /*padding: 0;*/
-	text-align: center;
+    text-align: center;
 	position: relative;
 	z-index: 5;
 	opacity: 0;
@@ -55,5 +55,4 @@
 	font-weight: 400;
 	font-size: 2em;
 	padding: 0 0 2em;
-	margin: 0;
 }

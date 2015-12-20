@@ -1,3 +1,19 @@
+# IMPROVE: use strings instead of "enum" tokens and just use a dictionary to match
+# each string to a command object in CommandInterpreter constructor
+CommandToken =
+    VOID: "VOID"
+    HELP: "HELP"
+    LS: "LS"
+    CONNECT: "CONNECT"
+
+CommandTokenFromString =
+    "void": CommandToken.VOID
+    "help": CommandToken.HELP
+    "ls": CommandToken.LS
+    "dir": CommandToken.LS
+    "connect": CommandToken.CONNECT
+
+
 class @Terminal
 
   # Construct terminal from div container
@@ -13,7 +29,8 @@ class @Terminal
     @historyIndex = 0  # [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
     @promptInput = terminalScreen.find ".prompt-input"
 
-    @connectionStack = [Game.servers["local"]]  # [Server[]] stack of servers through which you connected, last is current server
+#    @connectionStack = [game.servers["local"]]  # [Server[]] stack of servers through which you connected, last is current server
+    @connectionStack = []  # [Server[]] stack of servers through which you connected, last is current server
 
     # set initial focus and prevent losing focus by brute-force
     @promptInput.focus()
@@ -85,6 +102,11 @@ class @Terminal
     for line in lines
       @outputDiv.append(document.createTextNode(line)).append '<br>'
 
+  # Connect to a server
+  #
+  # server [Server] target server
+  connect: (server) =>
+    @connectionStack.push server
 
 # Class responsible for syntax analysis (parsing) and execution
 # of the command-lines in the terminal
@@ -172,9 +194,11 @@ class @LsCommand extends Command
 
   # Show files and subdirectories in current directory
   execute: (args, terminal) =>
-    # IMPROVE: get last element of array in coffeescript
-    for file in terminal.connectionStack[terminal.connectionStack.length - 1].files
-      terminal.print file
+    if terminal.connectionStack.length > 0
+      for file in terminal.connectionStack[terminal.connectionStack.length - 1].files
+        terminal.print file
+    else
+      terminal.print "[DEBUG] You are not connected to any server and have no local server."
 
   toString: ->
     "LS command"
@@ -192,23 +216,8 @@ class @ConnectCommand extends Command
       terminal.print "Could not resolve hostname / IP #{address}"
       return
     terminal.print "Connected to #{server.mainURL}"  # FIXME: in reality url is not given from IP
-    terminal.connectionStack.push server
+    terminal.connect server
 
 
   toString: ->
     "CONNECT command"
-
-# IMPROVE: use strings instead of "enum" tokens and just use a dictionary to match
-# each string to a command object in CommandInterpreter constructor
-CommandToken =
-  VOID: "VOID"
-  HELP: "HELP"
-  LS: "LS"
-  CONNECT: "CONNECT"
-
-CommandTokenFromString =
-  "void": CommandToken.VOID
-  "help": CommandToken.HELP
-  "ls": CommandToken.LS
-  "dir": CommandToken.LS
-  "connect": CommandToken.CONNECT
