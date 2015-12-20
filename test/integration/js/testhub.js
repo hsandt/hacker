@@ -8,7 +8,7 @@
       $("#content").html(data);
       console.log("DONE");
       return $.get("../../src/modules/chat.html", function(data) {
-        $("#phoneDialog .dialog__content").html(data);
+        $("#phoneContent").html(data);
         console.log("CHAT DONE");
         return testHub();
       });

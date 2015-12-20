@@ -5,7 +5,7 @@ $("document").ready ->
     $("#content").html(data)
     console.log "DONE"
     $.get "../../src/modules/chat.html", (data) ->
-      $("#phoneDialog .dialog__content").html(data)
+      $("#phoneContent").html(data)
       console.log "CHAT DONE"
       testHub()
 

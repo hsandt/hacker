@@ -33,11 +33,12 @@
 }
 
 .dialog__content {
-	width: 50%;
+	/*width: 50%;*/
 	max-width: 560px;
 	min-width: 290px;
-	background: #fff;
-	padding: 4em;
+	background: purple;
+	/*padding: 4em;*/
+    /*padding: 0;*/
 	text-align: center;
 	position: relative;
 	z-index: 5;
