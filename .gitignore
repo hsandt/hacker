@@ -46,6 +46,7 @@ proguard/
 *.iws
 *.userlibraries
 .idea/
+!watcherTasks.xml
 .gradle/
 
 # Compiled source
