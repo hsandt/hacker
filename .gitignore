@@ -97,3 +97,7 @@ archive
 # or ignore at least JS maps only used for debug
 /src/js/*.js.map
 /test/integration/js/*.js.map
+
+# Ignore CSS files generated from SASS
+/src/stylesheets/css/main.css
+/src/stylesheets/css/main.css.map
