@@ -17,15 +17,15 @@ class @Chat
     @sentMessageTemplate = Handlebars.compile $("#message-sent-template").html()
     @messageChoiceTemplate = Handlebars.compile $("#message-choice-template").html()
 
-    @dialogueGraph = null
+    @storyGraph = null
     @currentDialogueNode = null
 
   # Start a dialogue graph
   #
   # @param dialogueGraph [DialogueGraph]
   startDialogue: (dialogueGraph) =>
-    @dialogueGraph = dialogueGraph
-    @enterDialogueNode dialogueGraph.getInitialNode()
+    @storyGraph = storyGraph
+    @enterDialogueNode storyGraph.getInitialNode()
 
   # Continue dialogue on given node
   enterDialogueNode: (dialogueNode) =>
@@ -60,7 +60,7 @@ class @Chat
     @scrollToBottom()
 
     # continue dialogue graph following choice consequence
-    @enterDialogueNode @dialogueGraph.getNode(choice.nextNodeId)
+    @enterDialogueNode @storyGraph.getNode(choice.nextNodeId)
 
   # Scroll chat history to bottom
   scrollToBottom: =>
@@ -121,7 +121,7 @@ class @DialogueGraph
 
   # Return node by id
   #
-  # @param [int] id of the node to find
+  # id [int] id of the node to find
   getNode: (id) =>
     if !(id of @nodes)
       throw "Node #{id} is not in the dialogue graph"
@@ -132,7 +132,7 @@ class @DialogueNode
 
   # Construct a dialogue node
   #
-  # @param id [int] messages to receive
+  # @param id [int]
   # @param messages [string[]] messages to receive
   # @param choices [DialogueChoice[]] available choices after all messages have been received
   constructor: (@id, @messages, @choices) ->

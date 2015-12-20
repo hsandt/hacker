@@ -32,7 +32,26 @@ incrementNbModulesAndStartIfReady = ->
 testGame = ->
   @game = new Game
   game.initModules()
-  game.start()
+
+  # start story
+  storyGraph = new StoryGraph
+
+  storyGraph.addNode new StoryNode "introduction", [
+      "chapter1"
+    ]
+
+  storyGraph.addNode new StoryNode "chapter1", [
+      "option",
+      "ending"
+    ]
+
+  storyGraph.addNode new StoryNode "option", [
+      "ending"
+    ]
+
+  storyGraph.addNode new StoryNode "ending"
+
+  game.startStory storyGraph
 
 
 

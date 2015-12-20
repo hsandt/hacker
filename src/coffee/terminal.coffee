@@ -29,8 +29,9 @@ class @Terminal
     @historyIndex = 0  # [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
     @promptInput = terminalScreen.find ".prompt-input"
 
-#    @connectionStack = [game.servers["local"]]  # [Server[]] stack of servers through which you connected, last is current server
     @connectionStack = []  # [Server[]] stack of servers through which you connected, last is current server
+    # connect terminal to local server
+    @connect game.servers["local"]
 
     # set initial focus and prevent losing focus by brute-force
     @promptInput.focus()

@@ -21,14 +21,26 @@ class @Game
         ]
       ]
 
+  # story
+  storyGraph: null
+  currentStoryNode: null
+
   constructor: ->
 
   initModules: =>
-    initHub()
+    @hub = new Hub
     @terminal = new Terminal $("#terminal-screen")
     @chat = new Chat $("#chat-screen")
 
-  start: =>
-    # connect terminal to local server
-    @terminal.connect @servers["local"]
+  # @param storyGraph [StoryGraph] story graph of the entire game
+  startStory: (storyGraph) =>
+    @storyGraph = storyGraph
+    @enterStoryNode storyGraph.getInitialNode()
+
+  # Start or continue story on given node
+  #
+  # @param storyNode [StoryNode]
+  enterStoryNode: (storyNode) =>
+    @currentStoryNode = storyNode
+    # trigger onEnter events such as notifications
 

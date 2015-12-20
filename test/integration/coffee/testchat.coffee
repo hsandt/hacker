@@ -13,7 +13,7 @@ testChat = ->
 
   dialogueGraph = new DialogueGraph
 
-  dialogueGraph.addNode new DialogueNode 0,
+  storyGraph.addNode new DialogueNode 0,
     [
       "Hi!",
       "How are you?"
@@ -23,7 +23,7 @@ testChat = ->
       new DialogueChoice 1, "Not very good today.", 2
     ]
 
-  dialogueGraph.addNode new DialogueNode 1,
+  storyGraph.addNode new DialogueNode 1,
       [
         "Nice!"
       ],
@@ -32,7 +32,7 @@ testChat = ->
         new DialogueChoice 1, "Okay, time to start business", 5
       ]
 
-  dialogueGraph.addNode new DialogueNode 2,
+  storyGraph.addNode new DialogueNode 2,
     [
       "Oh, sorry for you."
     ],
@@ -42,7 +42,7 @@ testChat = ->
       new DialogueChoice 2, "Anyway, time to start business", 5
     ]
 
-  dialogueGraph.addNode new DialogueNode 3,
+  storyGraph.addNode new DialogueNode 3,
     [
       "I am fine, thanks."
     ],
@@ -50,7 +50,7 @@ testChat = ->
       new DialogueChoice 0, "Fine, time to start business", 5
     ]
 
-  dialogueGraph.addNode new DialogueNode 4,
+  storyGraph.addNode new DialogueNode 4,
     [
       "No, really, I mean it!"
     ],
@@ -58,14 +58,14 @@ testChat = ->
       new DialogueChoice 0, "Anyway, time to start business", 5
     ]
 
-  dialogueGraph.addNode new DialogueNode 5,
+  storyGraph.addNode new DialogueNode 5,
     [
       "So what about talking about our next project?"
     ],
     [
     ]
 
-  chat.startDialogue dialogueGraph
+  chat.startDialogue storyGraph
 
 #  chat.receiveAllMessages 3, 2000
 #  chat.showMessageInputChoiceList()
