@@ -2,18 +2,32 @@ class @Game
 
   # domain table of URL [string]: IP [string]
   @dns =
-    "google.com": "256.241.23.02"
+    "moogle.com": "256.241.23.02"
 
     # associative array of event [string]: hasHappened [bool]
   events:
-    "player_is_dead": false
+    "mission01.accepted": false
 
   # associative array of serverID [string]: server [Server]
   servers:
-    "local": new Server "N/A", "456.231.24.57",
-      ["home"]
-    "google": new Server "google.com", "256.241.23.02",
-      ["etc", "home", "var"],
+    "local": new Server "local", "456.231.24.57",
+      [
+        new Directory "home", [
+          new Directory "a", [new TextFile "test", "coucou"]
+          new Directory "b"
+        ]
+      ]
+    "moogle": new Server "moogle.com", "256.241.23.02",
+      [
+        new Directory "etc"
+        new Directory "home", [
+          new Directory "john", [
+            new TextFile "mail", "I went to the cinema the other day. If you could see my boss, he was just crazy!\n
+                                  I told him I had an important meeting with an ex-collaborator."
+          ]
+        ]
+        new Directory "var"
+      ],
       [
         new DatabaseSim [
           new Table "user_table",
@@ -42,5 +56,6 @@ class @Game
   # @param storyNode [StoryNode]
   enterStoryNode: (storyNode) =>
     @currentStoryNode = storyNode
+    @currentStoryNode.onEnter()
     # trigger onEnter events such as notifications
 

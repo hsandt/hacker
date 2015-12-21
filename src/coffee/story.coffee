@@ -12,7 +12,7 @@ class @StoryGraph
 
   # Return initial node of the story
   getInitialNode: =>
-    @nodes[@initialNodeId]
+    @nodes[@initialNodeTitle]
 
   # Return node by id
   #
@@ -26,5 +26,13 @@ class @StoryGraph
 class @StoryNode
 
   # @param title [String] unique meaningful name to identify this node
+  # @param onEnter [function] callback called when the node is entered
   # @param successors [StoryNode[]] possible successor nodes in the story
-  constructor: (@title, @successors = []) ->
+  constructor: (@title, onEnter, @successors = []) ->
+    # use provided onEnter callback if any, else keep default
+    if onEnter?
+      @onEnter = onEnter
+
+  onEnter: =>
+    throw "#{this} has not implemented the 'onEnter' method."
+

@@ -4,6 +4,8 @@ CommandToken =
     VOID: "VOID"
     HELP: "HELP"
     LS: "LS"
+    CD: "CD"
+    CAT: "CAT"
     CONNECT: "CONNECT"
 
 CommandTokenFromString =
@@ -11,8 +13,20 @@ CommandTokenFromString =
     "help": CommandToken.HELP
     "ls": CommandToken.LS
     "dir": CommandToken.LS
+    "cd": CommandToken.CD
+    "cat": CommandToken.CAT
     "connect": CommandToken.CONNECT
 
+
+# enable properties in Coffeescript with simple syntax
+Function::property = (prop, desc) ->
+  Object.defineProperty @prototype, prop, desc
+
+Function::getter = (prop, get) ->
+  Object.defineProperty @prototype, prop, {get, configurable: yes}
+
+Function::setter = (prop, set) ->
+  Object.defineProperty @prototype, prop, {set, configurable: yes}
 
 class @Terminal
 
@@ -30,7 +44,9 @@ class @Terminal
     @promptInput = terminalScreen.find ".prompt-input"
 
     @connectionStack = []  # [Server[]] stack of servers through which you connected, last is current server
-    # connect terminal to local server
+    @directoryStack = []  # [Directory[]] stack of directories corresponding to path to working directory
+
+    # connect terminal to local server (will also set working dir to its root)
     @connect game.servers["local"]
 
     # set initial focus and prevent losing focus by brute-force
@@ -72,9 +88,10 @@ class @Terminal
   #
   # command [string] command sent to shell
   enterCommand: (commandLine) =>
-    # record command in history
+    # record entered command in history and reset history position to 0
     @history[0] = commandLine
     @history.unshift ""
+    @historyIndex = 0
 
     # empty input field
     @promptInput.val("")
@@ -96,18 +113,43 @@ class @Terminal
     catch error
       @print error.message
 
-  # Send a text to the terminal output, on one line
+  # Send a sanitized text to the terminal output, on one line
   #
   # lines [String...]
   print: (lines...) =>
     for line in lines
       @outputDiv.append(document.createTextNode(line)).append '<br>'
 
-  # Connect to a server
+  # Send a raw text to the terminal output, on one line
+  #
+  # lines [String...]
+  printRaw: (lines...) =>
+    for line in lines
+      @outputDiv.append(line).append '<br>'
+
+
+# Connect to a server
   #
   # server [Server] target server
   connect: (server) =>
     @connectionStack.push server
+    # set current working directory to root of this server
+    @directoryStack.length = 0
+    @cdChild @currentServer.getRoot()
+
+  # Current server get property
+  @getter 'currentServer', -> @connectionStack[@connectionStack.length - 1]
+
+  # Change to child directory
+  # Use it to change dir to root only at server connection time
+  #
+  # dir [Directory] target child directory
+  cdChild: (dir) =>
+    @directoryStack.push dir
+
+  # Current directory get property
+  @getter 'currentDirectory', -> @directoryStack[@directoryStack.length - 1]
+
 
 # Class responsible for syntax analysis (parsing) and execution
 # of the command-lines in the terminal
@@ -120,6 +162,8 @@ class @CommandInterpreter
       "VOID": new VoidCommand
       "HELP": new HelpCommand
       "LS": new LsCommand
+      "CD": new CdCommand
+      "CAT": new CatCommand
       "CONNECT": new ConnectCommand
 
   # Parse a command and return a syntax tree made of tokens
@@ -135,7 +179,7 @@ class @CommandInterpreter
     if command == ""
       return new SyntaxTree [CommandToken.VOID, []]
     if !(command of CommandTokenFromString)
-      throw SyntaxError "#{command} is not a known command."
+      throw SyntaxError "#{command}: command not found"
     new SyntaxTree [CommandTokenFromString[command], commandArgs]
 
   # Execute command with arguments provided in syntax tree
@@ -185,7 +229,8 @@ class @HelpCommand extends Command
   execute: (args, terminal) =>
     terminal.print "List of available commands:",
       "help -- show this help menu",
-      "ls -- show files and subdirectories in current directory"
+      "ls -- show files and subdirectories in current directory",
+      "connect <domain> -- connect to a domain by URL or IP"
 
   toString: ->
     "HELP command"
@@ -195,21 +240,67 @@ class @LsCommand extends Command
 
   # Show files and subdirectories in current directory
   execute: (args, terminal) =>
-    if terminal.connectionStack.length > 0
-      for file in terminal.connectionStack[terminal.connectionStack.length - 1].files
-        terminal.print file
-    else
-      terminal.print "[DEBUG] You are not connected to any server and have no local server."
+    if terminal.connectionStack.length == 0
+      terminal.print "[DEBUG] You are not connected to any server."
+      return
+    for file in terminal.currentDirectory.children
+      terminal.print file.toString()
 
   toString: ->
     "LS command"
+
+class @CdCommand extends Command
+
+  # Enter target directory
+  # Only supports one directory change for now
+  execute: (args, terminal) =>
+    if args.length < 1
+      # on unix, cd without arguments does nothing with no errors
+      return
+
+    if terminal.connectionStack.length == 0
+      terminal.print "[DEBUG] You are not connected to any server."
+      return
+
+    newDirectoryName = args[0]
+
+    childDir = terminal.currentDirectory.getChildDir newDirectoryName
+    if !childDir?
+      throw new Error "cd: #{newDirectoryName}: No such directory"
+    terminal.cdChild childDir
+
+  toString: ->
+    "CD command"
+
+class @CatCommand extends Command
+
+  # Print text file content to output
+  execute: (args, terminal) =>
+    if args.length < 1
+      # actual cat open stream for free input, but we do not need this in the game
+      throw new SyntaxError "The cat command requires 1 argument: the name of a text (.txt) file"
+
+    textFileName = args[0]
+    if textFileName[-4..] == ".txt"
+      # remove .txt extension for the search by name
+      textFileName = textFileName[0...-4]
+
+    textFile = terminal.currentDirectory.getFile TextFile, textFileName
+    if !textFile?
+      throw new Error "cat: #{textFileName}: No such file"
+    # WARNING: print raw will print the text content as HTML; use HTML symbols
+    # in your text data or make a conversion from JSON strings beforehand!
+    terminal.printRaw textFile.content.replace /\n/g, '<br>'
+
+  toString: ->
+    "CD command"
 
 class @ConnectCommand extends Command
 
   # Connect to server by domain URL or IP
   execute: (args, terminal) =>
     if args.length < 1
-      throw SyntaxError "The connect command requires 1 argument: the domain URL or IP"
+      throw new SyntaxError "The connect command requires 1 argument: the domain URL or IP"
     address = args[0]
     terminal.print "Connecting to #{address}..."
     server = Server.find(address)
@@ -218,7 +309,6 @@ class @ConnectCommand extends Command
       return
     terminal.print "Connected to #{server.mainURL}"  # FIXME: in reality url is not given from IP
     terminal.connect server
-
 
   toString: ->
     "CONNECT command"
