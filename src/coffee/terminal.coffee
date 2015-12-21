@@ -44,11 +44,10 @@ class @Terminal
     @promptInput = terminalScreen.find ".prompt-input"
 
     @connectionStack = []  # [Server[]] stack of servers through which you connected, last is current server
-    # connect terminal to local server
-    @connect game.servers["local"]
-
     @directoryStack = []  # [Directory[]] stack of directories corresponding to path to working directory
-    @cdChild @currentServer.getRoot()
+
+    # connect terminal to local server (will also set working dir to its root)
+    @connect game.servers["local"]
 
     # set initial focus and prevent losing focus by brute-force
     @promptInput.focus()
@@ -114,23 +113,35 @@ class @Terminal
     catch error
       @print error.message
 
-  # Send a text to the terminal output, on one line
+  # Send a sanitized text to the terminal output, on one line
   #
   # lines [String...]
   print: (lines...) =>
     for line in lines
       @outputDiv.append(document.createTextNode(line)).append '<br>'
 
-  # Connect to a server
+  # Send a raw text to the terminal output, on one line
+  #
+  # lines [String...]
+  printRaw: (lines...) =>
+    for line in lines
+      @outputDiv.append(line).append '<br>'
+
+
+# Connect to a server
   #
   # server [Server] target server
   connect: (server) =>
     @connectionStack.push server
+    # set current working directory to root of this server
+    @directoryStack.length = 0
+    @cdChild @currentServer.getRoot()
 
   # Current server get property
   @getter 'currentServer', -> @connectionStack[@connectionStack.length - 1]
 
   # Change to child directory
+  # Use it to change dir to root only at server connection time
   #
   # dir [Directory] target child directory
   cdChild: (dir) =>
@@ -276,8 +287,10 @@ class @CatCommand extends Command
 
     textFile = terminal.currentDirectory.getFile TextFile, textFileName
     if !textFile?
-      throw new Error "cat: #{textFile}: No such file"
-    terminal.print textFile.content
+      throw new Error "cat: #{textFileName}: No such file"
+    # WARNING: print raw will print the text content as HTML; use HTML symbols
+    # in your text data or make a conversion from JSON strings beforehand!
+    terminal.printRaw textFile.content.replace /\n/g, '<br>'
 
   toString: ->
     "CD command"

@@ -20,7 +20,12 @@ class @Game
     "moogle": new Server "moogle.com", "256.241.23.02",
       [
         new Directory "etc"
-        new Directory "home"
+        new Directory "home", [
+          new Directory "john", [
+            new TextFile "mail", "I went to the cinema the other day. If you could see my boss, he was just crazy!\n
+                                  I told him I had an important meeting with an ex-collaborator."
+          ]
+        ]
         new Directory "var"
       ],
       [
