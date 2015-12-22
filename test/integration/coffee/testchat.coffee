@@ -38,7 +38,7 @@ testChat = ->
     ],
     [
       new DialogueChoice 0, "Thanks.", 5
-      new DialogueChoice 1, "As if you would ever...", 4
+      new DialogueChoice 1, "As if you would ever...", 4, ["player_is_dead"]
       new DialogueChoice 2, "Anyway, time to start business", 5
     ]
 
