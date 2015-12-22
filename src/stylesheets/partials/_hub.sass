@@ -1,3 +1,18 @@
+body
+  margin: 0
+
 .background
-    background-image: url('#{$image-path}/fond.jpg')
-    //background-image: image-url('fond.jpg')
+  background-image: url('#{$image-path}/fond.jpg')
+  //background-image: image-url('fond.jpg')
+
+#phone
+  +x-transform(skewX(-30deg))
+
+  &.notify-off
+    background-color: #3c8835
+
+  &.notify-on
+    background-color: #44ff7f
+
+#notes
+  +x-transform(skewX(30deg))

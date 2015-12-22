@@ -157,7 +157,6 @@ class @Terminal
   # Current directory get property
   @getter 'currentDirectory', -> @directoryStack[@directoryStack.length - 1]
 
->>>>>>> origin/develop
 
 # Class responsible for syntax analysis (parsing) and execution
 # of the command-lines in the terminal
@@ -315,7 +314,7 @@ class @ConnectCommand extends Command
     if !server?
       terminal.print "Could not resolve hostname / IP #{address}"
       return
-    terminal.print "Connected to #{server.mainURL}"  # FIXME: in reality url is not given from IP
+    terminal.print "Connection complete"
     terminal.connect server
 
   toString: ->

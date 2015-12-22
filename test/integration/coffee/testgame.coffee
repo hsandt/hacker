@@ -87,7 +87,8 @@ testGame = ->
 
   storyGraph.addNode new StoryNode "ending"
 
-  game.startStory storyGraph
+  # IMPROVE: timeout for the dialogue event, not the event
+  setTimeout (-> game.startStory(storyGraph)), 1000
 
 
 
