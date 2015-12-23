@@ -34,6 +34,7 @@ class @Terminal
   #
   # terminalScreen [jQuery] jQuery element for the terminal-screen div
   constructor: (terminalScreen) ->
+    @container = terminalScreen
     @interpreter = new CommandInterpreter
 
     @output = []  # [String[]] output lines, including commands entered by the player
@@ -104,6 +105,7 @@ class @Terminal
       syntaxTree = @interpreter.parse commandLine
     catch error
       @print error.message
+      @scrollToBottom()
       return
 
     try
@@ -112,6 +114,8 @@ class @Terminal
       @interpreter.execute syntaxTree, @
     catch error
       @print error.message
+
+    @scrollToBottom()
 
   # Send a sanitized text to the terminal output, on one line
   #
@@ -127,8 +131,11 @@ class @Terminal
     for line in lines
       @outputDiv.append(line).append '<br>'
 
+  scrollToBottom: =>
+    console.log "scroll #{@container[0].scrollHeight}"
+    @container.animate scrollTop: @container[0].scrollHeight, 200, "swing"
 
-# Connect to a server
+  # Connect to a server
   #
   # server [Server] target server
   connect: (server) =>
@@ -307,7 +314,7 @@ class @ConnectCommand extends Command
     if !server?
       terminal.print "Could not resolve hostname / IP #{address}"
       return
-    terminal.print "Connected to #{server.mainURL}"  # FIXME: in reality url is not given from IP
+    terminal.print "Connection complete"
     terminal.connect server
 
   toString: ->

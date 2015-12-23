@@ -2,6 +2,13 @@ class @Hub
 
   constructor: ->
     console.log("Construct HUB")
+
+    # get DOM references
+    @$phone= $("#phone")
+    @$phone.addClass "notify-off"
+
+    # TODO: other apps
+
     # bind "open modular window" event to each monitor
     dlgtrigger = $('[data-dialog]')
     dlgtrigger.each (i, element) ->
@@ -15,3 +22,17 @@ class @Hub
     .parallax(
       mouseport: $('#parallax')
     )
+
+  # Show a visual cue to notify the player that something new has happened
+  #
+  # @param app [String] name of the application with new events going on
+  notifyPhone: =>
+    # change color directly or change class so that all styles are in CSS
+    @$phone.removeClass "notify-off"
+    @$phone.addClass "notify-on"
+
+  # Stop showing visual cue for new events
+  stopNotifyPhone: =>
+    @$phone.removeClass "notify-on"
+    @$phone.addClass "notify-off"
+

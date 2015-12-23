@@ -26,6 +26,8 @@ class @Chat
   startDialogue: (dialogueGraph) =>
     @dialogueGraph = dialogueGraph
     @enterDialogueNode dialogueGraph.getInitialNode()
+    # show phone notification on hub
+    game.hub.notifyPhone()
 
   # Continue dialogue on given node
   enterDialogueNode: (dialogueNode) =>
@@ -68,7 +70,7 @@ class @Chat
     @chatHistoryList.append @sentMessageTemplate(message: choice.message)
     @scrollToBottom()
 
-    # continue dialogue graph following choice consequence
+    # continue dialogue graph f.ollowing choice consequence
     @enterDialogueNode @dialogueGraph.getNode(choice.nextNodeId)
 
   # Scroll chat history to bottom
