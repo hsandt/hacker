@@ -43,8 +43,8 @@ class @Game
 
   initModules: =>
     @hub = new Hub
-    @terminal = new Terminal $("#terminal-screen")
-    @chat = new Chat $("#chat-screen")
+    @terminal = new Terminal $("#terminal-screen"), $("#terminal-device")
+    @chat = new Chat $("#chat-screen"), $("#chat-device")
 
   # @param storyGraph [StoryGraph] story graph of the entire game
   startStory: (storyGraph) =>

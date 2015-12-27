@@ -1,3 +1,19 @@
+class @TerminalDevice extends HubDevice
+
+  # If active is true, show a visual cue to notify the player that something new has happened
+  # If active is false, stop showing visual cue for new events
+  notify: (state = "on") =>
+#    if !(state in ["on", "off"])
+#      throw Exception "notify 'state' argument must be 'on' or 'off'"
+#    antistate = if state == "on" then "off" else "on"
+
+    # change class to trigger notification style / animation
+#    @$device.removeClass "notify-#{antistate}"
+#    @$device.addClass "notify-#{state}"
+
+    if state == "on"
+      console.log "TERMINAL ON"
+
 # IMPROVE: use strings instead of "enum" tokens and just use a dictionary to match
 # each string to a command object in CommandInterpreter constructor
 CommandToken =
@@ -28,32 +44,29 @@ Function::getter = (prop, get) ->
 Function::setter = (prop, set) ->
   Object.defineProperty @prototype, prop, {set, configurable: yes}
 
-class @Terminal
+class @Terminal extends App
 
   # Construct terminal from div container
   #
   # terminalScreen [jQuery] jQuery element for the terminal-screen div
-  constructor: (terminalScreen) ->
-    @container = terminalScreen
+  constructor: ($screen, $device) ->
+    super $screen, $device
+    @device = new TerminalDevice $device
+
     @interpreter = new CommandInterpreter
 
     @output = []  # [String[]] output lines, including commands entered by the player
-    @outputDiv = terminalScreen.find ".output"
+    @outputDiv = $screen.find ".output"
 
     @history = [""]  # [String[]] command history, as a reversed queue, with last buffer as 1st element
     @historyIndex = 0  # [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
-    @promptInput = terminalScreen.find ".prompt-input"
+    @promptInput = $screen.find ".prompt-input"
 
     @connectionStack = []  # [Server[]] stack of servers through which you connected, last is current server
     @directoryStack = []  # [Directory[]] stack of directories corresponding to path to working directory
 
     # connect terminal to local server (will also set working dir to its root)
     @connect game.servers["local"]
-
-    # set initial focus and prevent losing focus by brute-force
-    @promptInput.focus()
-    @promptInput.blur =>
-      @promptInput.focus()
 
     # bind up/down arrow press to history navigation
     @promptInput.keydown (event) =>
@@ -66,9 +79,21 @@ class @Terminal
           false  # stop propagation
 
     # replace normal submit behavior for prompt
-    terminalScreen.find(".prompt-submit").click => @enterCommand @promptInput.val()
+    $screen.find(".prompt-submit").click => @enterCommand @promptInput.val()
 
-  # Navigate in command-line history up or down as much as possible
+  # Focus on terminal prompt
+  onOpen: =>
+    # set initial focus and prevent losing focus by brute-force
+    @promptInput.focus()
+#    @promptInput.blur =>
+#      @promptInput.focus()
+
+  # Leave focus and unbind forced focus rule
+  onClose: =>
+    @promptInput.blur()
+    @promptInput.off("blur");
+
+# Navigate in command-line history up or down as much as possible
   #
   # delta [int] 1 to go to next command, -1 to go to previous command
   navigateHistory: (delta) =>
@@ -132,8 +157,8 @@ class @Terminal
       @outputDiv.append(line).append '<br>'
 
   scrollToBottom: =>
-    console.log "scroll #{@container[0].scrollHeight}"
-    @container.animate scrollTop: @container[0].scrollHeight, 200, "swing"
+    console.log "scroll #{@$screen[0].scrollHeight}"
+    @$screen.animate scrollTop: @$screen[0].scrollHeight, 200, "swing"
 
   # Connect to a server
   #

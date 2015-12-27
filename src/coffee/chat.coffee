@@ -1,17 +1,40 @@
-class @Chat
+class @ChatDevice extends HubDevice
+
+  constructor: ($device) ->
+    super $device
+    $device.addClass "notify-off"
+
+# If active is true, show a visual cue to notify the player that something new has happened
+  # If active is false, stop showing visual cue for new events
+  notify: (state = "on") =>
+    if !(state in ["on", "off"])
+      throw Exception "notify 'state' argument must be 'on' or 'off'"
+    antistate = if state == "on" then "off" else "on"
+
+    # change class to trigger notification style / animation
+    @$device.removeClass "notify-#{antistate}"
+    @$device.addClass "notify-#{state}"
+
+    if state == "on"
+      phoneAudio = new Audio
+      phoneAudio.src = '../../src/audio/sfx/phone_notification.wav'
+      phoneAudio.play()
+
+
+class @Chat extends App
 
   # [int] index of next message to receive
   nextIncomingMessageIdx: 0
 
-  # Store references of chat DOM elements as jQuery
-  #
-  # chatScreen [jQuery] chat-screen div/section
-  constructor: (chatScreen) ->
+  constructor: ($screen, $device) ->
+    super $screen, $device
+    @device = new ChatDevice $device
+
     # jQuery element for the list of messages
-    @chatHistory = chatScreen.find ".chat-history"
-    @chatHistoryList = @chatHistory.find "ul"
-    @chatInput = chatScreen.find ".chat-input"
-    @chatInputList = @chatInput.find "ul"
+    @$chatHistory = $screen.find ".chat-history"
+    @$chatHistoryList = @$chatHistory.find "ul"
+    @$chatInput = $screen.find ".chat-input"
+    @$chatInputList = @$chatInput.find "ul"
 
     @receivedMessageTemplate = Handlebars.compile $("#message-received-template").html()
     @sentMessageTemplate = Handlebars.compile $("#message-sent-template").html()
@@ -27,7 +50,7 @@ class @Chat
     @dialogueGraph = dialogueGraph
     @enterDialogueNode dialogueGraph.getInitialNode()
     # show phone notification on hub
-    game.hub.notifyPhone()
+    @device.notify()
 
   # Continue dialogue on given node
   enterDialogueNode: (dialogueNode) =>
@@ -47,7 +70,7 @@ class @Chat
     context =
       message: message
       time: "12:00"
-    @chatHistoryList.append @receivedMessageTemplate(context)
+    @$chatHistoryList.append @receivedMessageTemplate(context)
     @scrollToBottom()
 
   # Choose given choice, triggering all associated events
@@ -70,7 +93,7 @@ class @Chat
     context =
       message: choice.message
       time: "12:00"
-    @chatHistoryList.append @sentMessageTemplate(context)
+    @$chatHistoryList.append @sentMessageTemplate(context)
     @scrollToBottom()
 
     # continue dialogue graph f.ollowing choice consequence
@@ -78,7 +101,7 @@ class @Chat
 
   # Scroll chat history to bottom
   scrollToBottom: =>
-    @chatHistory.animate scrollTop: @chatHistory[0].scrollHeight, 200, "swing"
+    @$chatHistory.animate scrollTop: @$chatHistory[0].scrollHeight, 200, "swing"
 
   # Show available replies for the player
   #
@@ -90,11 +113,11 @@ class @Chat
       choiceEntry = $(@messageChoiceTemplate(choiceMessage: choice.message))
       # add onclick event with choice inside forEach's closure
       choiceEntry.click => @choose choice
-      @chatInputList.append choiceEntry
+      @$chatInputList.append choiceEntry
 
   # Remove choices from input area
   hideMessageChoices: =>
-    @chatInputList.empty()
+    @$chatInputList.empty()
 
   # display the next message
   receiveNextMessage: =>
@@ -102,7 +125,7 @@ class @Chat
     context =
       message: Chat.incomingMessageSequence[@nextIncomingMessageIdx],
       time: "12:00"
-    @chatHistoryList.append template(context)
+    @$chatHistoryList.append template(context)
     @scrollToBottom()
 
     ++@nextIncomingMessageIdx

@@ -5,7 +5,14 @@ body
   background-image: url('#{$image-path}/fond.jpg')
   //background-image: image-url('fond.jpg')
 
-#phone
+#chat-device
+  &.notify-off
+    background-color: #9b9465
+
+  &.notify-on
+    background-color: #fff8a8
+
+#phone-device
   +x-transform(skewX(-30deg))
 
   &.notify-off
@@ -16,3 +23,5 @@ body
 
 #notes
   +x-transform(skewX(30deg))
+
+
