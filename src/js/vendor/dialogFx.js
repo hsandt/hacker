@@ -59,39 +59,57 @@
 		var self = this;
 
 		// close action
-		this.ctrlClose.addEventListener( 'click', this.toggle.bind(this) );
+		this.ctrlClose.addEventListener( 'click', this.close.bind(this) );
 
 		// esc key closes dialog
 		document.addEventListener( 'keydown', function( ev ) {
 			var keyCode = ev.keyCode || ev.which;
 			if( keyCode === 27 && self.isOpen ) {
-				self.toggle();
+				self.close();
 			}
 		} );
 
-		this.el.querySelector( '.dialog__overlay' ).addEventListener( 'click', this.toggle.bind(this) );
+		this.el.querySelector( '.dialog__overlay' ).addEventListener( 'click', this.close.bind(this) );
 	}
 
+	/* Modified by hsandt */
 	DialogFx.prototype.toggle = function() {
-		var self = this;
 		if( this.isOpen ) {
-			classie.remove( this.el, 'dialog--open' );
-			classie.add( self.el, 'dialog--close' );
-			
-			onEndAnimation( this.el.querySelector( '.dialog__content' ), function() {
-				classie.remove( self.el, 'dialog--close' );
-			} );
-
-			// callback on close
-			this.options.onCloseDialog( this );
+			this.close();
 		}
 		else {
-			classie.add( this.el, 'dialog--open' );
-
-			// callback on open
-			this.options.onOpenDialog( this );
+			this.open();
 		}
-		this.isOpen = !this.isOpen;
+	};
+
+	/* Added by hsandt */
+	DialogFx.prototype.open = function() {
+		if (this.isOpen) return;
+
+		classie.add( this.el, 'dialog--open' );
+
+		// callback on open
+		this.options.onOpenDialog( this );
+
+		this.isOpen = true;
+	};
+
+	/* Added by hsandt */
+	DialogFx.prototype.close = function() {
+		if (!this.isOpen) return;
+
+		var self = this;
+		classie.remove( this.el, 'dialog--open' );
+		classie.add( self.el, 'dialog--close' );
+
+		onEndAnimation( this.el.querySelector( '.dialog__content' ), function() {
+			classie.remove( self.el, 'dialog--close' );
+		} );
+
+		// callback on close
+		this.options.onCloseDialog( this );
+
+		this.isOpen = false;
 	};
 
 	// add to global namespace

@@ -10,26 +10,26 @@
         </div>
     </div>
     <div class="parallax-layer" style="width:130%; height:105%;">
-        <div id="phone" style="position:absolute; top:80%; left:25%; width: 5%; height: 10%; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
-            <button data-dialog="phoneDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        <div id="phone-device" style="position:absolute; top:80%; left:25%; width: 5%; height: 10%; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="phone" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
         </div>
-        <div id="notes" style="position:absolute; top:80%; left:70%; width: 5%; height: 10%; background-color: #fff900; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
-            <button data-dialog="noteDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>>
+        <div id="memo" style="position:absolute; top:80%; left:70%; width: 5%; height: 10%; background-color: #fff900; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="memo" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>>
         </div>
-        <div id="chat" style="position:absolute; top:45%; left:5%; width: 20%; height: 30%; background-color: #9b9465; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
-            <button data-dialog="chatDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        <div id="chat-device" style="position:absolute; top:45%; left:5%; width: 20%; height: 30%; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="chat" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
         </div>
-        <div id="other" style="position:absolute; top:5%; left:5%; width: 20%; height: 30%; background-color: #66999b; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
-            <button data-dialog="otherDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        <div id="other-device" style="position:absolute; top:5%; left:5%; width: 20%; height: 30%; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="other" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
         </div>
-        <div id="actu" style="position:absolute; top:5%; left:75%; width: 20%; height: 70%; background-color: #9b4400; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
-            <button data-dialog="actuDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        <div id="news-device" style="position:absolute; top:5%; left:75%; width: 20%; height: 70%; background-color: #9b4400; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="news" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
         </div>
-        <div id="main-screen" style="position:absolute; top:30%; left:30%; width: 40%; height: 45%; background-color: #282e9b; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
-            <button data-dialog="terminalDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
+        <div id="terminal-device" style="position:absolute; top:30%; left:30%; width: 40%; height: 45%; background-color: #282e9b; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="terminal" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>
         </div>
-        <div id="cameras" style="position:absolute; top:5%; left:30%; width: 40%; height: 20%; background-color: #80569b; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
-            <button data-dialog="camerasDialog" class="trigger" style="height: 100%; width: 100%; opacity: 0;">cameras</button>
+        <div id="camera-device" style="position:absolute; top:5%; left:30%; width: 40%; height: 20%; background-color: #80569b; box-shadow: 1px 2px 20px 1px #dc0e00; border-radius: 5px">
+            <button data-dialog="camera" class="trigger" style="height: 100%; width: 100%; opacity: 0;">cameras</button>
         </div>
     </div>
 </div>
@@ -40,7 +40,7 @@
         <button class="action" data-dialog-close>Close</button>
     </div>
 </div>
-<div id="camerasDialog" class="dialog">
+<div id="cameraDialog" class="dialog">
     <div class="dialog__overlay"></div>
     <div class="dialog__content">
         cameras<br/><button class="action" data-dialog-close>Close</button></div>
@@ -53,16 +53,16 @@
         <button class="action" data-dialog-close>Close</button>
     </div>
 </div>
-<div id="noteDialog" class="dialog">
+<div id="memoDialog" class="dialog">
     <div class="dialog__overlay"></div>
     <div class="dialog__content">
-        notes<br/><div><button class="action" data-dialog-close>Close</button></div>
+        <button class="action" data-dialog-close>Close</button>
     </div>
 </div>
-<div id="actuDialog" class="dialog">
+<div id="newsDialog" class="dialog">
     <div class="dialog__overlay"></div>
     <div class="dialog__content">
-        actu<br/><div><button class="action" data-dialog-close>Close</button></div>
+        <button class="action" data-dialog-close>Close</button>
     </div>
 </div>
 <div id="chatDialog" class="dialog">

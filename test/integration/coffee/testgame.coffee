@@ -8,7 +8,7 @@ $("document").ready ->
     Game.nbReadyModules = 0
 
     $.get "../../src/modules/chat.html", (data) ->
-      $("#phoneContent").html(data)
+      $("#chatContent").html(data)
       console.log "CHAT DONE"
       incrementNbModulesAndStartIfReady()
     $.get "../../src/modules/terminal.html", (data) ->
