@@ -30,6 +30,11 @@ class @Hub
     # change color directly or change class so that all styles are in CSS
     @$phone.removeClass "notify-off"
     @$phone.addClass "notify-on"
+    phoneAudio = new Audio
+
+    phoneAudio.src = '../../src/audio/sfx/phone_notification.wav'
+    phoneAudio.play()
+
 
   # Stop showing visual cue for new events
   stopNotifyPhone: =>
