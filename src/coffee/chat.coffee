@@ -47,7 +47,7 @@ class @Chat
     context =
       message: message
       time: "12:00"
-    @chatHistoryList.append @receivedMessageTemplate context
+    @chatHistoryList.append @receivedMessageTemplate(context)
     @scrollToBottom()
 
   # Choose given choice, triggering all associated events
@@ -67,7 +67,10 @@ class @Chat
     @hideMessageChoices()
 
     # show chosen message in the chat
-    @chatHistoryList.append @sentMessageTemplate(message: choice.message)
+    context =
+      message: choice.message
+      time: "12:00"
+    @chatHistoryList.append @sentMessageTemplate(context)
     @scrollToBottom()
 
     # continue dialogue graph f.ollowing choice consequence
