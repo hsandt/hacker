@@ -4,9 +4,7 @@ class @Game
   @dns =
     "moogle.com": "256.241.23.02"
 
-    # associative array of event [string]: hasHappened [bool]
-  events:
-    "mission01.accepted": false
+  apps: {}
 
   # associative array of serverID [string]: server [Server]
   servers:
@@ -39,12 +37,16 @@ class @Game
   storyGraph: null
   currentStoryNode: null
 
+  # associative array of event [string]: hasHappened [bool]
+  events:
+    "mission01.accepted": false
+
   constructor: ->
 
   initModules: =>
     @hub = new Hub
-    @terminal = new Terminal $("#terminal-screen"), $("#terminal-device")
-    @chat = new Chat $("#chat-screen"), $("#chat-device")
+    @terminal = @apps['terminal'] = new Terminal $("#terminal-screen"), $("#terminal-device")
+    @chat = @apps['chat'] = new Chat $("#chat-screen"), $("#chat-device")
 
   # @param storyGraph [StoryGraph] story graph of the entire game
   startStory: (storyGraph) =>
