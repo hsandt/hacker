@@ -12,7 +12,7 @@ class @TerminalDevice extends HubDevice
 #    @$device.addClass "notify-#{state}"
 
     if state == "on"
-      console.log "TERMINAL ON"
+      console.log "TERMINAL NOTIFY ON"
 
 # IMPROVE: use strings instead of "enum" tokens and just use a dictionary to match
 # each string to a command object in CommandInterpreter constructor
@@ -85,13 +85,13 @@ class @Terminal extends App
   onOpen: =>
     # set initial focus and prevent losing focus by brute-force
     @promptInput.focus()
-#    @promptInput.blur =>
-#      @promptInput.focus()
+    @promptInput.on "blur.autofocus", =>
+      @promptInput.focus()
 
   # Leave focus and unbind forced focus rule
   onClose: =>
+    @promptInput.off("blur.autofocus")
     @promptInput.blur()
-    @promptInput.off("blur");
 
 # Navigate in command-line history up or down as much as possible
   #
@@ -262,7 +262,9 @@ class @HelpCommand extends Command
     terminal.print "List of available commands:",
       "help -- show this help menu",
       "ls -- show files and subdirectories in current directory",
-      "connect <domain> -- connect to a domain by URL or IP"
+      "cd -- navigate to subdirectory",
+      "cat <file> -- print content of text file to console output",
+      "connect <domain> -- connect to a domain by URL or IP",
 
   toString: ->
     "HELP command"
