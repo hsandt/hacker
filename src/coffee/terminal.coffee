@@ -231,6 +231,8 @@ class @SyntaxTree
   toString: =>
     "#{@nodes[0]} -> #{@nodes[1].join ', '}"
 
+
+# TODO: move commands to terminal, remove command classes altogether and identify commands by string directly
 class @Command
 
   # (virtual) Behavior of the command on execution

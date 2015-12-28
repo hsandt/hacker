@@ -6,7 +6,7 @@ class @Game
 
   apps: {}
 
-  # associative array of serverID [string]: server [Server]
+  # dictionary of serverID [string]: server [Server]
   servers:
     "local": new Server "local", "456.231.24.57",
       [
@@ -19,10 +19,7 @@ class @Game
       [
         new Directory "etc"
         new Directory "home", [
-          new Directory "john", [
-            new TextFile "mail", "I went to the cinema the other day. If you could see my boss, he was just crazy!\n
-                                  I told him I had an important meeting with an ex-collaborator."
-          ]
+          new Directory "john"
         ]
         new Directory "var"
       ],
@@ -32,14 +29,6 @@ class @Game
             0: new Google.User 0, "john", "dd6x5few961few68fq4wd6", "California"
         ]
       ]
-
-  # story
-  storyGraph: null
-  currentStoryNode: null
-
-  # associative array of event [string]: hasHappened [bool]
-  events:
-    "mission01.accepted": false
 
   constructor: ->
 
@@ -53,16 +42,4 @@ class @Game
     @apps['news'] = new App null, null
     @apps['camera'] = new App null, null
 
-  # @param storyGraph [StoryGraph] story graph of the entire game
-  startStory: (storyGraph) =>
-    @storyGraph = storyGraph
-    @enterStoryNode storyGraph.getInitialNode()
-
-  # Start or continue story on given node
-  #
-  # @param storyNode [StoryNode]
-  enterStoryNode: (storyNode) =>
-    @currentStoryNode = storyNode
-    @currentStoryNode.onEnter()
-    # trigger onEnter events such as notifications
-
+    @story = new Story

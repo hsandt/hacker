@@ -36,3 +36,39 @@ class @StoryNode
   onEnter: =>
     throw "#{this} has not implemented the 'onEnter' method."
 
+
+# Story class, only one instance should be created and used as member of @game
+# Manages story and mission progression
+class @Story
+
+  # story
+  storyGraph: null  # game story graph (unique)
+  currentStoryNode: null  # current story node (there should always be one during the game)
+  currentMission: null  # [Mission] current mission, null if none
+
+  # dictionary of event [string]: hasHappened [bool]
+  events:
+    "mission01.accepted": false
+
+  constructor: ->
+
+  # @param storyGraph [StoryGraph] story graph of the entire game
+  start: (storyGraph) =>
+    @storyGraph = storyGraph
+    @enterNode storyGraph.getInitialNode()
+
+  # Start or continue story on given node
+  #
+  # @param storyNode [StoryNode]
+  enterNode: (storyNode) =>
+    @currentStoryNode = storyNode
+    @currentStoryNode.onEnter()  # trigger onEnter events such as notifications
+
+  # Accept new mission and start immediately
+  #
+  # @param title [String] mission title
+  startMission: (title) =>
+    if @currentMission != null
+      throw new Exception "Cannot start new mission #{title} while there is a current mission, #{@currentMission.title}"
+    @currentMission = game.missions[title]
+    @currentMission.onStart()

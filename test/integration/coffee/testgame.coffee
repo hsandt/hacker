@@ -54,7 +54,7 @@ testGame = ->
       "You have to hack into Moogle's server and tell me what John did yesterday."
     ],
     [
-      new DialogueChoice 0, "I accept.", 3, ["mission01.accepted"]
+      new DialogueChoice 0, "I accept.", 3
       new DialogueChoice 1, "I refuse.", 2
     ]
 
@@ -65,12 +65,37 @@ testGame = ->
     [
     ]
 
-  dialogueGraph.addNode new DialogueNode 3,
-    [
+  dialogueGraph.addNode new DialogueNode 3, [
       "Okay, then connect to moogle.com and read the activity log of John."
+    ], [], ->
+      console.log "READ"
+      game.servers["moogle"].fileSystem.root.getDir('home/john').addFile(new TextFile "mail",
+      "I went to the cinema the other day. If you could see my boss, he was just crazy!\n
+      I told him I had an important meeting with an ex-collaborator.")
+
+  dialogueGraph.addNode new DialogueNode 4,
+    [
+      "So, anything new?"
+    ],
+    [
+      new DialogueChoice 0, "Yes, John is a traitor.", 5
+      new DialogueChoice 1, "No, John seems to be clean.", 6
+    ]
+
+  dialogueGraph.addNode new DialogueNode 5,
+    [
+      "I knew it! Thanks, here is your reward."
     ],
     [
     ]
+
+  dialogueGraph.addNode new DialogueNode 6,
+    [
+      "Really? Anyway, here is your reward."
+    ],
+    [
+    ]
+
 
   storyGraph.addNode new StoryNode("introduction", (-> game.chat.startDialogue(dialogueGraph)),
     ["chapter1"]
@@ -88,7 +113,7 @@ testGame = ->
   storyGraph.addNode new StoryNode "ending"
 
   # IMPROVE: timeout for the dialogue event, not the event
-  setTimeout (-> game.startStory(storyGraph)), 1000
+  setTimeout (-> game.story.start(storyGraph)), 1000
 
 
 
