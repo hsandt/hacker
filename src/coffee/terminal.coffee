@@ -18,6 +18,7 @@ class @TerminalDevice extends HubDevice
 # each string to a command object in CommandInterpreter constructor
 CommandToken =
     VOID: "VOID"
+    CLEAR: "CLEAR"
     HELP: "HELP"
     LS: "LS"
     CD: "CD"
@@ -26,6 +27,7 @@ CommandToken =
 
 CommandTokenFromString =
     "void": CommandToken.VOID
+    "clear": CommandToken.CLEAR
     "help": CommandToken.HELP
     "ls": CommandToken.LS
     "dir": CommandToken.LS
@@ -33,16 +35,6 @@ CommandTokenFromString =
     "cat": CommandToken.CAT
     "connect": CommandToken.CONNECT
 
-
-# enable properties in Coffeescript with simple syntax
-Function::property = (prop, desc) ->
-  Object.defineProperty @prototype, prop, desc
-
-Function::getter = (prop, get) ->
-  Object.defineProperty @prototype, prop, {get, configurable: yes}
-
-Function::setter = (prop, set) ->
-  Object.defineProperty @prototype, prop, {set, configurable: yes}
 
 class @Terminal extends App
 
@@ -192,6 +184,7 @@ class @CommandInterpreter
     # for debug, but static methods would work too)
     @commandObjects =
       "VOID": new VoidCommand
+      "CLEAR": new ClearCommand
       "HELP": new HelpCommand
       "LS": new LsCommand
       "CD": new CdCommand
@@ -255,11 +248,23 @@ class @VoidCommand extends Command
   toString: ->
     "VOID command"
 
+
+class @ClearCommand extends Command
+
+  # Clear the output content, but keep the history
+  execute: (args, terminal) =>
+    terminal.$output.empty()
+
+  toString: ->
+    "CLEAR command"
+
+
 class @HelpCommand extends Command
 
   # Show available commands information
   execute: (args, terminal) =>
     terminal.print "List of available commands:",
+      "clear -- clear the console output",
       "help -- show this help menu",
       "ls -- show files and subdirectories in current directory",
       "cd -- navigate to subdirectory",
