@@ -56,11 +56,11 @@ class @Terminal extends App
     @interpreter = new CommandInterpreter
 
     @output = []  # [String[]] output lines, including commands entered by the player
-    @outputDiv = $screen.find ".output"
+    @$output = $screen.find ".output"
 
     @history = [""]  # [String[]] command history, as a reversed queue, with last buffer as 1st element
     @historyIndex = 0  # [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
-    @promptInput = $screen.find ".prompt-input"
+    @$promptInput = $screen.find ".prompt-input"
 
     @connectionStack = []  # [Server[]] stack of servers through which you connected, last is current server
     @directoryStack = []  # [Directory[]] stack of directories corresponding to path to working directory
@@ -69,7 +69,7 @@ class @Terminal extends App
     @connect game.servers["local"]
 
     # bind up/down arrow press to history navigation
-    @promptInput.keydown (event) =>
+    @$promptInput.keydown (event) =>
       switch event.which
         when Keycode.UP
           @navigateHistory 1
@@ -79,19 +79,19 @@ class @Terminal extends App
           false  # stop propagation
 
     # replace normal submit behavior for prompt
-    $screen.find(".prompt-submit").click => @enterCommand @promptInput.val()
+    $screen.find(".prompt-submit").click => @enterCommand @$promptInput.val()
 
   # Focus on terminal prompt
   onOpen: =>
     # set initial focus and prevent losing focus by brute-force
-    @promptInput.focus()
-    @promptInput.on "blur.autofocus", =>
-      @promptInput.focus()
+    @$promptInput.focus()
+    @$promptInput.on "blur.autofocus", =>
+      @$promptInput.focus()
 
   # Leave focus and unbind forced focus rule
   onClose: =>
-    @promptInput.off("blur.autofocus")
-    @promptInput.blur()
+    @$promptInput.off("blur.autofocus")
+    @$promptInput.blur()
 
 # Navigate in command-line history up or down as much as possible
   #
@@ -100,15 +100,15 @@ class @Terminal extends App
     if @historyIndex > 0 and delta == -1
       console.log "-1"
       --@historyIndex
-      @promptInput.val @history[@historyIndex]
+      @$promptInput.val @history[@historyIndex]
     else if @historyIndex < @history.length - 1 and delta == 1
       console.log "+1"
       if @historyIndex == 0
         # if you enter history navigation mode, remember current input for later
-        @history[0] = @promptInput.val()
+        @history[0] = @$promptInput.val()
       ++@historyIndex
     else return
-    @promptInput.val @history[@historyIndex]
+    @$promptInput.val @history[@historyIndex]
 
   # Send command to fictive shell
   #
@@ -120,7 +120,7 @@ class @Terminal extends App
     @historyIndex = 0
 
     # empty input field
-    @promptInput.val("")
+    @$promptInput.val("")
 
     # output entered command with prompt symbol (multiple whitespaces will be reduced to one by HTML)
     @print '> ' + commandLine
@@ -147,18 +147,18 @@ class @Terminal extends App
   # lines [String...]
   print: (lines...) =>
     for line in lines
-      @outputDiv.append(document.createTextNode(line)).append '<br>'
+      @$output.append(document.createTextNode(line)).append '<br>'
 
   # Send a raw text to the terminal output, on one line
   #
   # lines [String...]
   printRaw: (lines...) =>
     for line in lines
-      @outputDiv.append(line).append '<br>'
+      @$output.append(line).append '<br>'
 
   scrollToBottom: =>
     console.log "scroll #{@$screen[0].scrollHeight}"
-    @$screen.animate scrollTop: @$screen[0].scrollHeight, 200, "swing"
+    @$output.animate scrollTop: @$screen[0].scrollHeight, 200, "swing"
 
   # Connect to a server
   #
