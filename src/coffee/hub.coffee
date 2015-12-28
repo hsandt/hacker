@@ -1,6 +1,6 @@
 class @Hub
 
-  # [String: DialogFx] associative array of dialogs, one per app
+  # [String: DialogFx] dictionary of dialogs, one per app
   dialogs: {}
 
   # state vars

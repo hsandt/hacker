@@ -1,18 +1,21 @@
-*, *:before, *:after
-  box-sizing: border-box
-
 .terminal-screen
   background-color: black
   font: 14px/20px "Inconsolata" "Courier"
   padding: 40px 40px
   color: white
+  width: 500px
+  height: 500px
 
   .output
+    background-color: black
     text-align: left
+    max-height: 400px
+    overflow: auto
     ul
       list-style-type: none
 
   .prompt
+    background-color: black
     text-align: left
     form
       input

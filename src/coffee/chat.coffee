@@ -8,7 +8,7 @@ class @ChatDevice extends HubDevice
   # If active is false, stop showing visual cue for new events
   notify: (state = "on") =>
     if !(state in ["on", "off"])
-      throw Exception "notify 'state' argument must be 'on' or 'off'"
+      throw new Exception "notify 'state' argument must be 'on' or 'off'"
     antistate = if state == "on" then "off" else "on"
 
     # change class to trigger notification style / animation
@@ -60,6 +60,9 @@ class @Chat extends App
     for message in dialogueNode.messages
       @receiveMessage message
 
+    # trigger callback for last message being read
+    @currentDialogueNode.onLastMessageRead()
+
     # show choices to send reply
     @showMessageChoices dialogueNode.choices
 
@@ -77,9 +80,9 @@ class @Chat extends App
   #
   # @choice [DialogueChoice]
   choose: (choice) =>
-    for event in choice.events
-      console.log "Game event #{event} -> true"
-      game.events[event] = true
+#    for event in choice.events
+#      console.log "Game event #{event} -> true"
+#      game.events[event] = true
     @sendMessage choice
 
   # Send message choice to chat
@@ -150,6 +153,7 @@ class @DialogueGraph
   #
   # @param node [DialogueNode]
   addNode: (node) =>
+    # IMPROVE: in JS, objects use strings for keys anyway, so either use an array or any string key
     @nodes[node.id] = node
 
   # Return initial node of the dialogue
@@ -170,9 +174,13 @@ class @DialogueNode
   # Construct a dialogue node
   #
   # @param id [int]
+  # @param onLastMessageRead [Function()] called when the last message has been sent (and read)
   # @param messages [string[]] messages to receive
   # @param choices [DialogueChoice[]] available choices after all messages have been received
-  constructor: (@id, @messages, @choices) ->
+  constructor: (@id, @messages, @choices, @onLastMessageRead = ->) ->
+
+  onEnter: =>
+    throw "#{this} has not implemented the 'onEnter' method."
 
 
 class @DialogueChoice
@@ -180,6 +188,7 @@ class @DialogueChoice
   # @param idx [int] index in the list of choices, from 0
   # @param message [String] message content
   # @param nextNodeId [int] ID of the dialogue node this choice leads to
+
   # @param events [String[]] optional list of named events that trigger when this choice is made
   constructor: (@idx, @message, @nextNodeId, @events = []) ->
 

@@ -70,7 +70,22 @@ class @Directory extends File
     else
       throw new Error "Error: more than 1 directory found with name '#{name}'"
 
-  # Return child file of given class with given name, or null if none was found
+  # Return directory at relative path from this directory
+  #
+  # @param path [String] path in the "./a/b" format; empty string is equivalent to '.'
+  getDir: (path) =>
+    # split the path at each '/', but if it is empty create empty chain array manually ("".split returns [''])
+    if path == ''
+      return @
+    pathChain = path.split '/'
+    currentDir = @  # start from this directory
+    for nextDirName in pathChain
+      # TODO: support '..'
+      if nextDirName != '.'
+        currentDir = currentDir.getChildDir nextDirName
+    currentDir
+
+# Return child file of given class with given name, or null if none was found
   #
   # @param fileClass [function] the constructor function representing the target class (e.g. TextFile)
   getFile: (fileClass, name) =>
@@ -82,6 +97,11 @@ class @Directory extends File
     else
       throw new Error "Error: more than 1 file of type #{fileClass} found with name '#{name}'"
 
+  # Add file/directory in relative path from this directory
+  #
+  # @param file [File] file to add
+  addFile: (file, path = '') =>
+    @getDir(path).children.push file
 
   toString: =>
     @name
