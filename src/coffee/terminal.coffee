@@ -149,8 +149,10 @@ class @Terminal extends App
       @$output.append(line).append '<br>'
 
   scrollToBottom: =>
-    console.log "scroll #{@$screen[0].scrollHeight}"
-    @$output.animate scrollTop: @$screen[0].scrollHeight, 200, "swing"
+    # cancel previous animations and start smooth scroll from current position
+    console.log "scroll #{@$output[0].scrollHeight}"
+    @$output.stop()
+    @$output.animate scrollTop: @$output[0].scrollHeight, 200, "swing"
 
   # Connect to a server
   #
