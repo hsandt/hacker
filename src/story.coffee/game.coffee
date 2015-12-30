@@ -14,6 +14,7 @@ class @Game
           new Directory "a", [new TextFile "test", "coucou"]
           new Directory "b"
         ]
+        new TextFile "a", "hi!", -> console.log "AHA"
       ]
     "moogle": new Server "moogle.com", "256.241.23.02",
       [

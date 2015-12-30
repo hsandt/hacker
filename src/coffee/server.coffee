@@ -70,6 +70,18 @@ class @Directory extends File
     else
       throw new Error "Error: more than 1 directory found with name '#{name}'"
 
+  # Return array
+#  getDirChain: (path) =>
+#    if path == ''
+#      return [@]
+#    pathChain = path.split '/'
+#    currentDir = @  # start from this directory
+#    for nextDirName in pathChain
+#  # TODO: support '..'
+#      if nextDirName != '.'
+#        currentDir = currentDir.getChildDir nextDirName
+
+
   # Return directory at relative path from this directory
   #
   # @param path [String] path in the "./a/b" format; empty string is equivalent to '.'
@@ -83,6 +95,7 @@ class @Directory extends File
       # TODO: support '..'
       if nextDirName != '.'
         currentDir = currentDir.getChildDir nextDirName
+        if not currentDir? then return null  # if path cannot be resolved at this step, STOP, no such directory found
     currentDir
 
 # Return child file of given class with given name, or null if none was found
@@ -115,10 +128,12 @@ class @TextFile extends RegularFile
 
   # @param name [String] name of the file (without extension)
   # @param content [String] text content
-  constructor: (@name, @content) ->
+  # @param onRead [Function()] called when the file is read by the player in the terminal
+  constructor: (@name, @content, @onRead = ->) ->
 
   toString: =>
     @name + ".txt"
+
 
 class @DatabaseSim
 
@@ -131,8 +146,8 @@ class @Table
   # Construct table from row entries
   constructor: (@rows = []) ->
 
-# Computer process simulation
-class @Process
-
-  execute: (terminal) =>
-
+## Computer process simulation
+#class @Process
+#
+#  execute: (terminal) =>
+#

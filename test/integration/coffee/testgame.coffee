@@ -71,30 +71,8 @@ testGame = ->
       console.log "READ"
       game.servers["moogle"].fileSystem.root.getDir('home/john').addFile(new TextFile "mail",
       "I went to the cinema the other day. If you could see my boss, he was just crazy!\n
-      I told him I had an important meeting with an ex-collaborator.")
-
-  dialogueGraph.addNode new DialogueNode 4,
-    [
-      "So, anything new?"
-    ],
-    [
-      new DialogueChoice 0, "Yes, John is a traitor.", 5
-      new DialogueChoice 1, "No, John seems to be clean.", 6
-    ]
-
-  dialogueGraph.addNode new DialogueNode 5,
-    [
-      "I knew it! Thanks, here is your reward."
-    ],
-    [
-    ]
-
-  dialogueGraph.addNode new DialogueNode 6,
-    [
-      "Really? Anyway, here is your reward."
-    ],
-    [
-    ]
+      I told him I had an important meeting with an ex-collaborator.",
+      -> game.chat.startDialogue(gameData.dialogues["m01.d02"]))
 
 
   storyGraph.addNode new StoryNode("introduction", (-> game.chat.startDialogue(dialogueGraph)),

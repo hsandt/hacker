@@ -14,26 +14,15 @@ class @TerminalDevice extends HubDevice
     if state == "on"
       console.log "TERMINAL NOTIFY ON"
 
-# IMPROVE: use strings instead of "enum" tokens and just use a dictionary to match
-# each string to a command object in CommandInterpreter constructor
 CommandToken =
-    VOID: "VOID"
-    CLEAR: "CLEAR"
-    HELP: "HELP"
-    LS: "LS"
-    CD: "CD"
-    CAT: "CAT"
-    CONNECT: "CONNECT"
-
-CommandTokenFromString =
-    "void": CommandToken.VOID
-    "clear": CommandToken.CLEAR
-    "help": CommandToken.HELP
-    "ls": CommandToken.LS
-    "dir": CommandToken.LS
-    "cd": CommandToken.CD
-    "cat": CommandToken.CAT
-    "connect": CommandToken.CONNECT
+    void: "void"
+    clear: "clear"
+    help: "help"
+    ls: "ls"
+    dir: "ls"
+    cd: "cd"
+    cat: "cat"
+    connect: "connect"
 
 
 class @Terminal extends App
@@ -45,7 +34,7 @@ class @Terminal extends App
     super $screen, $device
     @device = new TerminalDevice $device
 
-    @interpreter = new CommandInterpreter
+    @interpreter = new CommandInterpreter @
 
     @output = []  # [String[]] output lines, including commands entered by the player
     @$output = $screen.find ".output"
@@ -73,6 +62,15 @@ class @Terminal extends App
     # replace normal submit behavior for prompt
     $screen.find(".prompt-submit").click => @enterCommand @$promptInput.val()
 
+  # Current server get property
+  @getter 'currentServer', -> @connectionStack[@connectionStack.length - 1]
+
+  # Current directory get property
+  @getter 'currentDirectory', -> @directoryStack[@directoryStack.length - 1]
+
+
+  ### OPEN/CLOSE ###
+
   # Focus on terminal prompt
   onOpen: =>
     # set initial focus and prevent losing focus by brute-force
@@ -82,10 +80,13 @@ class @Terminal extends App
 
   # Leave focus and unbind forced focus rule
   onClose: =>
-    @$promptInput.off("blur.autofocus")
+    @$promptInput.off "blur.autofocus"
     @$promptInput.blur()
 
-# Navigate in command-line history up or down as much as possible
+
+  ### INPUT/OUTPUT ###
+
+  # Navigate in command-line history up or down as much as possible
   #
   # delta [int] 1 to go to next command, -1 to go to previous command
   navigateHistory: (delta) =>
@@ -101,6 +102,51 @@ class @Terminal extends App
       ++@historyIndex
     else return
     @$promptInput.val @history[@historyIndex]
+
+  # Send a sanitized text to the terminal output, on one line
+  #
+  # lines [String...]
+  print: (lines...) =>
+    for line in lines
+      @$output.append(document.createTextNode(line)).append '<br>'
+
+  # Send a raw text to the terminal output, on one line
+  #
+  # lines [String...]
+  printHTML: (lines...) =>
+    for line in lines
+      @$output.append(line).append '<br>'
+
+  scrollToBottom: =>
+    # cancel previous animations and start smooth scroll from current position
+#    console.log "scroll #{@$output[0].scrollHeight}"
+    @$output.stop()
+    @$output.animate scrollTop: @$output[0].scrollHeight, 200, "swing"
+
+
+  ### CORE ACTIONS ###
+
+  # Print file content to output and trigger any game event hooked
+  #
+  # @param [TextFile] text file to read
+  printText: (textFile) =>
+    # WARNING: printHTML will print the text content as HTML; use HTML symbols
+    # in your text data or make a conversion from JSON strings beforehand!
+    @printHTML textFile.content.replace /\n/g, '<br>'
+    # trigger game events related to reading this file
+    textFile.onRead()
+
+  # Connect to a server
+  #
+  # server [Server] target server
+  connect: (server) =>
+    @connectionStack.push server
+    # set current working directory to root of this server
+    @directoryStack.length = 0
+    @directoryStack.push @currentServer.getRoot()
+
+
+  ### COMMANDS ###
 
   # Send command to fictive shell
   #
@@ -134,64 +180,92 @@ class @Terminal extends App
 
     @scrollToBottom()
 
-  # Send a sanitized text to the terminal output, on one line
+  # Clear the output content, but keep the input history
+  clearCommand: =>
+    @$output.empty()
+
+  # Show available commands information
+  helpCommand: =>
+    @print "List of available commands:",
+      "clear -- clear the console output",
+      "help -- show this help menu",
+      "ls -- show files and subdirectories in current directory",
+      "cd -- navigate to subdirectory",
+      "cat <file> -- print content of text file to console output",
+      "connect <domain> -- connect to a domain by URL or IP",
+
+  # Show files and subdirectories in directory at relative path
   #
-  # lines [String...]
-  print: (lines...) =>
-    for line in lines
-      @$output.append(document.createTextNode(line)).append '<br>'
+  # @param pathname [String] relative path with 'a/b' format
+  lsCommand: (pathname) =>
+    # IMPROVE: support pathname
+    for file in @currentDirectory.children
+      @print file.toString()
 
-  # Send a raw text to the terminal output, on one line
+  # Enter directory at relative path
   #
-  # lines [String...]
-  printRaw: (lines...) =>
-    for line in lines
-      @$output.append(line).append '<br>'
+  # @param pathname [String] relative path with 'a/b' format
+  cdCommand: (pathname) =>
+    # on unix, cd with no arguments sends back to the user's home directory; there is no 'root' home dir so let's go to /
+    if not pathname?
+      @directoryStack = [@directoryStack[0]]  # only keep ROOT directory (not root home); works if no other ref to this array
+    else
+      pathChain = pathname.split '/'
+      newDirectoryStack = @directoryStack[..]  # work on stack copy in case it fails in the middle
+      for nextDirName in pathChain
+        if nextDirName in ['.', '']
+          continue
+        if nextDirName == '..'
+          # do not pop if already at ROOT
+          if newDirectoryStack.length > 1
+            newDirectoryStack.pop()
+        else
+          # nextDirName is assumed to be a normal name
+          nextDir = newDirectoryStack[newDirectoryStack.length - 1].getChildDir nextDirName
+          # if path cannot be resolved at this step, STOP, no such directory found, do not change directory
+          if not nextDir? then throw new Error "cd: #{pathname}: No such directory"
+          newDirectoryStack.push nextDir
 
-  scrollToBottom: =>
-    # cancel previous animations and start smooth scroll from current position
-    console.log "scroll #{@$output[0].scrollHeight}"
-    @$output.stop()
-    @$output.animate scrollTop: @$output[0].scrollHeight, 200, "swing"
+    @directoryStack = newDirectoryStack  # array ref changes here again
 
-  # Connect to a server
+  # Print text file content to output
   #
-  # server [Server] target server
-  connect: (server) =>
-    @connectionStack.push server
-    # set current working directory to root of this server
-    @directoryStack.length = 0
-    @cdChild @currentServer.getRoot()
+  # @param filename [String] name of a text file to read
+  catCommand: (filename) =>
+    if not filename?
+      # unix cat open stream for free input, but we do not need this in the game
+      throw new SyntaxError "The cat command requires 1 argument: the name of a text (.txt) file"
 
-  # Current server get property
-  @getter 'currentServer', -> @connectionStack[@connectionStack.length - 1]
+    if filename[-4..] == ".txt"
+    # remove .txt extension for the search by name
+      filename = filename[0...-4]
 
-  # Change to child directory
-  # Use it to change dir to root only at server connection time
+    # IMPROVE: support path + filename
+    textFile = @currentDirectory.getFile TextFile, filename
+    if not textFile?
+      throw new Error "cat: #{filename}: No such file"
+    @printText textFile
+
+  # Connect to server by domain URL or IP
   #
-  # dir [Directory] target child directory
-  cdChild: (dir) =>
-    @directoryStack.push dir
-
-  # Current directory get property
-  @getter 'currentDirectory', -> @directoryStack[@directoryStack.length - 1]
+  # @param address [String] domain URL or IP address
+  connectCommand: (address) =>
+    if not address?
+      throw new SyntaxError "The connect command requires 1 argument: the domain URL or IP"
+    server = Server.find(address)
+    if not server?
+      @print "Could not resolve hostname / IP #{address}"
+    else
+      @connect server
+      @print "Connected to #{address}"
 
 
 # Class responsible for syntax analysis (parsing) and execution
 # of the command-lines in the terminal
 class @CommandInterpreter
 
-  constructor: ->
-    # fill command objects with actual instances (we use bound methods for convenience
-    # for debug, but static methods would work too)
-    @commandObjects =
-      "VOID": new VoidCommand
-      "CLEAR": new ClearCommand
-      "HELP": new HelpCommand
-      "LS": new LsCommand
-      "CD": new CdCommand
-      "CAT": new CatCommand
-      "CONNECT": new ConnectCommand
+  # @param terminal [Terminal] terminal receiving the commands
+  constructor: (@terminal) ->
 
   # Parse a command and return a syntax tree made of tokens
   # Throw an exception if a parsing error occurs
@@ -204,22 +278,56 @@ class @CommandInterpreter
     console.log(commandLine)
     [command, commandArgs...] = commandLine.trim().split(/\s+/)
     if command == ""
-      return new SyntaxTree [CommandToken.VOID, []]
-    if !(command of CommandTokenFromString)
+      return new SyntaxTree [CommandToken.void, []]
+    if !(command of CommandToken)
       throw SyntaxError "#{command}: command not found"
-    new SyntaxTree [CommandTokenFromString[command], commandArgs]
+    new SyntaxTree [CommandToken[command], commandArgs]
 
   # Execute command with arguments provided in syntax tree
+  # All commands interpretation consist in giving semantics to each argument and delegating back to the terminal
   #
-  # syntaxTree [SyntaxTree] : multi-dimensional array containing the command line tokens
-  # terminal [Terminal] : represents the parent process
+  # @param syntaxTree [SyntaxTree] : multi-dimensional array containing the command line tokens
+  # @param terminal [Terminal] : represents the parent process
   execute: (syntaxTree, terminal) =>
     console.log "[TERMINAL] Execute #{syntaxTree}"
-    @commandObjects[syntaxTree.getCommand()].execute syntaxTree.getArgs(), terminal
+    @[syntaxTree.getCommand()] syntaxTree.getArgs()
+
+  # For all methods below, execute command line with following parameters
+  #
+  # @param args [Terminal] : arguments of the invoked command
+  # @param terminal [Terminal] : represents the parent process
+
+  # Do nothing
+  void: (args) =>
+
+  # Delegate clear command to terminal
+  clear: (args) =>
+    @terminal.clearCommand()
+
+  # Delegate help command to terminal
+  help: (args) =>
+    @terminal.helpCommand()
+
+  # Delegate ls command to terminal for given pathname
+  ls: (args) =>
+    @terminal.lsCommand args[0]
+
+  # Delegate cd command to terminal for given pathname
+  cd: (args) =>
+    @terminal.cdCommand args[0]
+
+  # Delegate cat command to terminal for given filename
+  cat: (args) =>
+    @terminal.catCommand args[0]
+
+  # Delegate ls command to terminal for given address
+  connect: (args) =>
+    @terminal.connectCommand args[0]
+
 
 class @SyntaxTree
 
-  # nodes [string[]] array of syntax elements (no deep hierarchy)
+  # @param nodes [String[]] array of syntax elements (no deep hierarchy)
   constructor: (@nodes) ->
 
   # Return single command string
@@ -232,126 +340,3 @@ class @SyntaxTree
 
   toString: =>
     "#{@nodes[0]} -> #{@nodes[1].join ', '}"
-
-
-# TODO: move commands to terminal, remove command classes altogether and identify commands by string directly
-class @Command
-
-  # (virtual) Behavior of the command on execution
-  #
-  # args [Terminal] : arguments of the invoked command
-  # terminal [Terminal] : represents the parent process
-  execute: (args, terminal) =>
-    throw "#{this} has not implemented the 'execute' method."
-
-class @VoidCommand extends Command
-
-  # do nothing
-  execute: (args, terminal) =>
-
-  toString: ->
-    "VOID command"
-
-
-class @ClearCommand extends Command
-
-  # Clear the output content, but keep the history
-  execute: (args, terminal) =>
-    terminal.$output.empty()
-
-  toString: ->
-    "CLEAR command"
-
-
-class @HelpCommand extends Command
-
-  # Show available commands information
-  execute: (args, terminal) =>
-    terminal.print "List of available commands:",
-      "clear -- clear the console output",
-      "help -- show this help menu",
-      "ls -- show files and subdirectories in current directory",
-      "cd -- navigate to subdirectory",
-      "cat <file> -- print content of text file to console output",
-      "connect <domain> -- connect to a domain by URL or IP",
-
-  toString: ->
-    "HELP command"
-
-
-class @LsCommand extends Command
-
-  # Show files and subdirectories in current directory
-  execute: (args, terminal) =>
-    if terminal.connectionStack.length == 0
-      terminal.print "[DEBUG] You are not connected to any server."
-      return
-    for file in terminal.currentDirectory.children
-      terminal.print file.toString()
-
-  toString: ->
-    "LS command"
-
-class @CdCommand extends Command
-
-  # Enter target directory
-  # Only supports one directory change for now
-  execute: (args, terminal) =>
-    if args.length < 1
-      # on unix, cd without arguments does nothing with no errors
-      return
-
-    if terminal.connectionStack.length == 0
-      terminal.print "[DEBUG] You are not connected to any server."
-      return
-
-    newDirectoryName = args[0]
-
-    childDir = terminal.currentDirectory.getChildDir newDirectoryName
-    if !childDir?
-      throw new Error "cd: #{newDirectoryName}: No such directory"
-    terminal.cdChild childDir
-
-  toString: ->
-    "CD command"
-
-class @CatCommand extends Command
-
-  # Print text file content to output
-  execute: (args, terminal) =>
-    if args.length < 1
-      # actual cat open stream for free input, but we do not need this in the game
-      throw new SyntaxError "The cat command requires 1 argument: the name of a text (.txt) file"
-
-    textFileName = args[0]
-    if textFileName[-4..] == ".txt"
-      # remove .txt extension for the search by name
-      textFileName = textFileName[0...-4]
-
-    textFile = terminal.currentDirectory.getFile TextFile, textFileName
-    if !textFile?
-      throw new Error "cat: #{textFileName}: No such file"
-    # WARNING: print raw will print the text content as HTML; use HTML symbols
-    # in your text data or make a conversion from JSON strings beforehand!
-    terminal.printRaw textFile.content.replace /\n/g, '<br>'
-
-  toString: ->
-    "CD command"
-
-class @ConnectCommand extends Command
-
-  # Connect to server by domain URL or IP
-  execute: (args, terminal) =>
-    if args.length < 1
-      throw new SyntaxError "The connect command requires 1 argument: the domain URL or IP"
-    address = args[0]
-    terminal.print "Connecting to #{address}..."
-    server = Server.find(address)
-    if !server?
-      terminal.print "Could not resolve hostname / IP #{address}"
-      return
-    terminal.print "Connection complete"
-    terminal.connect server
-
-  toString: ->
-    "CONNECT command"
