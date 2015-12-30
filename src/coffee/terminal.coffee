@@ -68,6 +68,9 @@ class @Terminal extends App
   # Current directory get property
   @getter 'currentDirectory', -> @directoryStack[@directoryStack.length - 1]
 
+
+  ### OPEN/CLOSE ###
+
   # Focus on terminal prompt
   onOpen: =>
     # set initial focus and prevent losing focus by brute-force
@@ -77,10 +80,13 @@ class @Terminal extends App
 
   # Leave focus and unbind forced focus rule
   onClose: =>
-    @$promptInput.off("blur.autofocus")
+    @$promptInput.off "blur.autofocus"
     @$promptInput.blur()
 
-# Navigate in command-line history up or down as much as possible
+
+  ### INPUT/OUTPUT ###
+
+  # Navigate in command-line history up or down as much as possible
   #
   # delta [int] 1 to go to next command, -1 to go to previous command
   navigateHistory: (delta) =>
@@ -113,9 +119,22 @@ class @Terminal extends App
 
   scrollToBottom: =>
     # cancel previous animations and start smooth scroll from current position
-    console.log "scroll #{@$output[0].scrollHeight}"
+#    console.log "scroll #{@$output[0].scrollHeight}"
     @$output.stop()
     @$output.animate scrollTop: @$output[0].scrollHeight, 200, "swing"
+
+
+  ### CORE ACTIONS ###
+
+  # Print file content to output and trigger any game event hooked
+  #
+  # @param [TextFile] text file to read
+  printText: (textFile) =>
+    # WARNING: printHTML will print the text content as HTML; use HTML symbols
+    # in your text data or make a conversion from JSON strings beforehand!
+    @printHTML textFile.content.replace /\n/g, '<br>'
+    # trigger game events related to reading this file
+    textFile.onRead()
 
   # Connect to a server
   #
@@ -125,6 +144,9 @@ class @Terminal extends App
     # set current working directory to root of this server
     @directoryStack.length = 0
     @directoryStack.push @currentServer.getRoot()
+
+
+  ### COMMANDS ###
 
   # Send command to fictive shell
   #
@@ -222,9 +244,7 @@ class @Terminal extends App
     textFile = @currentDirectory.getFile TextFile, filename
     if not textFile?
       throw new Error "cat: #{filename}: No such file"
-    # WARNING: print raw will print the text content as HTML; use HTML symbols
-    # in your text data or make a conversion from JSON strings beforehand!
-    @printHTML textFile.content.replace /\n/g, '<br>'
+    @printText textFile
 
   # Connect to server by domain URL or IP
   #

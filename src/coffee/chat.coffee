@@ -40,6 +40,7 @@ class @Chat extends App
     @sentMessageTemplate = Handlebars.compile $("#message-sent-template").html()
     @messageChoiceTemplate = Handlebars.compile $("#message-choice-template").html()
 
+    # [DialogueGraph] current dialogue graph
     @dialogueGraph = null
     @currentDialogueNode = null
 

@@ -128,10 +128,12 @@ class @TextFile extends RegularFile
 
   # @param name [String] name of the file (without extension)
   # @param content [String] text content
-  constructor: (@name, @content) ->
+  # @param onRead [Function()] called when the file is read by the player in the terminal
+  constructor: (@name, @content, @onRead = ->) ->
 
   toString: =>
     @name + ".txt"
+
 
 class @DatabaseSim
 
