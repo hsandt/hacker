@@ -208,7 +208,7 @@ class @Terminal extends App
   cdCommand: (pathname) =>
     # on unix, cd with no arguments sends back to the user's home directory; there is no 'root' home dir so let's go to /
     if not pathname?
-      @directoryStack = [@directoryStack[0]]  # only keep ROOT directory (not root home); works if no other ref to this array
+      newDirectoryStack = [@directoryStack[0]]  # only keep ROOT directory (not root home); works if no other ref to this array
     else
       pathChain = pathname.split '/'
       newDirectoryStack = @directoryStack[..]  # work on stack copy in case it fails in the middle
