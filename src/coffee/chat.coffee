@@ -44,6 +44,12 @@ class @Chat extends App
     @dialogueGraph = null
     @currentDialogueNode = null
 
+  # Start a dialogue graph stored in game data, by name
+  #
+  # @param dialogueName [String] name of the dialogue stored in game data
+  startDialogueByName: (dialogueName) =>
+    @startDialogue game.data.dialogues[dialogueName]
+
   # Start a dialogue graph
   #
   # @param dialogueGraph [DialogueGraph]
@@ -69,25 +75,32 @@ class @Chat extends App
     @currentDialogueNode = dialogueNode
 
     switch dialogueNode.type
+
       when "text"
         # for TEXT nodes, receive all messages in the node
         for line in dialogueNode.lines
           @receiveMessage line
-        # trigger callback for last message being read
-        dialogueNode.onLastRead()
         # go to next node
-        @enterDialogueNodeByName dialogueNode.successor
+        @enterDialogueNode dialogueNode.successor
 
       when "choice hub"
         # for CHOICE HUB nodes, display available choices
-        @showChoicesByName dialogueNode.choices
+        @showChoices dialogueNode.choices
 
       when "choice"
         # for CHOICE node, remove choices, send choice messages and trigger associated effects
         @hideMessageChoices()
         for line in dialogueNode.lines
           @sendMessage line
-        @enterDialogueNodeByName dialogueNode.successor
+        @enterDialogueNode dialogueNode.successor
+
+      when "event"
+        # for EVENT node, call the event function and go to next node
+        dialogueNode.eventFunction()
+        @enterDialogueNode dialogueNode.successor
+
+      else
+        throw new Error "Node #{dialogueNode.name} has unknown type #{dialogueNode.type}"
 
   # Choose given choice, triggering all associated events
   #
@@ -127,11 +140,12 @@ class @Chat extends App
 
   # Show available replies for the player
   #
-  # @param choiceNames [String[]] list of choice node names
-  showChoicesByName: (choiceNames) =>
+  # @param choices [DialogueChoice[]] list of choice nodes
+  showChoices: (choices) =>
     # show all choices in input area from template
-    choiceNames.forEach (choiceName) =>
-      choice = @dialogueGraph.getNode choiceName
+    choices.forEach (choice) =>
+      if not choice?
+        throw new Error "Could not find choice node #{choice.name} in dialogue #{dialogueGraph.name}"
       # create <li> jQuery element from template
       choiceEntry = $(@messageChoiceTemplate(choiceMessage: choice.lines[0]))
       # add onclick event with choice inside forEach's closure
@@ -145,9 +159,10 @@ class @Chat extends App
 
 class @DialogueGraph
 
+  # @param name [String] dialogue name
   # @param nodes [String: DialogueNode] dictionary of dialogue nodes
   # @param initialNodeName [String] name of the first node of the dialogue
-  constructor: (@nodes = {}, @initialNodeName = "initial") ->
+  constructor: (@name, @nodes = {}, @initialNodeName = "initial") ->
 
   # Add a node to the dialogue graph
   #
@@ -169,6 +184,9 @@ class @DialogueGraph
       return null
     @nodes[name]
 
+  toString: =>
+    "DialogueGraph #{@name}"
+
 
 class @DialogueNode
 
@@ -185,25 +203,42 @@ class @DialogueText extends DialogueNode
   #
   # @param name [String] string identifier
   # @param lines [String[]] messages to receive
-  # @param successor [String] name of the successor node
-  # @param onLastRead [Function()] called when the last line has been sent (and read)
-  constructor: (name, @lines, @successor, @onLastRead = ->) ->
+  # @param successor [DialogueNode] successor node
+  constructor: (name, @lines, @successor) ->
     super name, "text"
 
+  toString: =>
+    "DialogueText #{@name} -> #{if @successor? then @successor.name else "END"}"
 
 class @DialogueChoiceHub extends DialogueNode
 
   # @param name [String] string identifier
-  # @param choices [DialogueChoice[]] available choices after all messages have been received
+  # @param choices [DialogueNode] available choices after all messages have been received
   constructor: (name, @choices) ->
     super name, "choice hub"
 
+  toString: =>
+    "DialogueChoiceHub #{@name} -> #{@choices.map((e)->e.name).join(", ")}"
 
 class @DialogueChoice extends DialogueNode
 
   # @param name [String] string identifier
   # @param lines [String[]] messages sent when selecting this choice; the 1st is the one to click on
-  # @param successor [String] name of the successor node
+  # @param successor [DialogueNode] successor node
   constructor: (name, @lines, @successor) ->
     super name, "choice"
 
+  toString: =>
+    "DialogueChoice #{@name} -> #{if @successor? then @successor.name else "END"}"
+
+# Special dialogue node that calls an event function and immediately goes to the next node
+class @DialogueEvent extends DialogueNode
+
+  # @param name [String] string identifier
+  # @param eventFunction [Function()] event function to call
+  # @param successor [DialogueNode] successor node
+  constructor: (name, @eventFunction, @successor) ->
+    super name, "event"
+
+  toString: =>
+    "DialogueEvent #{@name} -> #{if @successor? then @successor.name else "END"}"

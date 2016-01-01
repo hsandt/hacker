@@ -11,7 +11,7 @@ $ ->
 testChat = ->
   chat = new Chat $("#chat-screen")
 
-  dialogueGraph = new DialogueGraph
+  dialogueGraph = new DialogueGraph "mock dialog"
 
   dialogueGraph.addNode new DialogueNode 0,
     [

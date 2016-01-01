@@ -50,15 +50,19 @@
                 "You have to hack into Moogle's server and tell me what John did yesterday.",
                 "Tell me when you found something."
             ],
-            "successor": null,
-            "onLastRead": "test.start"
+            "successor": "start"
+        },
+        "start": {
+            "type": "event",
+            "eventName": "test.start",
+            "successor": null
         }
     },
     "test.conclusion": {
-        "john?": {
+        "initial": {
             "type": "text",
             "lines": ["So, have you found anything on John?"],
-            "successor": "john!"
+            "successor": "john*"
         },
         "john*": {
             "type": "choice hub",
