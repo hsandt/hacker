@@ -34,6 +34,8 @@ class @Game
   constructor: ->
 
   initModules: =>
+    if not game?
+      throw new Error "document.game has not been defined, please create a game instance with @game = new Game first."
     @hub = new Hub
     @terminal = @apps['terminal'] = new Terminal $("#terminal-screen"), $("#terminal-device")
     @chat = @apps['chat'] = new Chat $("#chat-screen"), $("#chat-device")
@@ -44,3 +46,9 @@ class @Game
     @apps['camera'] = new App null, null
 
     @story = new Story
+
+  # @param dialogueFilename [String] path of the JSON file containing all dialogues
+  loadData: (dialogueFilename) =>
+    # [GameData] contains all game story data
+    @data = new GameData dialogueFilename
+

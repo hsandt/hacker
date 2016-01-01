@@ -32,50 +32,14 @@ incrementNbModulesAndStartIfReady = ->
 testGame = ->
   @game = new Game
   game.initModules()
+  game.loadData "../../src/data/dialogue.json"
+
+
 
   # start story
   storyGraph = new StoryGraph
 
-  # create dialogue
-
-  dialogueGraph = new DialogueGraph
-
-  dialogueGraph.addNode new DialogueNode 0,
-    [
-      "Hi! I have a mission for you.",
-    ],
-    [
-      new DialogueChoice 0, "What is it?", 1
-      new DialogueChoice 1, "I refuse.", 2
-    ]
-
-  dialogueGraph.addNode new DialogueNode 1,
-    [
-      "You have to hack into Moogle's server and tell me what John did yesterday."
-    ],
-    [
-      new DialogueChoice 0, "I accept.", 3
-      new DialogueChoice 1, "I refuse.", 2
-    ]
-
-  dialogueGraph.addNode new DialogueNode 2,
-    [
-      "Goodbye, then."
-    ],
-    [
-    ]
-
-  dialogueGraph.addNode new DialogueNode 3, [
-      "Okay, then connect to moogle.com and read the activity log of John."
-    ], [], ->
-      console.log "READ"
-      game.servers["moogle"].fileSystem.root.getDir('home/john').addFile(new TextFile "mail",
-      "I went to the cinema the other day. If you could see my boss, he was just crazy!\n
-      I told him I had an important meeting with an ex-collaborator.",
-      -> game.chat.startDialogue(gameData.dialogues["m01.d02"]))
-
-
-  storyGraph.addNode new StoryNode("introduction", (-> game.chat.startDialogue(dialogueGraph)),
+  storyGraph.addNode new StoryNode("introduction", (-> game.chat.startDialogueByName "test.proposal"),
     ["chapter1"]
   )
 

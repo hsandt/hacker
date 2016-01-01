@@ -44,38 +44,63 @@ class @Chat extends App
     @dialogueGraph = null
     @currentDialogueNode = null
 
+  # Start a dialogue graph stored in game data, by name
+  #
+  # @param dialogueName [String] name of the dialogue stored in game data
+  startDialogueByName: (dialogueName) =>
+    @startDialogue game.data.dialogues[dialogueName]
+
   # Start a dialogue graph
   #
   # @param dialogueGraph [DialogueGraph]
   startDialogue: (dialogueGraph) =>
     @dialogueGraph = dialogueGraph
-    @enterDialogueNode dialogueGraph.getInitialNode()
-    # show phone notification on hub
-    @device.notify()
+    initialNode = dialogueGraph.getInitialNode()
+    @enterDialogueNode initialNode
+    # show phone notification on hub if the NPC starts the dialogue
+    if initialNode.type == "text"
+      @device.notify()
+
+  # Continue dialogue on given node, by name, or do nothing if nodeName is null
+  #
+  # @param nodeName [String] name of the node to enter
+  enterDialogueNodeByName: (nodeName) =>
+    if nodeName?
+      @enterDialogueNode @dialogueGraph.getNode(nodeName)
 
   # Continue dialogue on given node
+  #
+  # @param dialogueNode [DialogueNode] node to enter
   enterDialogueNode: (dialogueNode) =>
     @currentDialogueNode = dialogueNode
 
-    # receive all messages in the node
-    for message in dialogueNode.messages
-      @receiveMessage message
+    switch dialogueNode.type
 
-    # trigger callback for last message being read
-    @currentDialogueNode.onLastMessageRead()
+      when "text"
+        # for TEXT nodes, receive all messages in the node
+        for line in dialogueNode.lines
+          @receiveMessage line
+        # go to next node
+        @enterDialogueNode dialogueNode.successor
 
-    # show choices to send reply
-    @showMessageChoices dialogueNode.choices
+      when "choice hub"
+        # for CHOICE HUB nodes, display available choices
+        @showChoices dialogueNode.choices
 
-  # Show new message received in chat history
-  #
-  # @param message [String] message received
-  receiveMessage: (message) =>
-    context =
-      message: message
-      time: "12:00"
-    @$chatHistoryList.append @receivedMessageTemplate(context)
-    @scrollToBottom()
+      when "choice"
+        # for CHOICE node, remove choices, send choice messages and trigger associated effects
+        @hideMessageChoices()
+        for line in dialogueNode.lines
+          @sendMessage line
+        @enterDialogueNode dialogueNode.successor
+
+      when "event"
+        # for EVENT node, call the event function and go to next node
+        dialogueNode.eventFunction()
+        @enterDialogueNode dialogueNode.successor
+
+      else
+        throw new Error "Node #{dialogueNode.name} has unknown type #{dialogueNode.type}"
 
   # Choose given choice, triggering all associated events
   #
@@ -84,24 +109,30 @@ class @Chat extends App
 #    for event in choice.events
 #      console.log "Game event #{event} -> true"
 #      game.events[event] = true
-    @sendMessage choice
+    @enterDialogueNode choice
 
   # Send message choice to chat
   #
-  # @choice [DialogueChoice] message choice to send
-  sendMessage: (choice) =>
-    # remove choices from input area
-    @hideMessageChoices()
+  # @param message [String] message to send
+  sendMessage: (message) =>
+    @printMessage message, @sentMessageTemplate
 
-    # show chosen message in the chat
+  # Show new message received in chat history
+  #
+  # @param message [String] message received
+  receiveMessage: (message) =>
+    @printMessage message, @receivedMessageTemplate
+
+  # Print message from character in chat
+  #
+  # @param message [String] message to print
+  # @param template [Handlebars.Template] message template corresponding to the character speaking
+  printMessage: (message, template) =>
     context =
-      message: choice.message
+      message: message
       time: "12:00"
-    @$chatHistoryList.append @sentMessageTemplate(context)
+    @$chatHistoryList.append template(context)
     @scrollToBottom()
-
-    # continue dialogue graph f.ollowing choice consequence
-    @enterDialogueNode @dialogueGraph.getNode(choice.nextNodeId)
 
   # Scroll chat history to bottom
   scrollToBottom: =>
@@ -109,12 +140,14 @@ class @Chat extends App
 
   # Show available replies for the player
   #
-  # @param choices [DialogueChoice[]] list of message choices
-  showMessageChoices: (choices) =>
+  # @param choices [DialogueChoice[]] list of choice nodes
+  showChoices: (choices) =>
     # show all choices in input area from template
     choices.forEach (choice) =>
+      if not choice?
+        throw new Error "Could not find choice node #{choice.name} in dialogue #{dialogueGraph.name}"
       # create <li> jQuery element from template
-      choiceEntry = $(@messageChoiceTemplate(choiceMessage: choice.message))
+      choiceEntry = $(@messageChoiceTemplate(choiceMessage: choice.lines[0]))
       # add onclick event with choice inside forEach's closure
       choiceEntry.click => @choose choice
       @$chatInputList.append choiceEntry
@@ -123,73 +156,89 @@ class @Chat extends App
   hideMessageChoices: =>
     @$chatInputList.empty()
 
-  # display the next message
-  receiveNextMessage: =>
-    template = Handlebars.compile $("#message-received-template").html()
-    context =
-      message: Chat.incomingMessageSequence[@nextIncomingMessageIdx],
-      time: "12:00"
-    @$chatHistoryList.append template(context)
-    @scrollToBottom()
-
-    ++@nextIncomingMessageIdx
-
-  # display nbMessages every timeInterval in ms
-  receiveAllMessages: (nbMessages, timeInterval) =>
-    if nbMessages == 0
-      return
-    @receiveNextMessage()
-    setTimeout (=> @receiveAllMessages(nbMessages - 1, timeInterval)), timeInterval
-
 
 class @DialogueGraph
 
-  # Construct a dialogue node
-  #
-  # @param nodes [DialogueNode[]] dialogue nodes
-  # @param initialNodeId [int] ID of the first node of the dialogue
-  constructor: (@nodes = {}, @initialNodeId = 0) ->
+  # @param name [String] dialogue name
+  # @param nodes [String: DialogueNode] dictionary of dialogue nodes
+  # @param initialNodeName [String] name of the first node of the dialogue
+  constructor: (@name, @nodes = {}, @initialNodeName = "initial") ->
 
   # Add a node to the dialogue graph
   #
   # @param node [DialogueNode]
   addNode: (node) =>
     # IMPROVE: in JS, objects use strings for keys anyway, so either use an array or any string key
-    @nodes[node.id] = node
+    @nodes[node.name] = node
 
   # Return initial node of the dialogue
   getInitialNode: =>
-    @nodes[@initialNodeId]
+    @nodes[@initialNodeName]
 
-  # Return node by id
+  # Return node by id, null if none found
   #
-  # id [int] id of the node to find
-  getNode: (id) =>
-    if !(id of @nodes)
-      throw "Node #{id} is not in the dialogue graph"
-    @nodes[id]
+  # name [String] id of the node to find
+  getNode: (name) =>
+    if not (name of @nodes)
+      console.warn "[DIALOGUE] Node #{name} not found"
+      return null
+    @nodes[name]
+
+  toString: =>
+    "DialogueGraph #{@name}"
 
 
 class @DialogueNode
 
   # Construct a dialogue node
   #
-  # @param id [int]
-  # @param onLastMessageRead [Function()] called when the last message has been sent (and read)
-  # @param messages [string[]] messages to receive
-  # @param choices [DialogueChoice[]] available choices after all messages have been received
-  constructor: (@id, @messages, @choices, @onLastMessageRead = ->) ->
-
-  onEnter: =>
-    throw "#{this} has not implemented the 'onEnter' method."
+  # @param name [String] string identifier
+  # @param type [String] node type: "text", "choice hub" or "choice" (redundant but convenient)
+  constructor: (@name, @type) ->
 
 
-class @DialogueChoice
+class @DialogueText extends DialogueNode
 
-  # @param idx [int] index in the list of choices, from 0
-  # @param message [String] message content
-  # @param nextNodeId [int] ID of the dialogue node this choice leads to
+  # Construct a dialogue node
+  #
+  # @param name [String] string identifier
+  # @param lines [String[]] messages to receive
+  # @param successor [DialogueNode] successor node
+  constructor: (name, @lines, @successor) ->
+    super name, "text"
 
-  # @param events [String[]] optional list of named events that trigger when this choice is made
-  constructor: (@idx, @message, @nextNodeId, @events = []) ->
+  toString: =>
+    "DialogueText #{@name} -> #{if @successor? then @successor.name else "END"}"
 
+class @DialogueChoiceHub extends DialogueNode
+
+  # @param name [String] string identifier
+  # @param choices [DialogueNode] available choices after all messages have been received
+  constructor: (name, @choices) ->
+    super name, "choice hub"
+
+  toString: =>
+    "DialogueChoiceHub #{@name} -> #{@choices.map((e)->e.name).join(", ")}"
+
+class @DialogueChoice extends DialogueNode
+
+  # @param name [String] string identifier
+  # @param lines [String[]] messages sent when selecting this choice; the 1st is the one to click on
+  # @param successor [DialogueNode] successor node
+  constructor: (name, @lines, @successor) ->
+    super name, "choice"
+
+  toString: =>
+    "DialogueChoice #{@name} -> #{if @successor? then @successor.name else "END"}"
+
+# Special dialogue node that calls an event function and immediately goes to the next node
+class @DialogueEvent extends DialogueNode
+
+  # @param name [String] string identifier
+  # @param eventFunction [Function()] event function to call
+  # @param successor [DialogueNode] successor node
+  constructor: (name, @eventFunction, @successor) ->
+    super name, "event"
+
+  toString: =>
+    "DialogueEvent #{@name} -> #{if @successor? then @successor.name else "END"}"

@@ -29,7 +29,7 @@ class @Terminal extends App
 
   # Construct terminal from div container
   #
-  # terminalScreen [jQuery] jQuery element for the terminal-screen div
+  # $screen [jQuery] jQuery element for the terminal-screen div
   constructor: ($screen, $device) ->
     super $screen, $device
     @device = new TerminalDevice $device
