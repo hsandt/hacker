@@ -1,9 +1,25 @@
+@import "../../../bower_components/sass-mixins/mixins"
+@import variables
+
 body
   margin: 0
 
-.background
-  background-image: url('#{$image-path}/fond.jpg')
-  //background-image: image-url('fond.jpg')
+#background
+  background-image: url('#{$image-path}/background.png')
+  width: 2400px
+  height: 1080px
+  //height: 1920px
+
+#screens
+  background: #00A000 url('#{$image-path}/img-screens.png') no-repeat
+  //+x-transform(scale(0.9, 0.9))
+  width: 2636px
+  height: 1700px
+  //height: 1872px
+
+  //&::after
+  //  content: url('#{$image-path}/screens.png')
+  //  +x-transform(scale(.5))
 
 #chat-device
   &.notify-off
@@ -11,6 +27,7 @@ body
 
   &.notify-on
     background-color: #fff8a8
+
 
 #phone-device
   +x-transform(skewX(-30deg))
@@ -23,5 +40,4 @@ body
 
 #memo-device
   +x-transform(skewX(30deg))
-
 
