@@ -275,7 +275,6 @@ class @CommandInterpreter
     console.log "[TERMINAL] Parse '#{commandLine}'"
     # multi-word analysis
     # trim whitespaces and separate command from arguments
-    console.log(commandLine)
     [command, commandArgs...] = commandLine.trim().split(/\s+/)
     if command == ""
       return new SyntaxTree [CommandToken.void, []]
