@@ -32,7 +32,7 @@ incrementNbModulesAndStartIfReady = ->
 testGame = ->
   @game = new Game
   game.initModules()
-  game.loadData "../../src/data/dialogue.json"
+  game.loadData "../../src/data/dialoguegraphs.json"
 
   # FIXME: load data is async so use a promise
 

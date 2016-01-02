@@ -57,9 +57,6 @@ class @Chat extends App
     @dialogueGraph = dialogueGraph
     initialNode = dialogueGraph.getInitialNode()
     @enterDialogueNode initialNode
-    # show phone notification on hub if the NPC starts the dialogue
-    if initialNode.type == "text"
-      @device.notify()
 
   # Continue dialogue on given node, by name, or do nothing if nodeName is null
   #
@@ -68,39 +65,16 @@ class @Chat extends App
     if nodeName?
       @enterDialogueNode @dialogueGraph.getNode(nodeName)
 
-  # Continue dialogue on given node
+  # Continue dialogue on given node, end if node is null
   #
   # @param dialogueNode [DialogueNode] node to enter
   enterDialogueNode: (dialogueNode) =>
     @currentDialogueNode = dialogueNode
-
-    switch dialogueNode.type
-
-      when "text"
-        # for TEXT nodes, receive all messages in the node
-        for line in dialogueNode.lines
-          @receiveMessage line
-        # go to next node
-        @enterDialogueNode dialogueNode.successor
-
-      when "choice hub"
-        # for CHOICE HUB nodes, display available choices
-        @showChoices dialogueNode.choices
-
-      when "choice"
-        # for CHOICE node, remove choices, send choice messages and trigger associated effects
-        @hideMessageChoices()
-        for line in dialogueNode.lines
-          @sendMessage line
-        @enterDialogueNode dialogueNode.successor
-
-      when "event"
-        # for EVENT node, call the event function and go to next node
-        dialogueNode.eventFunction()
-        @enterDialogueNode dialogueNode.successor
-
-      else
-        throw new Error "Node #{dialogueNode.name} has unknown type #{dialogueNode.type}"
+    # if node is null, end dialogue, else enter node
+    if dialogueNode?
+      dialogueNode.onEnter @
+    else
+      @dialogueGraph = null
 
   # Choose given choice, triggering all associated events
   #
@@ -196,6 +170,11 @@ class @DialogueNode
   # @param type [String] node type: "text", "choice hub" or "choice" (redundant but convenient)
   constructor: (@name, @type) ->
 
+  # Function called when the node is entered. Contains all the node's logic
+  #
+  # @param chat [Chat] chat managing the dialogue
+  onEnter: (chat) =>
+    throw new Error "onEnter is not defined for an abstract DialogueNode"
 
 class @DialogueText extends DialogueNode
 
@@ -210,6 +189,17 @@ class @DialogueText extends DialogueNode
   toString: =>
     "DialogueText #{@name} -> #{if @successor? then @successor.name else "END"}"
 
+  onEnter: (chat) =>
+    # for TEXT nodes, receive all messages in the node
+    # show phone notification on hub if the NPC starts the dialogue
+    chat.device.notify()
+
+    for line in @lines
+      chat.receiveMessage line
+    # go to next node
+    chat.enterDialogueNode @successor
+
+
 class @DialogueChoiceHub extends DialogueNode
 
   # @param name [String] string identifier
@@ -220,6 +210,10 @@ class @DialogueChoiceHub extends DialogueNode
   toString: =>
     "DialogueChoiceHub #{@name} -> #{@choices.map((e)->e.name).join(", ")}"
 
+  onEnter: (chat) =>
+    # for CHOICE HUB nodes, display available choices
+    chat.showChoices @choices
+
 class @DialogueChoice extends DialogueNode
 
   # @param name [String] string identifier
@@ -229,7 +223,15 @@ class @DialogueChoice extends DialogueNode
     super name, "choice"
 
   toString: =>
-    "DialogueChoice #{@name} -> #{if @successor? then @successor.name else "END"}"
+    "DialogueChoice #{@name} '#{@lines.join("; ")}' -> #{if @successor? then @successor.name else "END"}"
+
+  onEnter: (chat) =>
+    # for CHOICE node, remove choices, send choice messages and trigger associated effects
+    chat.hideMessageChoices()
+    for line in @lines
+      chat.sendMessage line
+    chat.enterDialogueNode @successor
+
 
 # Special dialogue node that calls an event function and immediately goes to the next node
 class @DialogueEvent extends DialogueNode
@@ -242,3 +244,25 @@ class @DialogueEvent extends DialogueNode
 
   toString: =>
     "DialogueEvent #{@name} -> #{if @successor? then @successor.name else "END"}"
+
+  onEnter: (chat) =>
+    # for EVENT node, call the event function and go to next node
+    @eventFunction()
+    chat.enterDialogueNode @successor
+
+
+# Node to wait between two nodes; useful to emphasize break in a conversation
+class @DialogueWait extends DialogueNode
+
+  # @param name [String] string identifier
+  # @param waitTime [float] time to wait in ms
+  # @param successor [DialogueNode] successor node
+  constructor: (name, @waitTime, @successor) ->
+    super name, "wait"
+
+  toString: =>
+    "DialogueWait #{@name} (#{@waitTime} ms) -> #{if @successor? then @successor.name else "END"}"
+
+  onEnter: (chat) =>
+    # for WAIT node, wait given time and go to next node
+    setTimeout (-> chat.enterDialogueNode @successor), @waitTime
