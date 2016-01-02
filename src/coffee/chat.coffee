@@ -95,6 +95,9 @@ class @Chat extends App
   #
   # @param message [String] message received
   receiveMessage: (message) =>
+    # show phone notification on hub if the player is not already viewing the phone
+    if game.hub.currentAppName != 'chat'  # and phone for the phone
+      @device.notify()
     @printMessage message, @receivedMessageTemplate
 
   # Print message from character in chat
@@ -191,9 +194,6 @@ class @DialogueText extends DialogueNode
 
   onEnter: (chat) =>
     # for TEXT nodes, receive all messages in the node
-    # show phone notification on hub if the NPC starts the dialogue
-    chat.device.notify()
-
     for line in @lines
       chat.receiveMessage line
     # go to next node
@@ -265,4 +265,5 @@ class @DialogueWait extends DialogueNode
 
   onEnter: (chat) =>
     # for WAIT node, wait given time and go to next node
-    setTimeout (-> chat.enterDialogueNode @successor), @waitTime
+    console.log @waitTime
+    setTimeout (=> chat.enterDialogueNode @successor), @waitTime

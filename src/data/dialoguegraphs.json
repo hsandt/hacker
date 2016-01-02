@@ -3,6 +3,11 @@
         "initial": {
             "type": "text",
             "lines": ["Hi! I have a mission for you."],
+            "successor": "break"
+        },
+        "break": {
+            "type": "wait",
+            "time": 1,
             "successor": "accept1*"
         },
         "accept1*": {

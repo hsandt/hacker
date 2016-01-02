@@ -34,13 +34,15 @@ class @GameData
             node = new DialogueChoice nodeName, nodeData.lines, nodeData.successor
           when "event"
             node = new DialogueEvent nodeName, @eventFunctions[nodeData.eventName], nodeData.successor
+          when "wait"
+            node = new DialogueWait nodeName, 1000 * nodeData.time, nodeData.successor  # s to ms conversion
           else
             throw new Error "Node #{nodeName} has unknown type #{nodeData.type}"
         @dialogues[dialogueName].addNode node
       # second pass: link node with successor/choices by name, since now all nodes have been defined
       # this requires more computation during building process but ensures all names are resolved
       for nodeName, node of @dialogues[dialogueName].nodes
-        if node.type in ["text", "choice", "event"] and node.successor?
+        if node.type in ["text", "choice", "event", "wait"] and node.successor?
           successor = @dialogues[dialogueName].getNode node.successor
           if not successor?
             throw new Error "Successor #{node.successor} not found in dialogue #{dialogueName}"
