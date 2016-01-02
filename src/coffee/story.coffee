@@ -2,7 +2,7 @@ class @StoryGraph
 
   # @param nodes [{String: StoryNode}] story nodes identified by their titles
   # @param initialNodeTitle [String] title of the first node of the story
-  constructor: (@nodes = {}, @initialNodeTitle = "introduction") ->
+  constructor: (@nodes = {}, @initialNodeTitle = "initial") ->
 
   # Add a node to the story graph
   #
