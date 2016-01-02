@@ -34,12 +34,12 @@ testGame = ->
   game.initModules()
   game.loadData "../../src/data/dialogue.json"
 
-
+  # FIXME: load data is async so use a promise
 
   # start story
   storyGraph = new StoryGraph
 
-  storyGraph.addNode new StoryNode("introduction", (-> game.chat.startDialogueByName "test.proposal"),
+  storyGraph.addNode new StoryNode("initial", (-> game.chat.startDialogueByName "mission-tutorial.proposal"),
     ["chapter1"]
   )
 
@@ -55,7 +55,7 @@ testGame = ->
   storyGraph.addNode new StoryNode "ending"
 
   # IMPROVE: timeout for the dialogue event, not the event
-  setTimeout (-> game.story.start(storyGraph)), 1000
+  setTimeout (-> game.story.start(storyGraph)), 1000  # just enough time for async load until we have promises
 
 
 

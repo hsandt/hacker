@@ -93,5 +93,64 @@
             "lines": ["Anyway, here is your reward."],
             "successor": null
         }
+    },
+    "mission-tutorial.proposal": {
+        "initial": {
+            "type": "text",
+            "lines": ["Hi! I have a mission for you."],
+            "successor": "accept1*"
+        },
+        "accept1*": {
+            "type": "choice hub",
+            "choices": ["what?!", "refuse!"]
+        },
+        "what?!": {
+            "type": "choice",
+            "lines": ["What is it?"],
+            "successor": "order"
+        },
+        "refuse!": {
+            "type": "choice",
+            "lines": [
+                "I refuse!",
+                "Go to hell!"
+            ],
+            "successor": "goodbye"
+        },
+        "goodbye": {
+            "type": "text",
+            "lines": ["Goodbye, then."],
+            "successor": null
+        },
+        "order": {
+            "type": "text",
+            "lines": ["I have doubts about what my employee John did yesterday.", "You have to find out what by hacking into our servers."],
+            "successor": "accept2*"
+        },
+        "accept2*": {
+            "type": "choice hub",
+            "choices": ["accept!", "refuse!"]
+        },
+        "accept!": {
+            "type": "choice",
+            "lines": [
+                "I accept.",
+                "How should I start?"
+            ],
+            "successor": "briefing"
+        },
+        "briefing": {
+            "type": "text",
+            "lines": [
+                "You have to hack into Moogle's server and tell me what John did yesterday.",
+                "Tell me when you found something."
+            ],
+            "successor": "start"
+        },
+        "start": {
+            "type": "event",
+            "eventName": "test.start",
+            "successor": null
+        }
     }
 }
