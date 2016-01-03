@@ -128,8 +128,9 @@ class @TextFile extends RegularFile
 
   # @param name [String] name of the file (without extension)
   # @param content [String] text content
-  # @param onRead [Function()] called when the file is read by the player in the terminal
-  constructor: (@name, @content, @onRead = ->) ->
+  # @param onReadEvent [String] name of the event called when the file is read by the player in the terminal
+  constructor: (@name, @content, @onReadEvent = null) ->
+    # TODO: put localization helper here
 
   toString: =>
     @name + ".txt"

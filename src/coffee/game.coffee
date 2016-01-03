@@ -14,7 +14,7 @@ class @Game
           new Directory "a", [new TextFile "test", "coucou"]
           new Directory "b"
         ]
-        new TextFile "a", "hi!", -> console.log "AHA"
+        new TextFile "a", "hi!"
       ]
     "moogle": new Server "moogle.com", "256.241.23.02",
       [
@@ -51,4 +51,20 @@ class @Game
   loadData: (dialogueFilename) =>
     # [GameData] contains all game story data
     @data = new GameData dialogueFilename
+
+  # @param dialoguesFilename [String] path of the JSON file containing all the localized dialogue lines
+  loadLocale: (dialoguesFilename) =>
+    @locale = new Localize dialoguesFilename
+
+  # Return event function by name
+  #
+  # @param name [String] event name
+  getEvent: (name) =>
+    @data.eventFunctions[name]
+
+  # Run event function by name
+  #
+  # @param name [String] event name
+  triggerEvent: (name) =>
+    @data.eventFunctions[name]()
 
