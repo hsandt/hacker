@@ -134,7 +134,8 @@ class @Terminal extends App
     # in your text data or make a conversion from JSON strings beforehand!
     @printHTML textFile.content.replace /\n/g, '<br>'
     # trigger game events related to reading this file
-    textFile.onRead()
+    if textFile.onReadEvent?
+      game.triggerEvent textFile.onReadEvent
 
   # Connect to a server
   #

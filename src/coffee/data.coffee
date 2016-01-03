@@ -4,24 +4,24 @@ class @GameData
     "mission01": new Mission "mission01", (->), (->)
 
   eventFunctions:
-    "test.start": ->
+    "mission-test.start": ->
       game.servers["moogle"].getRoot().getDir('home/john').addFile(new TextFile "mail",
-      "I went to the cinema the other day. If you could see my boss, he was just crazy!\n
-      I told him I had an important meeting with an ex-collaborator.",
-      -> game.chat.startDialogueByName "test.conclusion")
-
+      ["mt1_t1_01", "mt1_t1_02"].map(game.locale.getLine).join('\n'),
+      "mission-test.conclusion")
+    "mission-test.conclusion": ->
+      game.chat.startDialogueByName "mission-test.conclusion"
 
   # @param dialogueFilename [String] path of the JSON file containing all dialogues
-  constructor: (dialogueFilename) ->
-    $.getJSON dialogueFilename, @buildDialogues
+  constructor: (dialogueGraphsFilename) ->
+    $.getJSON dialogueGraphsFilename, @buildDialogueGraphs
 
   # Build dictionary of dialogue graphs from JSON data
   #
   # @param data [dictionary] dictionary with JSON data
-  buildDialogues: (data) =>
-    @dialogues = {}
+  buildDialogueGraphs: (data) =>
+    @dialogueGraphs = {}
     for dialogueName, dialogueData of data
-      @dialogues[dialogueName] = new DialogueGraph dialogueName
+      @dialogueGraphs[dialogueName] = new DialogueGraph dialogueName
       # first pass: fill dialogue by identifying successors and choices with name only
       # events have already been defined so you can link them already
       for nodeName, nodeData of dialogueData
@@ -38,18 +38,18 @@ class @GameData
             node = new DialogueWait nodeName, 1000 * nodeData.time, nodeData.successor  # s to ms conversion
           else
             throw new Error "Node #{nodeName} has unknown type #{nodeData.type}"
-        @dialogues[dialogueName].addNode node
+        @dialogueGraphs[dialogueName].addNode node
       # second pass: link node with successor/choices by name, since now all nodes have been defined
       # this requires more computation during building process but ensures all names are resolved
-      for nodeName, node of @dialogues[dialogueName].nodes
+      for nodeName, node of @dialogueGraphs[dialogueName].nodes
         if node.type in ["text", "choice", "event", "wait"] and node.successor?
-          successor = @dialogues[dialogueName].getNode node.successor
+          successor = @dialogueGraphs[dialogueName].getNode node.successor
           if not successor?
             throw new Error "Successor #{node.successor} not found in dialogue #{dialogueName}"
           node.successor = successor  # from String to DialogueNode
         else if node.type == "choice hub"
           for choiceName, i in node.choices
-            choice =  @dialogues[dialogueName].getNode choiceName
+            choice =  @dialogueGraphs[dialogueName].getNode choiceName
             if not choice?
               throw new Error "Choice #{choiceName} not found in dialogue #{dialogueName}"
             node.choices[i] = choice  # from String to DialogueNode

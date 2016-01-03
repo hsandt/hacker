@@ -48,7 +48,7 @@ class @Chat extends App
   #
   # @param dialogueName [String] name of the dialogue stored in game data
   startDialogueByName: (dialogueName) =>
-    @startDialogue game.data.dialogues[dialogueName]
+    @startDialogue game.data.dialogueGraphs[dialogueName]
 
   # Start a dialogue graph
   #
@@ -124,7 +124,8 @@ class @Chat extends App
       if not choice?
         throw new Error "Could not find choice node #{choice.name} in dialogue #{dialogueGraph.name}"
       # create <li> jQuery element from template
-      choiceEntry = $(@messageChoiceTemplate(choiceMessage: choice.lines[0]))
+      localizedLine = game.locale.getLine choice.lines[0]  # first line is representative for choice
+      choiceEntry = $(@messageChoiceTemplate(choiceMessage: localizedLine))
       # add onclick event with choice inside forEach's closure
       choiceEntry.click => @choose choice
       @$chatInputList.append choiceEntry
@@ -194,8 +195,8 @@ class @DialogueText extends DialogueNode
 
   onEnter: (chat) =>
     # for TEXT nodes, receive all messages in the node
-    for line in @lines
-      chat.receiveMessage line
+    for lineID in @lines
+      chat.receiveMessage game.locale.getLine(lineID)
     # go to next node
     chat.enterDialogueNode @successor
 
@@ -228,8 +229,8 @@ class @DialogueChoice extends DialogueNode
   onEnter: (chat) =>
     # for CHOICE node, remove choices, send choice messages and trigger associated effects
     chat.hideMessageChoices()
-    for line in @lines
-      chat.sendMessage line
+    for lineID in @lines
+      chat.sendMessage game.locale.getLine(lineID)
     chat.enterDialogueNode @successor
 
 
