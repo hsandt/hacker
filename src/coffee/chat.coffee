@@ -4,7 +4,7 @@ class @ChatDevice extends HubDevice
     super $device
     $device.addClass "notify-off"
 
-# If active is true, show a visual cue to notify the player that something new has happened
+  # If active is true, show a visual cue to notify the player that something new has happened
   # If active is false, stop showing visual cue for new events
   notify: (state = "on") =>
     if !(state in ["on", "off"])
@@ -17,7 +17,7 @@ class @ChatDevice extends HubDevice
 
     if state == "on"
       phoneAudio = new Audio
-      phoneAudio.src = '../../src/audio/sfx/phone_notification.wav'
+      phoneAudio.src = game.audioPath + 'sfx/phone_notification.wav'
       phoneAudio.play()
 
 

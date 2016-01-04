@@ -31,7 +31,9 @@ class @Game
         ]
       ]
 
-  constructor: ->
+  # @param srcPath [String] relative path to src folder from main HTML page, ending with '/'
+  constructor: (@srcPath) ->
+    @audioPath = @srcPath + 'audio/'
 
   initModules: =>
     if not game?
@@ -47,14 +49,14 @@ class @Game
 
     @story = new Story
 
-  # @param dialogueFilename [String] path of the JSON file containing all dialogues
+  # @param dialogueFilename [String] path from src of the JSON file containing all dialogues
   loadData: (dialogueFilename) =>
     # [GameData] contains all game story data
-    @data = new GameData dialogueFilename
+    @data = new GameData(game.srcPath + dialogueFilename)
 
-  # @param dialoguesFilename [String] path of the JSON file containing all the localized dialogue lines
+  # @param dialoguesFilename [String] path from src of the JSON file containing all the localized dialogue lines
   loadLocale: (dialoguesFilename) =>
-    @locale = new Localize dialoguesFilename
+    @locale = new Localize(game.srcPath + dialoguesFilename)
 
   # Return event function by name
   #

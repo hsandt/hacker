@@ -32,10 +32,10 @@ incrementNbModulesAndStartIfReady = ->
 testGame = ->
   lang = "fr"
 
-  @game = new Game
+  @game = new Game "../../src/"
   game.initModules()
-  game.loadData "../../src/data/dialoguegraphs.json"
-  game.loadLocale "../../src/localize/#{lang}/dialogues.json"
+  game.loadData "data/dialoguegraphs.json"
+  game.loadLocale "localize/#{lang}/dialogues.json"
 
   # FIXME: load data is async so use a promise
 
@@ -60,5 +60,3 @@ testGame = ->
   # IMPROVE: timeout for the dialogue event, not the event
   setTimeout (-> game.story.start(storyGraph)), 1500  # just enough time for async load until we have promises
 
-
-""
