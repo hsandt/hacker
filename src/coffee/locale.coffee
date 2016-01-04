@@ -1,15 +1,16 @@
 class @Localize
 
   # @param dialoguesFilename [String] path of the JSON file containing all the localized dialogue lines
-  constructor: (dialoguesFilename) ->
-    $.getJSON(dialoguesFilename, @buildDialogueLines).done(-> console.log "2nd success")
-      .fail(->console.log "fail")
+  constructor: ->
+
+  loadDialogueLines: (dialoguesFilename) =>
+    $.getJSON(dialoguesFilename, @buildDialogueLines).done ->
+      console.log "[LOAD] Loaded localized dialogue lines"
 
   # Build dictionary of dialogue lines from JSON data
   #
   # @param data [dictionary] dictionary of dialogue lines with JSON data
   buildDialogueLines: (data) =>
-    console.log "1st success"
     @dialogueLines = data
 
   # Return localized string for a dialogue or text line

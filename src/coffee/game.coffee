@@ -35,6 +35,28 @@ class @Game
   constructor: (@srcPath) ->
     @audioPath = @srcPath + 'audio/'
 
+  loadModules: =>
+    self = @
+    @loadHub().done ->
+      f = @loadApps
+      console.log "[LOAD] Loaded Hub"
+      $.when.apply($, self.loadApps()).done ->
+        console.log "[Load] Loaded all apps"
+
+  loadHub: =>
+    $.get game.srcPath + "modules/hub.html", (data) ->
+      $("#content").html data
+
+  loadApps: =>
+    [
+      $.get game.srcPath + "modules/chat.html", (data) ->
+        $("#chatContent").html(data)
+        console.log "[LOAD] Loaded Chat"
+      $.get game.srcPath + "modules/terminal.html", (data) ->
+        $("#terminalContent").html(data)
+        console.log "[LOAD] Loaded Terminal"
+    ]
+
   initModules: =>
     if not game?
       throw new Error "document.game has not been defined, please create a game instance with @game = new Game first."
@@ -52,11 +74,13 @@ class @Game
   # @param dialogueFilename [String] path from src of the JSON file containing all dialogues
   loadData: (dialogueFilename) =>
     # [GameData] contains all game story data
-    @data = new GameData(game.srcPath + dialogueFilename)
+    @data = new GameData
+    @data.loadDialogueGraphs(game.srcPath + dialogueFilename)
 
   # @param dialoguesFilename [String] path from src of the JSON file containing all the localized dialogue lines
   loadLocale: (dialoguesFilename) =>
-    @locale = new Localize(game.srcPath + dialoguesFilename)
+    @locale = new Localize
+    @locale.loadDialogueLines(game.srcPath + dialoguesFilename)
 
   # Return event function by name
   #

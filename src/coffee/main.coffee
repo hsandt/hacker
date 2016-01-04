@@ -1,26 +1,6 @@
 $("document").ready ->
   console.log "[DOCUMENT] Ready"
-
-  $.get "src/modules/hub.html", (data) ->
-    $("#content").html(data)
-    console.log "DONE"
-
-    Game.nbReadyModules = 0
-
-    $.get "src/modules/chat.html", (data) ->
-      $("#chatContent").html(data)
-      console.log "CHAT DONE"
-      incrementNbModulesAndStartIfReady()
-    $.get "src/modules/terminal.html", (data) ->
-      $("#terminalContent").html(data)
-      console.log "TERMINAL DONE"
-      incrementNbModulesAndStartIfReady()
-
-incrementNbModulesAndStartIfReady = ->
-  ++Game.nbReadyModules
-  if Game.nbReadyModules == 2
-    console.log "[MODULES] Ready, start test"
-    testGame()
+  main()
 
 #  $("#content").load "src/modules/hub.html", (response, status, xhr) ->
 #    if status != "success"
@@ -29,33 +9,23 @@ incrementNbModulesAndStartIfReady = ->
 #    console.log "Loaded HTML"
 #    testHub()
 
-testGame = ->
+main = ->
   lang = "fr"
 
-  @game = new Game "src/"
-  game.initModules()
-  game.loadData "data/dialoguegraphs.json"
-  game.loadLocale "localize/#{lang}/dialogues.json"
-
-  # FIXME: load data is async so use a promise
+  @game = new Game "./"
+  moduleDeferred = game.loadModules().done ->
+    console.log "[LOAD] Loaded modules"
+    game.initModules()
+  dataDeferred = game.loadData "data/dialoguegraphs.json"
+  localeDeferred = game.loadLocale "localize/#{lang}/dialogues.json"
 
   # start story
   storyGraph = new StoryGraph
-
-  storyGraph.addNode new StoryNode("initial", (-> game.chat.startDialogueByName "mission-test.proposal"),
-    ["chapter1"]
+  storyGraph.addNode new StoryNode("initial",
+    (-> setTimeout((-> game.chat.startDialogueByName "mission-test.proposal"), 1500)),
+    ["to-be-continued"]
   )
+  storyGraph.addNode new StoryNode("to-be-continued")
 
-  storyGraph.addNode new StoryNode "chapter1", [
-    "option",
-    "ending"
-  ]
-
-  storyGraph.addNode new StoryNode "option", [
-    "ending"
-  ]
-
-  storyGraph.addNode new StoryNode "ending"
-
-  # IMPROVE: timeout for the dialogue event, not the event
-  setTimeout (-> game.story.start(storyGraph)), 1500  # just enough time for async load until we have promises
+  $.when(moduleDeferred, dataDeferred, localeDeferred).done ->
+    game.story.start storyGraph

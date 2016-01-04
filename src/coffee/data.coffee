@@ -15,6 +15,11 @@ class @GameData
   constructor: (dialogueGraphsFilename) ->
     $.getJSON dialogueGraphsFilename, @buildDialogueGraphs
 
+  # @param dialogueFilename [String] path of the JSON file containing all dialogues
+  loadDialogueGraphs: (dialogueGraphsFilename) =>
+    $.getJSON(dialogueGraphsFilename, @buildDialogueGraphs).done ->
+      console.log "[LOAD] Loaded dialogue graphs"
+
   # Build dictionary of dialogue graphs from JSON data
   #
   # @param data [dictionary] dictionary with JSON data
