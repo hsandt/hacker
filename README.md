@@ -1,4 +1,4 @@
-# hacker game
+# Cyberlepsie
 
 Web game in development for a class of narrative storytelling
 
