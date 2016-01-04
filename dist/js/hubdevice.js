@@ -21,4 +21,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=hubscreen.js.map
+//# sourceMappingURL=hubdevice.js.map
