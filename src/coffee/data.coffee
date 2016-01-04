@@ -11,9 +11,7 @@ class @GameData
     "mission-test.conclusion": ->
       game.chat.startDialogueByName "mission-test.conclusion"
 
-  # @param dialogueFilename [String] path of the JSON file containing all dialogues
-  constructor: (dialogueGraphsFilename) ->
-    $.getJSON dialogueGraphsFilename, @buildDialogueGraphs
+  constructor: () ->
 
   # @param dialogueFilename [String] path of the JSON file containing all dialogues
   loadDialogueGraphs: (dialogueGraphsFilename) =>
@@ -24,6 +22,7 @@ class @GameData
   #
   # @param data [dictionary] dictionary with JSON data
   buildDialogueGraphs: (data) =>
+#    console.log "[CALL] buildDialogueGraphs"
     @dialogueGraphs = {}
     for dialogueName, dialogueData of data
       @dialogueGraphs[dialogueName] = new DialogueGraph dialogueName

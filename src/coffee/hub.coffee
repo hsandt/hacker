@@ -7,8 +7,6 @@ class @Hub
   currentAppName: 'none'  # current app name: 'none', 'terminal', 'chat', etc.
 
   constructor: ->
-    console.log("Construct HUB")
-
     self = @
 
     # bind "open modular window" event to each monitor

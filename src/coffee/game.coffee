@@ -36,26 +36,13 @@ class @Game
     @audioPath = @srcPath + 'audio/'
 
   loadModules: =>
-    self = @
-    @loadHub().done ->
-      f = @loadApps
-      console.log "[LOAD] Loaded Hub"
-      $.when.apply($, self.loadApps()).done ->
-        console.log "[Load] Loaded all apps"
-
-  loadHub: =>
-    $.get game.srcPath + "modules/hub.html", (data) ->
-      $("#content").html data
-
-  loadApps: =>
-    [
-      $.get game.srcPath + "modules/chat.html", (data) ->
-        $("#chatContent").html(data)
-        console.log "[LOAD] Loaded Chat"
-      $.get game.srcPath + "modules/terminal.html", (data) ->
-        $("#terminalContent").html(data)
-        console.log "[LOAD] Loaded Terminal"
-    ]
+    modulePath = game.srcPath + "modules/"
+    $.when($.get(modulePath + "hub.html"), $.get(modulePath + "chat.html"), $.get(modulePath + "terminal.html"))
+      .done ([hubHTML, ...], [chatHTML, ...], [terminalHTML, ...]) ->
+        console.log "[LOAD] Loaded Hub, Chat, Terminal HTML"
+        $("#content").html hubHTML
+        $("#chatContent").html chatHTML
+        $("#terminalContent").html terminalHTML
 
   initModules: =>
     if not game?
