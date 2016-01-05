@@ -12,6 +12,8 @@
     Localize.prototype.loadDialogueLines = function(dialoguesFilename) {
       return $.getJSON(dialoguesFilename, this.buildDialogueLines).done(function() {
         return console.log("[LOAD] Loaded localized dialogue lines");
+      }).fail(function() {
+        return console.log("[LOAD] Failed loading localized dialogues");
       });
     };
 

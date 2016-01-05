@@ -1,104 +1,300 @@
 {
-    "mission-test.proposal": {
-        "initial": {
-            "type": "text",
-            "lines": ["mt1_d1_01"],
-            "successor": "break"
-        },
-        "break": {
-            "type": "wait",
-            "time": 1,
-            "successor": "accept1*"
-        },
-        "accept1*": {
-            "type": "choice hub",
-            "choices": ["what?!", "refuse!"]
-        },
-        "what?!": {
-            "type": "choice",
-            "lines": ["mt1_d1_02"],
-            "successor": "order"
-        },
-        "refuse!": {
-            "type": "choice",
-            "lines": [
-                "mt1_d1_03",
-                "mt1_d1_04"
-            ],
-            "successor": "goodbye"
-        },
-        "goodbye": {
-            "type": "text",
-            "lines": ["mt1_d1_05"],
-            "successor": null
-        },
-        "order": {
-            "type": "text",
-            "lines": ["mt1_d1_06", "mt1_d1_07"],
-            "successor": "accept2*"
-        },
-        "accept2*": {
-            "type": "choice hub",
-            "choices": ["accept!", "refuse!"]
-        },
-        "accept!": {
-            "type": "choice",
-            "lines": [
-                "mt1_d1_10",
-                "mt1_d1_11"
-            ],
-            "successor": "briefing"
-        },
-        "briefing": {
-            "type": "text",
-            "lines": [
-                "mt1_d1_08",
-                "mt1_d1_09"
-            ],
-            "successor": "start"
-        },
-        "start": {
-            "type": "event",
-            "eventName": "mission-test.start",
-            "successor": null
-        }
+  "mission-test.proposal": {
+    "initial": {
+      "type": "text",
+      "lines": ["mt1_d1_01"],
+      "successor": "break"
     },
-    "mission-test.conclusion": {
-        "initial": {
-            "type": "text",
-            "lines": ["mt1_d2_01"],
-            "successor": "john*"
-        },
-        "john*": {
-            "type": "choice hub",
-            "choices": ["traitor!", "clean!"]
-        },
-        "traitor!": {
-            "type": "choice",
-            "lines": ["mt1_d2_02"],
-            "successor": "knew"
-        },
-        "clean!": {
-            "type": "choice",
-            "lines": ["mt1_d2_03"],
-            "successor": "see"
-        },
-        "knew": {
-            "type": "text",
-            "lines": ["mt1_d2_04"],
-            "successor": "reward"
-        },
-        "see": {
-            "type": "text",
-            "lines": ["mt1_d2_05"],
-            "successor": "reward"
-        },
-        "reward": {
-            "type": "text",
-            "lines": ["mt1_d2_06"],
-            "successor": null
-        }
+    "break": {
+      "type": "wait",
+      "time": 1,
+      "successor": "accept1*"
     },
-    "mission-tutorial.proposal": {
+    "accept1*": {
+      "type": "choice hub",
+      "choices": ["what?!", "refuse!"]
+    },
+    "what?!": {
+      "type": "choice",
+      "lines": ["mt1_d1_02"],
+      "successor": "order"
+    },
+    "refuse!": {
+      "type": "choice",
+      "lines": [
+        "mt1_d1_03",
+        "mt1_d1_04"
+      ],
+      "successor": "goodbye"
+    },
+    "goodbye": {
+      "type": "text",
+      "lines": ["mt1_d1_05"],
+      "successor": null
+    },
+    "order": {
+      "type": "text",
+      "lines": ["mt1_d1_06", "mt1_d1_07"],
+      "successor": "accept2*"
+    },
+    "accept2*": {
+      "type": "choice hub",
+      "choices": ["accept!", "refuse!"]
+    },
+    "accept!": {
+      "type": "choice",
+      "lines": [
+        "mt1_d1_10",
+        "mt1_d1_11"
+      ],
+      "successor": "briefing"
+    },
+    "briefing": {
+      "type": "text",
+      "lines": [
+        "mt1_d1_08",
+        "mt1_d1_09"
+      ],
+      "successor": "start"
+    },
+    "start": {
+      "type": "event",
+      "eventName": "mission-test.start",
+      "successor": null
     }
+  },
+  "mission-test.conclusion": {
+    "initial": {
+      "type": "text",
+      "lines": ["mt1_d2_01"],
+      "successor": "john*"
+    },
+    "john*": {
+      "type": "choice hub",
+      "choices": ["traitor!", "clean!"]
+    },
+    "traitor!": {
+      "type": "choice",
+      "lines": ["mt1_d2_02"],
+      "successor": "knew"
+    },
+    "clean!": {
+      "type": "choice",
+      "lines": ["mt1_d2_03"],
+      "successor": "see"
+    },
+    "knew": {
+      "type": "text",
+      "lines": ["mt1_d2_04"],
+      "successor": "reward"
+    },
+    "see": {
+      "type": "text",
+      "lines": ["mt1_d2_05"],
+      "successor": "reward"
+    },
+    "reward": {
+      "type": "text",
+      "lines": ["mt1_d2_06"],
+      "successor": null
+    }
+  },
+  "mission-tutorial.proposal": {
+    "initial": {
+      "type": "text",
+      "lines": ["mk1_d1_01"],
+      "successor": "prop1"
+    },
+    "prop1": {
+      "type": "text",
+      "lines": ["mk1_d1_02"],
+      "successor": "prop2",
+      "speaker": "me"
+    },
+    "prop2": {
+      "type": "text",
+      "lines": ["mk1_d1_03", "mk1_d1_04"],
+      "successor": "question1*"
+    },
+    "question1*": {
+      "type": "choice hub",
+      "choices": ["fingerprint?!", "key?!", "people?!"]
+    },
+    "fingerprint?!": {
+      "type": "choice",
+      "lines": ["mk1_d1_05"],
+      "successor": "fingerprint1"
+    },
+    "key?!": {
+      "type": "choice",
+      "lines": ["mk1_d1_06"],
+      "successor": "key1"
+    },
+    "people?!": {
+      "type": "choice",
+      "lines": ["mk1_d1_07"],
+      "successor": "people1"
+    },
+    "fingerprint1": {
+      "type": "text",
+      "lines": ["mk1_d1_08"],
+      "successor": "fingerprint2"
+    },
+    "fingerprint2": {
+      "type": "text",
+      "lines": ["mk1_d1_09"],
+      "successor": "question1*",
+      "speaker": "me"
+    },
+    "people1": {
+      "type": "text",
+      "lines": ["mk1_d1_10"],
+      "successor": "people2"
+    },
+    "people2": {
+      "type": "text",
+      "lines": ["mk1_d1_11"],
+      "successor": "question1*",
+      "speaker": "me"
+    },
+    "key1": {
+      "type": "text",
+      "lines": ["mk1_d1_12", "mk1_d1_13", "mk1_d1_14"],
+      "successor": "key2"
+    },
+    "key2": {
+      "type": "text",
+      "lines": ["mk1_d1_15"],
+      "successor": "question2*",
+      "speaker": "me"
+    },
+    "question2*": {
+      "type": "choice hub",
+      "choices": ["name?!", "find?!", "id?!"]
+    },
+    "name?!": {
+      "type": "choice",
+      "lines": ["mk1_d1_16"],
+      "successor": "name1"
+    },
+    "find?!": {
+      "type": "choice",
+      "lines": ["mk1_d1_17"],
+      "successor": "find1"
+    },
+    "id?!": {
+      "type": "choice",
+      "lines": ["mk1_d1_18"],
+      "successor": "id1"
+    },
+    "name1": {
+      "type": "text",
+      "lines": ["mk1_d1_19"],
+      "successor": "question2*"
+    },
+    "find1": {
+      "type": "text",
+      "lines": ["mk1_d1_20", "mk1_d1_21"],
+      "successor": "find2"
+    },
+    "find2": {
+      "type": "text",
+      "lines": ["mk1_d1_22"],
+      "successor": "find3",
+      "speaker": "me"
+    },
+    "find3": {
+      "type": "text",
+      "lines": ["mk1_d1_23"],
+      "successor": "question2*"
+    },
+    "id1": {
+      "type": "text",
+      "lines": ["mk1_d1_24", "mk1_d1_25"],
+      "successor": "question2*"
+    }
+  },
+  "mission-tutorial.conclusion": {
+    "initial": {
+      "type": "choice hub",
+      "choices": ["found!"]
+    },
+    "found!": {
+      "type": "choice",
+      "lines": ["mk1_d2_01", "mk1_d2_02"],
+      "successor": "found1"
+    },
+    "found1": {
+      "type": "text",
+      "lines": ["mk1_d2_03"],
+      "successor": "how?"
+    },
+    "how?": {
+      "type": "text",
+      "lines": ["mk1_d2_04"],
+      "successor": "how*"
+    },
+    "how*": {
+      "type": "choice hub",
+      "choices": ["hacked!", "always!", "secret!"]
+    },
+    "hacked!": {
+      "type": "choice",
+      "lines": ["mk1_d2_05"],
+      "successor": "hacked1"
+    },
+    "always!": {
+      "type": "choice",
+      "lines": ["mk1_d2_06"],
+      "successor": "always1"
+    },
+    "secret!": {
+      "type": "text",
+      "lines": ["mk1_d2_07"],
+      "successor": "secret1"
+    },
+    "hacked1": {
+      "type": "text",
+      "lines": ["mk1_d2_08", "mk1_d2_09"],
+      "successor": "hacked2"
+    },
+    "hacked2": {
+      "type": "text",
+      "lines": ["mk1_d2_10"],
+      "successor": "hacked3",
+      "speaker": "me"
+    },
+    "hacked3": {
+      "type": "text",
+      "lines": ["mk1_d2_11"],
+      "successor": "goodbye1"
+    },
+    "always1": {
+      "type": "text",
+      "lines": ["mk1_d2_12"],
+      "successor": "always2"
+    },
+    "always2": {
+      "type": "text",
+      "lines": ["mk1_d2_13"],
+      "successor": "goodbye1",
+      "speaker": "me"
+    },
+    "secret1": {
+      "type": "text",
+      "lines": ["mk1_d2_14"],
+      "successor": "goodbye1"
+    },
+    "goodbye1": {
+      "type": "text",
+      "lines": ["mk1_d2_15"],
+      "successor": "goodbye2"
+    },
+    "goodbye2": {
+      "type": "text",
+      "lines": ["mk1_d2_16"],
+      "successor": null,
+      "speaker": "me"
+    }
+  }
 }

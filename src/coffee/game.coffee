@@ -6,6 +6,8 @@ class @Game
 
   apps: {}
 
+  bgm: "bgm.mp3"
+
   # dictionary of serverID [string]: server [Server]
   servers:
     "local": new Server "local", "456.231.24.57",
@@ -97,3 +99,7 @@ class @Game
   triggerEvent: (name) =>
     @data.eventFunctions[name]()
 
+  playBGM: () =>
+    bgmAudio = new Audio
+    bgmAudio.src = game.audioPath + 'bgm/' + @bgm
+    bgmAudio.play()

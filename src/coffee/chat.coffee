@@ -2,6 +2,10 @@ class @ChatDevice extends HubDevice
 
   constructor: ($device) ->
     super $device
+
+    @phoneAudio = new Audio
+    @phoneAudio.src = game.audioPath + 'sfx/phone_notification.mp3'
+
     $device.addClass "notify-off"
 
   # If active is true, show a visual cue to notify the player that something new has happened
@@ -16,10 +20,11 @@ class @ChatDevice extends HubDevice
     @$device.addClass "notify-#{state}"
 
     if state == "on"
-      phoneAudio = new Audio
-      phoneAudio.src = game.audioPath + 'sfx/phone_notification.wav'
-      phoneAudio.play()
+      @phoneAudio.play()
 
+    else
+      @phoneAudio.pause()
+      @phoneAudio.currentTime = 0
 
 class @Chat extends App
 
@@ -46,7 +51,13 @@ class @Chat extends App
     @dialogueGraph = null
     @currentDialogueNode = null
 
-  # Start a dialogue graph stored in game data, by name
+  onOpen: =>
+    @device.notify "off"
+
+  onClose: =>
+
+
+# Start a dialogue graph stored in game data, by name
   #
   # @param dialogueName [String] name of the dialogue stored in game data
   startDialogueByName: (dialogueName) =>

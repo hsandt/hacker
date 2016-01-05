@@ -7,11 +7,19 @@
 
     Hub.prototype.currentAppName = 'none';
 
-    function Hub() {
+    function Hub($screens, $desk) {
+      var $dialog, deskImage, dialogAppName, dialogFx, dlgtrigger, element, i, j, len, ref, screensImage, self;
+      this.$screens = $screens;
+      this.$desk = $desk;
       this._onClose = bind(this._onClose, this);
       this._onOpen = bind(this._onOpen, this);
-      var $dialog, dialogAppName, dialogFx, dlgtrigger, element, i, j, len, ref, self;
       self = this;
+      screensImage = new Image;
+      screensImage.src = game.imagePath + 'screens.png';
+      this.$screens.prepend(screensImage);
+      deskImage = new Image;
+      deskImage.src = game.imagePath + 'desk.png';
+      this.$desk.prepend(deskImage);
       dlgtrigger = $('[data-dialog]');
       ref = dlgtrigger.toArray();
       for (i = j = 0, len = ref.length; j < len; i = ++j) {

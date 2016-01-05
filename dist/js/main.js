@@ -18,8 +18,10 @@
     localeDeferred = game.loadLocale("localize/" + lang + "/dialogues.json");
     storyGraph = new StoryGraph;
     storyGraph.addNode(new StoryNode("initial", (function() {
+      console.log("story start");
+      game.playBGM();
       return setTimeout((function() {
-        return game.phone.startDialogueByName("mission-test.proposal");
+        return game.phone.startDialogueByName("mission-tutorial.proposal");
       }), 1500);
     }), ["to-be-continued"]));
     storyGraph.addNode(new StoryNode("to-be-continued"));
