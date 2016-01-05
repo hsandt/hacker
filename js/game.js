@@ -94,5 +94,3 @@
   })();
 
 }).call(this);
-
-//# sourceMappingURL=game.js.map

@@ -22,7 +22,7 @@
       game.playBGM();
       return setTimeout((function() {
         return game.phone.startDialogueByName("mission-tutorial.proposal");
-      }), 1500);
+      }), 2000);
     }), ["to-be-continued"]));
     storyGraph.addNode(new StoryNode("to-be-continued"));
     return $.when(loadHTMLDeferred, dataDeferred, localeDeferred).done(function() {
@@ -31,5 +31,3 @@
   };
 
 }).call(this);
-
-//# sourceMappingURL=main.js.map

@@ -241,17 +241,16 @@
       for (i = 0, len = ref.length; i < len; i++) {
         lineID = ref[i];
         line = game.locale.getLine(lineID);
+        totalTime += 2000 + 20 * line.length;
         if (this.speaker === "other") {
           setTimeout((function(line) {
             return function() {
-              console.log(1);
               return chat.receiveMessage(line);
             };
           })(line), totalTime);
         } else if (this.speaker === "me") {
           setTimeout((function(line) {
             return function() {
-              console.log(2);
               return chat.sendMessage(line);
             };
           })(line), totalTime);
@@ -259,11 +258,12 @@
           throw new Error("Unknown speaker type " + this.speaker);
         }
       }
-      return setTimeout((function(_this) {
+      console.log(totalTime);
+      return setTimeout(((function(_this) {
         return function() {
-          return chat.enterDialogueNode(_this.successor, totalTime);
+          return chat.enterDialogueNode(_this.successor);
         };
-      })(this));
+      })(this)), totalTime);
     };
 
     return DialogueText;
@@ -395,5 +395,3 @@
   })(Chat);
 
 }).call(this);
-
-//# sourceMappingURL=chat.js.map

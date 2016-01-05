@@ -20,5 +20,3 @@
   })();
 
 }).call(this);
-
-//# sourceMappingURL=hubdevice.js.map

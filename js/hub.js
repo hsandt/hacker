@@ -70,5 +70,3 @@
   })();
 
 }).call(this);
-
-//# sourceMappingURL=hub.js.map
