@@ -37,11 +37,11 @@ class @Game
 
   loadModules: =>
     modulePath = game.srcPath + "modules/"
-    $.when($.get(modulePath + "hub.html"), $.get(modulePath + "chat.html"), $.get(modulePath + "terminal.html"))
-      .done ([hubHTML, ...], [chatHTML, ...], [terminalHTML, ...]) ->
-        console.log "[LOAD] Loaded Hub, Chat, Terminal HTML"
+    $.when($.get(modulePath + "hub.html"), $.get(modulePath + "phone.html"), $.get(modulePath + "terminal.html"))
+      .done ([hubHTML, ...], [phoneHTML, ...], [terminalHTML, ...]) ->
+        console.log "[LOAD] Loaded Hub, Phone, Terminal HTML"
         $("#content").html hubHTML
-        $("#chatContent").html chatHTML
+        $("#phoneContent").html phoneHTML
         $("#terminalContent").html terminalHTML
 
   initModules: =>
@@ -49,8 +49,8 @@ class @Game
       throw new Error "document.game has not been defined, please create a game instance with @game = new Game first."
     @hub = new Hub
     @terminal = @apps['terminal'] = new Terminal $("#terminal-screen"), $("#terminal-device")
-    @chat = @apps['chat'] = new Chat $("#chat-screen"), $("#chat-device")
-    @apps['phone'] = new App null, null
+    @phone = @apps['phone'] = new Phone $("#phone-screen"), $("#phone-device")
+    @apps['chat'] = new App null, null
     @apps['memo'] = new App null, null
     @apps['other'] = new App null, null
     @apps['news'] = new App null, null

@@ -26,14 +26,16 @@ class @Chat extends App
   # [int] index of next message to receive
   nextIncomingMessageIdx: 0
 
+  appName: "N/A"
+
   constructor: ($screen, $device) ->
     super $screen, $device
     @device = new ChatDevice $device
 
     # jQuery element for the list of messages
-    @$chatHistory = $screen.find ".chat-history"
+    @$chatHistory = $screen.find ".history"
     @$chatHistoryList = @$chatHistory.find "ul"
-    @$chatInput = $screen.find ".chat-input"
+    @$chatInput = $screen.find ".input"
     @$chatInputList = @$chatInput.find "ul"
 
     @receivedMessageTemplate = Handlebars.compile $("#message-received-template").html()
@@ -96,7 +98,7 @@ class @Chat extends App
   # @param message [String] message received
   receiveMessage: (message) =>
     # show phone notification on hub if the player is not already viewing the phone
-    if game.hub.currentAppName != 'chat'  # and phone for the phone
+    if game.hub.currentAppName != @appName  # "irc" for IRC, "phone" for the phone
       @device.notify()
     @printMessage message, @receivedMessageTemplate
 
@@ -268,3 +270,8 @@ class @DialogueWait extends DialogueNode
     # for WAIT node, wait given time and go to next node
     console.log @waitTime
     setTimeout (=> chat.enterDialogueNode @successor), @waitTime
+
+
+class @Phone extends Chat
+
+  appName: "phone"

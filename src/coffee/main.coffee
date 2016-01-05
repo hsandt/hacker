@@ -15,7 +15,7 @@ main = ->
   # start story
   storyGraph = new StoryGraph
   storyGraph.addNode new StoryNode("initial",
-    (-> setTimeout((-> game.chat.startDialogueByName "mission-test.proposal"), 1500)),
+    (-> setTimeout((-> game.phone.startDialogueByName "mission-test.proposal"), 1500)),
     ["to-be-continued"]
   )
   storyGraph.addNode new StoryNode("to-be-continued")
