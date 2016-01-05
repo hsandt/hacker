@@ -42,7 +42,7 @@ testGame = ->
   # start story
   storyGraph = new StoryGraph
 
-  storyGraph.addNode new StoryNode("initial", (-> game.chat.startDialogueByName "mission-test.proposal"),
+  storyGraph.addNode new StoryNode("initial", (-> game.chat.startDialogueByName "mission-tutorial.proposal"),
     ["chapter1"]
   )
 
