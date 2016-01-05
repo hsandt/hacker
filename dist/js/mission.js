@@ -12,5 +12,3 @@
   })();
 
 }).call(this);
-
-//# sourceMappingURL=mission.js.map

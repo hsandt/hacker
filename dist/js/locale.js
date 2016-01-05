@@ -32,5 +32,3 @@
   })();
 
 }).call(this);
-
-//# sourceMappingURL=locale.js.map

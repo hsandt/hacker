@@ -89,5 +89,3 @@
   })();
 
 }).call(this);
-
-//# sourceMappingURL=story.js.map
