@@ -1,16 +1,24 @@
-$ ->
-  console.log "[GAME] Ready"
+$("document").ready ->
+  console.log "[DOCUMENT] Ready"
+  main()
 
-  $("#content").load "modules/testchat.html", (response, status, xhr) ->
-    if status == "success"
-      console.log "YES"
+main = ->
+  lang = "fr"
 
-      chat = new Chat $("#chat-screen")
-      console.log String(chat)
-    else
-      console.log "NO"
+  @game = new Game "./"
 
+  loadHTMLDeferred = game.loadModules().done ->
+    game.initModules()
+  dataDeferred = game.loadData "data/dialoguegraphs.json"
+  localeDeferred = game.loadLocale "localize/#{lang}/dialogues.json"
 
-#  chat.receiveAllMessages 3, 2000
-#  chat.showMessageInputChoiceList()
+  # start story
+  storyGraph = new StoryGraph
+  storyGraph.addNode new StoryNode("initial",
+    (-> setTimeout((-> game.phone.startDialogueByName "mission-test.proposal"), 1500)),
+    ["to-be-continued"]
+  )
+  storyGraph.addNode new StoryNode("to-be-continued")
 
+  $.when(loadHTMLDeferred, dataDeferred, localeDeferred).done ->
+    game.story.start storyGraph

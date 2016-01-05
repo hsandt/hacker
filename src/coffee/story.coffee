@@ -54,6 +54,7 @@ class @Story
 
   # @param storyGraph [StoryGraph] story graph of the entire game
   start: (storyGraph) =>
+    console.log "[STORY] Start"
     @storyGraph = storyGraph
     @enterNode storyGraph.getInitialNode()
 

@@ -99,7 +99,7 @@ gulp.task('copy:license', function () {
 
 gulp.task('copy:main.css', function () {
 
-    var banner = '/*! HTML5 Boilerplate v' + pkg.version +
+    var banner = '/*! Cyberlepsie v' + pkg.version +
                     ' | ' + pkg.license.type + ' License' +
                     ' | ' + pkg.homepage + ' */\n\n';
 
@@ -121,7 +121,20 @@ gulp.task('copy:misc', function () {
         // Exclude the following files
         // (other tasks will handle the copying of these files)
         '!' + dirs.src + '/css/main.css',
-        '!' + dirs.src + '/index.html'
+        '!' + dirs.src + '/index.html',
+
+        // Exclude dev files to compile (coffee + map and sass)
+        '!' + dirs.src + '/coffee',
+        '!' + dirs.src + '/coffee/*',
+        '!' + dirs.src + '/js/*.js.map',
+        '!' + dirs.src + '/stylesheets/main.sass',
+        '!' + dirs.src + '/stylesheets/partials',
+        '!' + dirs.src + '/stylesheets/partials/*',
+        '!' + dirs.src + '/**/less',
+        '!' + dirs.src + '/**/less/*',
+        '!' + dirs.src + '/**/*.less',
+        '!' + dirs.src + '/**/scss',
+        '!' + dirs.src + '/**/scss/*',
 
     ], {
 
@@ -162,7 +175,8 @@ gulp.task('archive', function (done) {
 
 gulp.task('build', function (done) {
     runSequence(
-        ['clean', 'lint:js'],
+        //['clean', 'lint:js'],
+        'clean',
         'copy',
     done);
 });

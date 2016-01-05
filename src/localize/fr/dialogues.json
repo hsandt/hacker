@@ -1,0 +1,29 @@
+{
+  "mt1": {
+    "d1": {
+      "01": "Hi! I have a mission for you. Right now.",
+      "02": "What is it?",
+      "03": "I refuse!",
+      "04": "Go to hell!",
+      "05": "Goodbye, then.",
+      "06": "I have doubts about what my employee John did yesterday.",
+      "07": "You have to find out what by hacking into our servers.",
+      "08": "You have to hack into Moogle's server and tell me what John did yesterday.",
+      "09": "Tell me when you found something.",
+      "10": "I accept.",
+      "11": "How should I start?"
+    },
+    "d2": {
+      "01": "So, have you found anything on John?",
+      "02": "Yes, John is a traitor.",
+      "03": "No, John seems to be clean.",
+      "04": "I knew it!",
+      "05": "I see...",
+      "06": "Anyway, here is your reward."
+    },
+    "t1": {
+      "01": "I went to the cinema the other day. If you could see my boss, he was just crazy!",
+      "02": "I told him I had an important meeting with an ex-collaborator."
+    }
+  }
+}

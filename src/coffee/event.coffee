@@ -3,3 +3,4 @@ eventCallbacks =
   "accept mission": (missionTitle) ->
 
   "mission01.": 46
+ 

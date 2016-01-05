@@ -89,7 +89,7 @@ archive
 #node_modules
 
 # No need for dist until production
-/dist/
+#/dist/
 
 # Ignore JS files compiled with CoffeeScript
 /src/js/*.js

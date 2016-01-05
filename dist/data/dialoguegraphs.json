@@ -1,0 +1,104 @@
+{
+    "mission-test.proposal": {
+        "initial": {
+            "type": "text",
+            "lines": ["mt1_d1_01"],
+            "successor": "break"
+        },
+        "break": {
+            "type": "wait",
+            "time": 1,
+            "successor": "accept1*"
+        },
+        "accept1*": {
+            "type": "choice hub",
+            "choices": ["what?!", "refuse!"]
+        },
+        "what?!": {
+            "type": "choice",
+            "lines": ["mt1_d1_02"],
+            "successor": "order"
+        },
+        "refuse!": {
+            "type": "choice",
+            "lines": [
+                "mt1_d1_03",
+                "mt1_d1_04"
+            ],
+            "successor": "goodbye"
+        },
+        "goodbye": {
+            "type": "text",
+            "lines": ["mt1_d1_05"],
+            "successor": null
+        },
+        "order": {
+            "type": "text",
+            "lines": ["mt1_d1_06", "mt1_d1_07"],
+            "successor": "accept2*"
+        },
+        "accept2*": {
+            "type": "choice hub",
+            "choices": ["accept!", "refuse!"]
+        },
+        "accept!": {
+            "type": "choice",
+            "lines": [
+                "mt1_d1_10",
+                "mt1_d1_11"
+            ],
+            "successor": "briefing"
+        },
+        "briefing": {
+            "type": "text",
+            "lines": [
+                "mt1_d1_08",
+                "mt1_d1_09"
+            ],
+            "successor": "start"
+        },
+        "start": {
+            "type": "event",
+            "eventName": "mission-test.start",
+            "successor": null
+        }
+    },
+    "mission-test.conclusion": {
+        "initial": {
+            "type": "text",
+            "lines": ["mt1_d2_01"],
+            "successor": "john*"
+        },
+        "john*": {
+            "type": "choice hub",
+            "choices": ["traitor!", "clean!"]
+        },
+        "traitor!": {
+            "type": "choice",
+            "lines": ["mt1_d2_02"],
+            "successor": "knew"
+        },
+        "clean!": {
+            "type": "choice",
+            "lines": ["mt1_d2_03"],
+            "successor": "see"
+        },
+        "knew": {
+            "type": "text",
+            "lines": ["mt1_d2_04"],
+            "successor": "reward"
+        },
+        "see": {
+            "type": "text",
+            "lines": ["mt1_d2_05"],
+            "successor": "reward"
+        },
+        "reward": {
+            "type": "text",
+            "lines": ["mt1_d2_06"],
+            "successor": null
+        }
+    },
+    "mission-tutorial.proposal": {
+    }
+}

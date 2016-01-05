@@ -4,7 +4,7 @@ class @ChatDevice extends HubDevice
     super $device
     $device.addClass "notify-off"
 
-# If active is true, show a visual cue to notify the player that something new has happened
+  # If active is true, show a visual cue to notify the player that something new has happened
   # If active is false, stop showing visual cue for new events
   notify: (state = "on") =>
     if !(state in ["on", "off"])
@@ -17,7 +17,7 @@ class @ChatDevice extends HubDevice
 
     if state == "on"
       phoneAudio = new Audio
-      phoneAudio.src = '../../src/audio/sfx/phone_notification.wav'
+      phoneAudio.src = game.audioPath + 'sfx/phone_notification.wav'
       phoneAudio.play()
 
 
@@ -26,14 +26,16 @@ class @Chat extends App
   # [int] index of next message to receive
   nextIncomingMessageIdx: 0
 
+  appName: "N/A"
+
   constructor: ($screen, $device) ->
     super $screen, $device
     @device = new ChatDevice $device
 
     # jQuery element for the list of messages
-    @$chatHistory = $screen.find ".chat-history"
+    @$chatHistory = $screen.find ".history"
     @$chatHistoryList = @$chatHistory.find "ul"
-    @$chatInput = $screen.find ".chat-input"
+    @$chatInput = $screen.find ".input"
     @$chatInputList = @$chatInput.find "ul"
 
     @receivedMessageTemplate = Handlebars.compile $("#message-received-template").html()
@@ -48,7 +50,7 @@ class @Chat extends App
   #
   # @param dialogueName [String] name of the dialogue stored in game data
   startDialogueByName: (dialogueName) =>
-    @startDialogue game.data.dialogues[dialogueName]
+    @startDialogue game.data.dialogueGraphs[dialogueName]
 
   # Start a dialogue graph
   #
@@ -57,9 +59,6 @@ class @Chat extends App
     @dialogueGraph = dialogueGraph
     initialNode = dialogueGraph.getInitialNode()
     @enterDialogueNode initialNode
-    # show phone notification on hub if the NPC starts the dialogue
-    if initialNode.type == "text"
-      @device.notify()
 
   # Continue dialogue on given node, by name, or do nothing if nodeName is null
   #
@@ -68,39 +67,16 @@ class @Chat extends App
     if nodeName?
       @enterDialogueNode @dialogueGraph.getNode(nodeName)
 
-  # Continue dialogue on given node
+  # Continue dialogue on given node, end if node is null
   #
   # @param dialogueNode [DialogueNode] node to enter
   enterDialogueNode: (dialogueNode) =>
     @currentDialogueNode = dialogueNode
-
-    switch dialogueNode.type
-
-      when "text"
-        # for TEXT nodes, receive all messages in the node
-        for line in dialogueNode.lines
-          @receiveMessage line
-        # go to next node
-        @enterDialogueNode dialogueNode.successor
-
-      when "choice hub"
-        # for CHOICE HUB nodes, display available choices
-        @showChoices dialogueNode.choices
-
-      when "choice"
-        # for CHOICE node, remove choices, send choice messages and trigger associated effects
-        @hideMessageChoices()
-        for line in dialogueNode.lines
-          @sendMessage line
-        @enterDialogueNode dialogueNode.successor
-
-      when "event"
-        # for EVENT node, call the event function and go to next node
-        dialogueNode.eventFunction()
-        @enterDialogueNode dialogueNode.successor
-
-      else
-        throw new Error "Node #{dialogueNode.name} has unknown type #{dialogueNode.type}"
+    # if node is null, end dialogue, else enter node
+    if dialogueNode?
+      dialogueNode.onEnter @
+    else
+      @dialogueGraph = null
 
   # Choose given choice, triggering all associated events
   #
@@ -121,6 +97,9 @@ class @Chat extends App
   #
   # @param message [String] message received
   receiveMessage: (message) =>
+    # show phone notification on hub if the player is not already viewing the phone
+    if game.hub.currentAppName != @appName  # "irc" for IRC, "phone" for the phone
+      @device.notify()
     @printMessage message, @receivedMessageTemplate
 
   # Print message from character in chat
@@ -147,7 +126,8 @@ class @Chat extends App
       if not choice?
         throw new Error "Could not find choice node #{choice.name} in dialogue #{dialogueGraph.name}"
       # create <li> jQuery element from template
-      choiceEntry = $(@messageChoiceTemplate(choiceMessage: choice.lines[0]))
+      localizedLine = game.locale.getLine choice.lines[0]  # first line is representative for choice
+      choiceEntry = $(@messageChoiceTemplate(choiceMessage: localizedLine))
       # add onclick event with choice inside forEach's closure
       choiceEntry.click => @choose choice
       @$chatInputList.append choiceEntry
@@ -196,6 +176,11 @@ class @DialogueNode
   # @param type [String] node type: "text", "choice hub" or "choice" (redundant but convenient)
   constructor: (@name, @type) ->
 
+  # Function called when the node is entered. Contains all the node's logic
+  #
+  # @param chat [Chat] chat managing the dialogue
+  onEnter: (chat) =>
+    throw new Error "onEnter is not defined for an abstract DialogueNode"
 
 class @DialogueText extends DialogueNode
 
@@ -210,6 +195,14 @@ class @DialogueText extends DialogueNode
   toString: =>
     "DialogueText #{@name} -> #{if @successor? then @successor.name else "END"}"
 
+  onEnter: (chat) =>
+    # for TEXT nodes, receive all messages in the node
+    for lineID in @lines
+      chat.receiveMessage game.locale.getLine(lineID)
+    # go to next node
+    chat.enterDialogueNode @successor
+
+
 class @DialogueChoiceHub extends DialogueNode
 
   # @param name [String] string identifier
@@ -220,6 +213,10 @@ class @DialogueChoiceHub extends DialogueNode
   toString: =>
     "DialogueChoiceHub #{@name} -> #{@choices.map((e)->e.name).join(", ")}"
 
+  onEnter: (chat) =>
+    # for CHOICE HUB nodes, display available choices
+    chat.showChoices @choices
+
 class @DialogueChoice extends DialogueNode
 
   # @param name [String] string identifier
@@ -229,7 +226,15 @@ class @DialogueChoice extends DialogueNode
     super name, "choice"
 
   toString: =>
-    "DialogueChoice #{@name} -> #{if @successor? then @successor.name else "END"}"
+    "DialogueChoice #{@name} '#{@lines.join("; ")}' -> #{if @successor? then @successor.name else "END"}"
+
+  onEnter: (chat) =>
+    # for CHOICE node, remove choices, send choice messages and trigger associated effects
+    chat.hideMessageChoices()
+    for lineID in @lines
+      chat.sendMessage game.locale.getLine(lineID)
+    chat.enterDialogueNode @successor
+
 
 # Special dialogue node that calls an event function and immediately goes to the next node
 class @DialogueEvent extends DialogueNode
@@ -242,3 +247,31 @@ class @DialogueEvent extends DialogueNode
 
   toString: =>
     "DialogueEvent #{@name} -> #{if @successor? then @successor.name else "END"}"
+
+  onEnter: (chat) =>
+    # for EVENT node, call the event function and go to next node
+    @eventFunction()
+    chat.enterDialogueNode @successor
+
+
+# Node to wait between two nodes; useful to emphasize break in a conversation
+class @DialogueWait extends DialogueNode
+
+  # @param name [String] string identifier
+  # @param waitTime [float] time to wait in ms
+  # @param successor [DialogueNode] successor node
+  constructor: (name, @waitTime, @successor) ->
+    super name, "wait"
+
+  toString: =>
+    "DialogueWait #{@name} (#{@waitTime} ms) -> #{if @successor? then @successor.name else "END"}"
+
+  onEnter: (chat) =>
+    # for WAIT node, wait given time and go to next node
+    console.log @waitTime
+    setTimeout (=> chat.enterDialogueNode @successor), @waitTime
+
+
+class @Phone extends Chat
+
+  appName: "phone"

@@ -1,0 +1,147 @@
+ul
+  list-style-type: none
+
+.phone-screen
+  background: #ffffff
+  margin: 0 auto
+  width: 400px
+  border: 1px solid black
+  color: black
+  text-align: left
+
+  .header
+    background-color: #bef4fe
+    padding: 20px
+
+  .history
+    /*display: flex;  !* removes whitespace *!*/
+    background-color: #ffffff
+    padding: 30px 30px 20px
+    margin-top: 0
+    border-top: 2px solid #000000
+    border-bottom: 2px solid #000000
+    height: 500px
+    overflow-y: scroll
+    /*vertical-align: top;*/
+
+  .input
+    height: 100px
+
+.message-data
+  margin-bottom: 10px
+
+span.message-data-time
+  font-style: italic
+  font-size: smaller
+  color: grey
+
+.message
+  color: white
+  padding: 10px 20px
+  line-height: 150%
+  font-size: 16px
+  border-radius: 7px
+  margin-bottom: 20px
+  /*display: flex;*
+  width: 90%
+  position: relative
+
+/* speech bubble triangle trick: bottom border limited by left and right invisible borders is  a trapezoid,
+    and an empty string shortens it back to a triangle */
+.message:after
+  bottom: 100%
+  left: 7%
+  border: solid transparent
+  content: " "
+  /*height: 0;*
+  /*width: 0;*
+  position: absolute
+  /*pointer-events: none;*
+  border-bottom-color: green
+  border-width: 10px
+  margin-left: -10px
+
+.my-message
+  background: green
+
+.other-message
+  background: blue
+
+.other-message:after
+  border-bottom-color: blue
+  left: 93%
+
+.avatar
+  width: 40px
+
+  img
+    width: 40px
+    display: block
+
+.self
+  /* switch horizontal layout */
+  justify-content: flex-end
+  /* switch vertical layout */
+  align-items: flex-end
+
+//.phone-message
+//  padding: 20px
+//
+//  textarea
+//    width: 100%
+//    border: none
+//    padding: 10px 20px
+//    font: 14px/18px Verdana
+//    color: black
+//    /*background-color: white;*/
+//    margin-bottom: 10px
+//    border-radius: 8px
+//    resize: none
+//
+//  button
+//    float: right
+//    color: #00A000
+//    font-size: 18px
+//    text-transform: uppercase
+//    border: none
+//    cursor: pointer
+//    font-weight: bold
+//    background: whitesmoke
+//
+//  button:hover
+//    color: red
+
+.online
+  color: green
+
+.offline
+  color: orange
+
+.me
+  color: blue
+
+.align-right
+  text-align: right
+
+.clearfix:after
+  visibility: hidden
+  display: block
+  font-size: 0
+  content: " "
+  clear: both
+  height: 0
+
+ul.message-input-choice-list
+  list-style-type: decimal
+
+li.message-choice
+  cursor: pointer
+  +x-user-select
+//user-select: none
+//-moz-user-select:-moz-none  /* Firefox prior to 21 */
+//-moz-user-select:none
+//-o-user-select:none
+//-khtml-user-select:none
+//-webkit-user-select:none
+//-ms-user-select:none
+//
