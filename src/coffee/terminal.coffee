@@ -27,6 +27,8 @@ CommandToken =
 
 class @Terminal extends App
 
+  openedOnce: false
+
   # Construct terminal from div container
   #
   # $screen [jQuery] jQuery element for the terminal-screen div
@@ -73,6 +75,10 @@ class @Terminal extends App
 
   # Focus on terminal prompt
   onOpen: =>
+    if not @openedOnce
+      @openedOnce = true
+      @print "Pour voir les commandes de bases, entrez help"
+
     # set initial focus and prevent losing focus by brute-force
     @$promptInput.focus()
     @$promptInput.on "blur.autofocus", =>
