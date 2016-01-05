@@ -1,0 +1,53 @@
+<!-- Phone chatbox -->
+<div id="phone-screen" class="phone-screen clearfix">
+
+    <div class="header clearfix">
+        <span class="fa fa-weixin"></span> To Genea
+    </div>
+
+    <div class="history">
+        <ul>
+        </ul>
+    </div>
+
+    <div class="input clearfix">
+        <ul class="message-input-choice-list">
+            <!--<li>A</li>-->
+        </ul>
+        <!--<textarea name="message-to-send" id="message-to-send" placeholder="type here" rows="3"></textarea>-->
+        <!--<button>Send</button>-->
+    </div>
+
+    <!--<div><button class="action" data-dialog-close>Close</button></div>-->
+
+</div>
+
+<!-- Message templates -->
+<script id="message-sent-template" type="text/x-handlebars-template">
+    <li>
+        <div class="message-data">
+            <span class="message-data-name"><i class="fa fa-circle online"></i> Me</span>
+            <span class="message-data-time">{{time}}, Today</span>
+        </div>
+        <div class="message my-message">
+            {{message}}
+        </div>
+    </li>
+</script>
+
+<script id="message-received-template" type="text/x-handlebars-template">
+    <li class="clearfix">
+        <div class="message-data align-right">
+            <span class="message-data-time">{{time}}, Today</span> &nbsp; &nbsp;
+            <span class="message-data-name">Genea</span> <i class="fa fa-circle me"></i>
+        </div>
+        <div class="message other-message float-right">
+            {{message}}
+        </div>
+    </li>
+</script>
+
+<!-- Message send template -->
+<script id="message-choice-template" type="text/x-handlebars-template">
+    <li class="message-choice">{{choiceMessage}}</li>
+</script>

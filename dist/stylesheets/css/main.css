@@ -950,17 +950,17 @@ body {
 ul {
   list-style-type: none; }
 
-.screen {
+.phone-screen {
   background: #ffffff;
   margin: 0 auto;
   width: 400px;
   border: 1px solid black;
   color: black;
   text-align: left; }
-  .screen .chat-header {
+  .phone-screen .header {
     background-color: #bef4fe;
     padding: 20px; }
-  .screen .chat-history {
+  .phone-screen .history {
     /*display: flex;  !* removes whitespace *! */
     background-color: #ffffff;
     padding: 30px 30px 20px;
@@ -968,9 +968,11 @@ ul {
     border-top: 2px solid #000000;
     border-bottom: 2px solid #000000;
     height: 500px;
-    overflow-y: scroll; }
+    overflow-y: scroll;
+    /*vertical-align: top; */ }
+  .phone-screen .input {
+    height: 100px; }
 
-/*vertical-align: top; */
 .message-data {
   margin-bottom: 10px; }
 
@@ -1027,30 +1029,6 @@ span.message-data-time {
   /* switch vertical layout */
   align-items: flex-end; }
 
-.chat-message {
-  padding: 20px; }
-  .chat-message textarea {
-    width: 100%;
-    border: none;
-    padding: 10px 20px;
-    font: 14px/18px Verdana;
-    color: black;
-    /*background-color: white; */
-    margin-bottom: 10px;
-    border-radius: 8px;
-    resize: none; }
-  .chat-message button {
-    float: right;
-    color: #00A000;
-    font-size: 18px;
-    text-transform: uppercase;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    background: whitesmoke; }
-  .chat-message button:hover {
-    color: red; }
-
 .online {
   color: green; }
 
@@ -1070,9 +1048,6 @@ span.message-data-time {
   content: " ";
   clear: both;
   height: 0; }
-
-.chat-input {
-  height: 100px; }
 
 ul.message-input-choice-list {
   list-style-type: decimal; }

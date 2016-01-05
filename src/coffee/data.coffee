@@ -9,7 +9,7 @@ class @GameData
       ["mt1_t1_01", "mt1_t1_02"].map(game.locale.getLine).join('\n'),
       "mission-test.conclusion")
     "mission-test.conclusion": ->
-      game.chat.startDialogueByName "mission-test.conclusion"
+      game.phone.startDialogueByName "mission-test.conclusion"
 
   constructor: () ->
 
