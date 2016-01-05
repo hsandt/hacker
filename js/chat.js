@@ -40,6 +40,8 @@
 
     Chat.prototype.nextIncomingMessageIdx = 0;
 
+    Chat.prototype.appName = "N/A";
+
     function Chat($screen, $device) {
       this.hideMessageChoices = bind(this.hideMessageChoices, this);
       this.showChoices = bind(this.showChoices, this);
@@ -54,9 +56,9 @@
       this.startDialogueByName = bind(this.startDialogueByName, this);
       Chat.__super__.constructor.call(this, $screen, $device);
       this.device = new ChatDevice($device);
-      this.$chatHistory = $screen.find(".chat-history");
+      this.$chatHistory = $screen.find(".history");
       this.$chatHistoryList = this.$chatHistory.find("ul");
-      this.$chatInput = $screen.find(".chat-input");
+      this.$chatInput = $screen.find(".input");
       this.$chatInputList = this.$chatInput.find("ul");
       this.receivedMessageTemplate = Handlebars.compile($("#message-received-template").html());
       this.sentMessageTemplate = Handlebars.compile($("#message-sent-template").html());
@@ -100,7 +102,7 @@
     };
 
     Chat.prototype.receiveMessage = function(message) {
-      if (game.hub.currentAppName !== 'chat') {
+      if (game.hub.currentAppName !== this.appName) {
         this.device.notify();
       }
       return this.printMessage(message, this.receivedMessageTemplate);
@@ -333,6 +335,19 @@
     return DialogueWait;
 
   })(DialogueNode);
+
+  this.Phone = (function(superClass) {
+    extend(Phone, superClass);
+
+    function Phone() {
+      return Phone.__super__.constructor.apply(this, arguments);
+    }
+
+    Phone.prototype.appName = "phone";
+
+    return Phone;
+
+  })(Chat);
 
 }).call(this);
 

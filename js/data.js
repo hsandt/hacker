@@ -12,7 +12,7 @@
         return game.servers["moogle"].getRoot().getDir('home/john').addFile(new TextFile("mail", ["mt1_t1_01", "mt1_t1_02"].map(game.locale.getLine).join('\n'), "mission-test.conclusion"));
       },
       "mission-test.conclusion": function() {
-        return game.chat.startDialogueByName("mission-test.conclusion");
+        return game.phone.startDialogueByName("mission-test.conclusion");
       }
     };
 

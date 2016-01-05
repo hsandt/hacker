@@ -19,7 +19,7 @@
     storyGraph = new StoryGraph;
     storyGraph.addNode(new StoryNode("initial", (function() {
       return setTimeout((function() {
-        return game.chat.startDialogueByName("mission-test.proposal");
+        return game.phone.startDialogueByName("mission-test.proposal");
       }), 1500);
     }), ["to-be-continued"]));
     storyGraph.addNode(new StoryNode("to-be-continued"));

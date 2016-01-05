@@ -34,14 +34,14 @@
     Game.prototype.loadModules = function() {
       var modulePath;
       modulePath = game.srcPath + "modules/";
-      return $.when($.get(modulePath + "hub.html"), $.get(modulePath + "chat.html"), $.get(modulePath + "terminal.html")).done(function(arg, arg1, arg2) {
-        var chatHTML, hubHTML, terminalHTML;
+      return $.when($.get(modulePath + "hub.html"), $.get(modulePath + "phone.html"), $.get(modulePath + "terminal.html")).done(function(arg, arg1, arg2) {
+        var hubHTML, phoneHTML, terminalHTML;
         hubHTML = arg[0];
-        chatHTML = arg1[0];
+        phoneHTML = arg1[0];
         terminalHTML = arg2[0];
-        console.log("[LOAD] Loaded Hub, Chat, Terminal HTML");
+        console.log("[LOAD] Loaded Hub, Phone, Terminal HTML");
         $("#content").html(hubHTML);
-        $("#chatContent").html(chatHTML);
+        $("#phoneContent").html(phoneHTML);
         return $("#terminalContent").html(terminalHTML);
       });
     };
@@ -52,8 +52,8 @@
       }
       this.hub = new Hub;
       this.terminal = this.apps['terminal'] = new Terminal($("#terminal-screen"), $("#terminal-device"));
-      this.chat = this.apps['chat'] = new Chat($("#chat-screen"), $("#chat-device"));
-      this.apps['phone'] = new App(null, null);
+      this.phone = this.apps['phone'] = new Phone($("#phone-screen"), $("#phone-device"));
+      this.apps['chat'] = new App(null, null);
       this.apps['memo'] = new App(null, null);
       this.apps['other'] = new App(null, null);
       this.apps['news'] = new App(null, null);
