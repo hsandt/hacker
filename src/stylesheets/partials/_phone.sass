@@ -2,33 +2,38 @@ ul
   list-style-type: none
 
 .phone-screen
-  background: #ffffff
+  background-image: url('#{$image-path}/screen-phone.png')
   margin: 0 auto
-  width: 400px
-  border: 1px solid black
+  width: 363px
+  //border: 1px solid black
   color: black
   text-align: left
 
   .header
-    background-color: #bef4fe
-    padding: 20px
+    //background-color: #bef4fe
+    padding: 28px 28px 19px
+    color: white
+    font-size: 30px
 
   .history
     /*display: flex;  !* removes whitespace *!*/
-    background-color: #ffffff
-    padding: 30px 30px 20px
+    //background-color: #ffffff
+    padding: 10px
     margin-top: 0
-    border-top: 2px solid #000000
-    border-bottom: 2px solid #000000
-    height: 500px
+    //border-top: 2px solid #000000
+    //border-bottom: 2px solid #000000
+    height: 382px
     overflow-y: scroll
+    margin: 0 18px 0 0
     /*vertical-align: top;*/
 
   .input
-    height: 100px
+    height: 156px
+    padding: 0 20px
 
 .message-data
   margin-bottom: 10px
+  margin-right: 27px
 
 span.message-data-time
   font-style: italic
@@ -40,7 +45,6 @@ span.message-data-time
   padding: 10px 20px
   line-height: 150%
   font-size: 16px
-  border-radius: 7px
   margin-bottom: 20px
   /*display: flex;*
   width: 90%
@@ -57,19 +61,21 @@ span.message-data-time
   /*width: 0;*
   position: absolute
   /*pointer-events: none;*
-  border-bottom-color: green
+  //border-bottom-color: green
   border-width: 10px
   margin-left: -10px
 
+
 .my-message
-  background: green
+  background-image: url('#{$image-path}/screen-phone-bg1.png')
 
 .other-message
-  background: blue
+  background-image: url('#{$image-path}/screen-phone-bg2.png')
 
 .other-message:after
-  border-bottom-color: blue
+  border-bottom-color: none
   left: 93%
+
 
 .avatar
   width: 40px
@@ -112,13 +118,13 @@ span.message-data-time
 //    color: red
 
 .online
-  color: green
+  color: gray
 
 .offline
   color: orange
 
 .me
-  color: blue
+  color: black
 
 .align-right
   text-align: right
@@ -145,3 +151,5 @@ li.message-choice
 //-webkit-user-select:none
 //-ms-user-select:none
 //
+
+
