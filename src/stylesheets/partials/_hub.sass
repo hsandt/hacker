@@ -56,7 +56,7 @@ body
   //  content: url('#{$image-path}/screens.png')
   //  +x-transform(scale(.5))
 
-  #chat-device
+#chat-device
   &.notify-off
     background-color: #9b9465
 
@@ -65,13 +65,13 @@ body
 
 
 #phone-device
-  +x-transform(skewX(-30deg))
-
   &.notify-off
-    background-color: #3c8835
+    background-image: url('#{$image-path}/phone-off.png')
+
 
   &.notify-on
-    background-color: #44ff7f
+    background-image: url('#{$image-path}/phone-on.png')
+
 
 #memo-device
   +x-transform(skewX(30deg))
