@@ -6,8 +6,17 @@ class @Hub
   # state vars
   currentAppName: 'none'  # current app name: 'none', 'terminal', 'chat', etc.
 
-  constructor: ->
+  constructor: (@$screens, @$desk) ->
     self = @
+
+    # add images from script to ensure path is correct
+    screensImage = new Image
+    screensImage.src = game.imagePath + 'screens.png'
+    @$screens.prepend screensImage
+
+    deskImage = new Image
+    deskImage.src = game.imagePath + 'desk.png'
+    @$desk.prepend deskImage
 
     # bind "open modular window" event to each monitor
     dlgtrigger = $('[data-dialog]')

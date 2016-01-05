@@ -34,6 +34,7 @@ class @Game
   # @param srcPath [String] relative path to src folder from main HTML page, ending with '/'
   constructor: (@srcPath) ->
     @audioPath = @srcPath + 'audio/'
+    @imagePath = @srcPath + 'img/'
 
   loadModules: =>
     modulePath = game.srcPath + "modules/"
@@ -47,7 +48,7 @@ class @Game
   initModules: =>
     if not game?
       throw new Error "document.game has not been defined, please create a game instance with @game = new Game first."
-    @hub = new Hub
+    @hub = new Hub $("#screens"), $("#desk")
     @terminal = @apps['terminal'] = new Terminal $("#terminal-screen"), $("#terminal-device")
     @phone = @apps['phone'] = new Phone $("#phone-screen"), $("#phone-device")
     @apps['chat'] = new App null, null
