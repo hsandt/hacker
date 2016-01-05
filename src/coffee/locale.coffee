@@ -4,10 +4,12 @@ class @Localize
 
   # @param dialoguesFilename [String] path of the JSON file containing all the localized dialogue lines
   loadDialogueLines: (dialoguesFilename) =>
-    $.getJSON(dialoguesFilename, @buildDialogueLines).done ->
-      console.log "[LOAD] Loaded localized dialogue lines"
+    $.getJSON(dialoguesFilename, @buildDialogueLines)
+      .done(-> console.log "[LOAD] Loaded localized dialogue lines")
+      .fail(-> console.log "[LOAD] Failed loading localized dialogues")
 
-  # Build dictionary of dialogue lines from JSON data
+
+# Build dictionary of dialogue lines from JSON data
   #
   # @param data [dictionary] dictionary of dialogue lines with JSON data
   buildDialogueLines: (data) =>

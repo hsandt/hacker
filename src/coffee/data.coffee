@@ -15,8 +15,9 @@ class @GameData
 
   # @param dialogueFilename [String] path of the JSON file containing all dialogues
   loadDialogueGraphs: (dialogueGraphsFilename) =>
-    $.getJSON(dialogueGraphsFilename, @buildDialogueGraphs).done ->
-      console.log "[LOAD] Loaded dialogue graphs"
+    $.getJSON(dialogueGraphsFilename, @buildDialogueGraphs)
+      .done(-> console.log "[LOAD] Loaded dialogue graphs")
+      .fail(-> console.log "[LOAD] Failed loading dialogue graphs")
 
   # Build dictionary of dialogue graphs from JSON data
   #
@@ -31,7 +32,7 @@ class @GameData
       for nodeName, nodeData of dialogueData
         switch nodeData.type
           when "text"
-            node = new DialogueText nodeName, nodeData.lines, nodeData.successor
+            node = new DialogueText nodeName, nodeData.lines, nodeData.successor, nodeData.speaker
           when "choice hub"
             node = new DialogueChoiceHub nodeName, nodeData.choices
           when "choice"

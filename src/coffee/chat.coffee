@@ -109,7 +109,7 @@ class @Chat extends App
   printMessage: (message, template) =>
     context =
       message: message
-      time: "12:00"
+      time: "2017-04-15"
     @$chatHistoryList.append template(context)
     @scrollToBottom()
 
@@ -189,16 +189,22 @@ class @DialogueText extends DialogueNode
   # @param name [String] string identifier
   # @param lines [String[]] messages to receive
   # @param successor [DialogueNode] successor node
-  constructor: (name, @lines, @successor) ->
+  # @param speaker [String] speaker, either "me" or "other"
+  constructor: (name, @lines, @successor, @speaker = "other") ->
     super name, "text"
 
   toString: =>
     "DialogueText #{@name} -> #{if @successor? then @successor.name else "END"}"
 
   onEnter: (chat) =>
-    # for TEXT nodes, receive all messages in the node
+    # for TEXT nodes, either send or receive all messages in the node, depending on the speaker
     for lineID in @lines
-      chat.receiveMessage game.locale.getLine(lineID)
+      if @speaker == "other"
+        chat.receiveMessage game.locale.getLine(lineID)
+      else if @speaker == "me"
+        chat.sendMessage game.locale.getLine(lineID)
+      else
+        throw new Error "Unknown speaker type #{@speaker}"
     # go to next node
     chat.enterDialogueNode @successor
 

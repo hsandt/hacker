@@ -108,7 +108,8 @@
     "prop1": {
       "type": "text",
       "lines": ["mk1_d1_02"],
-      "successor": "prop2"
+      "successor": "prop2",
+      "speaker": "me"
     },
     "prop2": {
       "type": "text",
@@ -142,7 +143,8 @@
     "fingerprint2": {
       "type": "text",
       "lines": ["mk1_d1_09"],
-      "successor": "question1*"
+      "successor": "question1*",
+      "speaker": "me"
     },
     "people1": {
       "type": "text",
@@ -152,7 +154,8 @@
     "people2": {
       "type": "text",
       "lines": ["mk1_d1_11"],
-      "successor": "question1*"
+      "successor": "question1*",
+      "speaker": "me"
     },
     "key1": {
       "type": "text",
@@ -162,7 +165,8 @@
     "key2": {
       "type": "text",
       "lines": ["mk1_d1_15"],
-      "successor": "question2*"
+      "successor": "question2*",
+      "speaker": "me"
     },
     "question2*": {
       "type": "choice hub",
@@ -196,7 +200,8 @@
     "find2": {
       "type": "text",
       "lines": ["mk1_d1_22"],
-      "successor": "find3"
+      "successor": "find3",
+      "speaker": "me"
     },
     "find3": {
       "type": "text",
@@ -256,7 +261,8 @@
     "hacked2": {
       "type": "text",
       "lines": ["mk1_d2_10"],
-      "successor": "hacked3"
+      "successor": "hacked3",
+      "speaker": "me"
     },
     "hacked3": {
       "type": "text",
@@ -271,7 +277,8 @@
     "always2": {
       "type": "text",
       "lines": ["mk1_d2_13"],
-      "successor": "goodbye1"
+      "successor": "goodbye1",
+      "speaker": "me"
     },
     "secret1": {
       "type": "text",
@@ -286,7 +293,8 @@
     "goodbye2": {
       "type": "text",
       "lines": ["mk1_d2_16"],
-      "successor": null
+      "successor": null,
+      "speaker": "me"
     }
   }
 }
