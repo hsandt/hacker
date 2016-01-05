@@ -10,11 +10,13 @@
     function ChatDevice($device) {
       this.notify = bind(this.notify, this);
       ChatDevice.__super__.constructor.call(this, $device);
+      this.phoneAudio = new Audio;
+      this.phoneAudio.src = game.audioPath + 'sfx/phone_notification.mp3';
       $device.addClass("notify-off");
     }
 
     ChatDevice.prototype.notify = function(state) {
-      var antistate, phoneAudio;
+      var antistate;
       if (state == null) {
         state = "on";
       }
@@ -25,9 +27,10 @@
       this.$device.removeClass("notify-" + antistate);
       this.$device.addClass("notify-" + state);
       if (state === "on") {
-        phoneAudio = new Audio;
-        phoneAudio.src = game.audioPath + 'sfx/phone_notification.wav';
-        return phoneAudio.play();
+        return this.phoneAudio.play();
+      } else {
+        this.phoneAudio.pause();
+        return this.phoneAudio.currentTime = 0;
       }
     };
 
@@ -54,6 +57,8 @@
       this.enterDialogueNodeByName = bind(this.enterDialogueNodeByName, this);
       this.startDialogue = bind(this.startDialogue, this);
       this.startDialogueByName = bind(this.startDialogueByName, this);
+      this.onClose = bind(this.onClose, this);
+      this.onOpen = bind(this.onOpen, this);
       Chat.__super__.constructor.call(this, $screen, $device);
       this.device = new ChatDevice($device);
       this.$chatHistory = $screen.find(".history");
@@ -66,6 +71,12 @@
       this.dialogueGraph = null;
       this.currentDialogueNode = null;
     }
+
+    Chat.prototype.onOpen = function() {
+      return this.device.notify("off");
+    };
+
+    Chat.prototype.onClose = function() {};
 
     Chat.prototype.startDialogueByName = function(dialogueName) {
       return this.startDialogue(game.data.dialogueGraphs[dialogueName]);
@@ -85,6 +96,9 @@
     };
 
     Chat.prototype.enterDialogueNode = function(dialogueNode) {
+      if (this.currentDialogueNode != null) {
+        this.currentDialogueNode.onExit(this);
+      }
       this.currentDialogueNode = dialogueNode;
       if (dialogueNode != null) {
         return dialogueNode.onEnter(this);
@@ -112,7 +126,7 @@
       var context;
       context = {
         message: message,
-        time: "12:00"
+        time: "2017-04-15"
       };
       this.$chatHistoryList.append(template(context));
       return this.scrollToBottom();
@@ -190,12 +204,15 @@
     function DialogueNode(name1, type) {
       this.name = name1;
       this.type = type;
+      this.onExit = bind(this.onExit, this);
       this.onEnter = bind(this.onEnter, this);
     }
 
     DialogueNode.prototype.onEnter = function(chat) {
       throw new Error("onEnter is not defined for an abstract DialogueNode");
     };
+
+    DialogueNode.prototype.onExit = function(chat) {};
 
     return DialogueNode;
 
@@ -204,9 +221,10 @@
   this.DialogueText = (function(superClass) {
     extend(DialogueText, superClass);
 
-    function DialogueText(name, lines, successor) {
+    function DialogueText(name, lines, successor, speaker) {
       this.lines = lines;
       this.successor = successor;
+      this.speaker = speaker != null ? speaker : "other";
       this.onEnter = bind(this.onEnter, this);
       this.toString = bind(this.toString, this);
       DialogueText.__super__.constructor.call(this, name, "text");
@@ -217,13 +235,35 @@
     };
 
     DialogueText.prototype.onEnter = function(chat) {
-      var i, len, lineID, ref;
+      var i, len, line, lineID, ref, totalTime;
+      totalTime = 0;
       ref = this.lines;
       for (i = 0, len = ref.length; i < len; i++) {
         lineID = ref[i];
-        chat.receiveMessage(game.locale.getLine(lineID));
+        line = game.locale.getLine(lineID);
+        if (this.speaker === "other") {
+          setTimeout((function(line) {
+            return function() {
+              console.log(1);
+              return chat.receiveMessage(line);
+            };
+          })(line), totalTime);
+        } else if (this.speaker === "me") {
+          setTimeout((function(line) {
+            return function() {
+              console.log(2);
+              return chat.sendMessage(line);
+            };
+          })(line), totalTime);
+        } else {
+          throw new Error("Unknown speaker type " + this.speaker);
+        }
       }
-      return chat.enterDialogueNode(this.successor);
+      return setTimeout((function(_this) {
+        return function() {
+          return chat.enterDialogueNode(_this.successor, totalTime);
+        };
+      })(this));
     };
 
     return DialogueText;
@@ -235,6 +275,7 @@
 
     function DialogueChoiceHub(name, choices1) {
       this.choices = choices1;
+      this.onExit = bind(this.onExit, this);
       this.onEnter = bind(this.onEnter, this);
       this.toString = bind(this.toString, this);
       DialogueChoiceHub.__super__.constructor.call(this, name, "choice hub");
@@ -248,6 +289,10 @@
 
     DialogueChoiceHub.prototype.onEnter = function(chat) {
       return chat.showChoices(this.choices);
+    };
+
+    DialogueChoiceHub.prototype.onExit = function(chat) {
+      return chat.hideMessageChoices();
     };
 
     return DialogueChoiceHub;

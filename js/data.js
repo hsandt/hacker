@@ -13,6 +13,9 @@
       },
       "mission-test.conclusion": function() {
         return game.phone.startDialogueByName("mission-test.conclusion");
+      },
+      "mission-tutorial.conclusion": function() {
+        return game.phone.startDialogueByName("mission-tutorial.conclusion");
       }
     };
 
@@ -24,6 +27,8 @@
     GameData.prototype.loadDialogueGraphs = function(dialogueGraphsFilename) {
       return $.getJSON(dialogueGraphsFilename, this.buildDialogueGraphs).done(function() {
         return console.log("[LOAD] Loaded dialogue graphs");
+      }).fail(function() {
+        return console.log("[LOAD] Failed loading dialogue graphs");
       });
     };
 
@@ -38,7 +43,7 @@
           nodeData = dialogueData[nodeName];
           switch (nodeData.type) {
             case "text":
-              node = new DialogueText(nodeName, nodeData.lines, nodeData.successor);
+              node = new DialogueText(nodeName, nodeData.lines, nodeData.successor, nodeData.speaker);
               break;
             case "choice hub":
               node = new DialogueChoiceHub(nodeName, nodeData.choices);
