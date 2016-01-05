@@ -18,7 +18,7 @@ main = ->
     (->
       console.log "story start"
       game.playBGM()
-      setTimeout((-> game.phone.startDialogueByName "mission-tutorial.proposal"), 1500)),
+      setTimeout((-> game.phone.startDialogueByName "mission-tutorial.proposal"), 2000)),
     ["to-be-continued"]
   )
   storyGraph.addNode new StoryNode("to-be-continued")
