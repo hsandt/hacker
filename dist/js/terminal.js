@@ -41,6 +41,8 @@
   this.Terminal = (function(superClass) {
     extend(Terminal, superClass);
 
+    Terminal.prototype.openedOnce = false;
+
     function Terminal($screen, $device) {
       this.connectCommand = bind(this.connectCommand, this);
       this.catCommand = bind(this.catCommand, this);
@@ -99,6 +101,10 @@
     /* OPEN/CLOSE */
 
     Terminal.prototype.onOpen = function() {
+      if (!this.openedOnce) {
+        this.openedOnce = true;
+        this.print("Pour voir les commandes de bases, entrez help");
+      }
       this.$promptInput.focus();
       return this.$promptInput.on("blur.autofocus", (function(_this) {
         return function() {

@@ -13,10 +13,13 @@ class @Game
     "local": new Server "local", "456.231.24.57",
       [
         new Directory "home", [
-          new Directory "a", [new TextFile "test", "coucou"]
-          new Directory "b"
+          new TextFile "tutorial", "Entrez vos commandes dans le terminal et pressez ENTER\n" +
+              "Utilisez les flèches HAUT et BAS pour retrouver les dernières commandes entrées\n\n" +
+              "connect est une commande très puissante qui infiltre automatiquement un server par son adresse IP ou son URL.\n" +
+              "Les fichiers texte sont affichés par ls avec l'extension .txt. Les autres sont tous des dossiers.\n\n" +
+              "Pour remonter au dossier supérieur, entrez cd ..\n\n" +
+              "Pour lire un fichier texte, entrez cat + nom du fichier. Il n'est pas nécessaire d'écrire l'extension dans le nom du fichier."
         ]
-        new TextFile "a", "hi!"
       ]
     "besafe": new Server "besafe.com", "256.241.23.02",
       [
