@@ -1,16 +1,68 @@
+@import "../../../bower_components/sass-mixins/mixins"
+@import variables
+
 body
   margin: 0
+  background-color: #f2f2f2
 
-.background
-  background-image: url('#{$image-path}/fond.jpg')
-  //background-image: image-url('fond.jpg')
+#background
+  background-image: url('#{$image-path}/background.png')
+  width: 2600px
+  height: 1630px
+  //height: 1920px
 
-#chat-device
+#shadow1
+  background-image: url('#{$image-path}/shadow1.png')
+  width: 2600px
+  height: 1630px
+//height: 1920px
+
+#shadow2
+  background-image: url('#{$image-path}/shadow2.png')
+  width: 2600px
+  height: 1630px
+//height: 1920px
+
+#shadow3
+  background-image: url('#{$image-path}/shadow3.png')
+  width: 2600px
+  height: 1630px
+//height: 1920px
+
+#shadow4
+  background-image: url('#{$image-path}/shadow4.png')
+  width: 2600px
+  height: 1630px
+//height: 1920px
+
+#desk
+  background-image: url('#{$image-path}/desk2.png') no-repeat
+  width: 2600px
+  height: 1630px
+  //height: 1080px
+//  width: 2636px
+//  height: 1700px
+//  z-index: 500
+
+#screens
+  background-image: url('#{$image-path}/screens.png') no-repeat
+  //+x-transform(scale(0.9, 0.9))
+  width: 2636px
+  height: 1700px
+  //height: 1872px
+  //z-index: 500
+
+  //&::after
+  //  content: url('#{$image-path}/screens.png')
+  //  +x-transform(scale(.5))
+
+  #chat-device
   &.notify-off
     background-color: #9b9465
 
   &.notify-on
     background-color: #fff8a8
+
 
 #phone-device
   +x-transform(skewX(-30deg))

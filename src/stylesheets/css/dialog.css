@@ -20,7 +20,7 @@
 .dialog__overlay {
 	position: absolute;
 	z-index: 1;
-	background: rgba(55, 58, 71, 0.9);
+	background: rgba(0, 0, 0, 0.85);
 	opacity: 0;
 	-webkit-transition: opacity 0.3s;
 	transition: opacity 0.3s;
@@ -36,7 +36,7 @@
 	/*width: 50%;*/
 	/*max-width: 560px;*/
 	/*min-width: 290px;*/
-	background: purple;
+	/*background: purple;*/
 	/*padding: 4em;*/
     /*padding: 0;*/
     text-align: center;

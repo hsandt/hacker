@@ -316,7 +316,7 @@ class @CommandInterpreter
   cd: (args) =>
     @terminal.cdCommand args[0]
 
-  # Delegate cat command to terminal for given filename
+  # Delegate cat command to terminal for given filenamehu
   cat: (args) =>
     @terminal.catCommand args[0]
 
