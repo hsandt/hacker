@@ -914,11 +914,6 @@ td {
  *     @include x-user-select;
  *   }
  */
-@font-face {
-  font-family: "Inconsolata";
-  src: url("../fonts/Inconsolata.otf");
-  font-weight: normal;
-  font-style: normal; }
 *, *:before, *:after {
   box-sizing: border-box; }
 
@@ -1091,7 +1086,7 @@ li.message-choice {
 
 .terminal-screen {
   background-color: black;
-  font: 14px/20px "Inconsolata" "Courier";
+  font: 14px/20px "Inconsolata", "Courier New";
   padding: 40px 40px;
   color: white;
   width: 500px;
