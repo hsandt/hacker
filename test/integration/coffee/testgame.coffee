@@ -35,7 +35,7 @@ testGame = ->
   @game = new Game "../../src/"
   game.initModules()
   game.loadData "data/dialoguegraphs.json"
-  game.loadLocale "localize/#{lang}/dialogues.json"
+  game.loadLocale "locales/#{lang}/dialogues.json"
 
   # FIXME: load data is async so use a promise
 

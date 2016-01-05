@@ -87,7 +87,7 @@ class @Game
 
   # @param dialoguesFilename [String] path from src of the JSON file containing all the localized dialogue lines
   loadLocale: (dialoguesFilename) =>
-    @locale = new Localize
+    @locale = new Locale
     @locale.loadDialogueLines(game.srcPath + dialoguesFilename)
 
   # Return event function by name
