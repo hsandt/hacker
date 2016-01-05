@@ -43,7 +43,7 @@ class @Game
     @apps['memo'] = new App null, null
     @apps['other'] = new App null, null
     @apps['news'] = new App null, null
-    @apps['camera'] = new App null, null
+#    @apps['camera'] = new App null, null
 
     @story = new Story
 
