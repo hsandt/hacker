@@ -43,6 +43,7 @@
   "dependencies": {
     "handlebars": "^4.0.5",
     "http-server": "^0.8.5",
+    "inconsolata": "0.0.2",
     "jquery-ui": "^1.10.5"
   }
 }

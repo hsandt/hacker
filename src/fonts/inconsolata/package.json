@@ -1,0 +1,63 @@
+{
+  "_args": [
+    [
+      "inconsolata",
+      "F:\\Projects\\Web\\hacker-game"
+    ]
+  ],
+  "_from": "inconsolata@*",
+  "_id": "inconsolata@0.0.2",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/inconsolata",
+  "_npmUser": {
+    "email": "forbes@lindesay.co.uk",
+    "name": "forbeslindesay"
+  },
+  "_npmVersion": "1.3.21",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "inconsolata",
+    "raw": "inconsolata",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "*",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/inconsolata/-/inconsolata-0.0.2.tgz",
+  "_shasum": "baa1433f43d42aa1edb26bd9ee87738e929250eb",
+  "_shrinkwrap": null,
+  "_spec": "inconsolata",
+  "_where": "F:\\Projects\\Web\\hacker-game",
+  "bugs": {
+    "url": "https://github.com/ForbesLindesay/inconsolata/issues"
+  },
+  "dependencies": {},
+  "description": "The inconsolata typeface",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "baa1433f43d42aa1edb26bd9ee87738e929250eb",
+    "tarball": "http://registry.npmjs.org/inconsolata/-/inconsolata-0.0.2.tgz"
+  },
+  "homepage": "https://github.com/ForbesLindesay/inconsolata",
+  "keywords": [],
+  "license": "SIL Open Font License, 1.1",
+  "maintainers": [
+    {
+      "name": "forbeslindesay",
+      "email": "forbes@lindesay.co.uk"
+    }
+  ],
+  "name": "inconsolata",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ForbesLindesay/inconsolata.git"
+  },
+  "version": "0.0.2"
+}

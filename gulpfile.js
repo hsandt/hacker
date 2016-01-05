@@ -132,6 +132,7 @@ gulp.task('copy:misc', function () {
         '!' + dirs.src + '/stylesheets/partials/*',
         '!' + dirs.src + '/**/less',
         '!' + dirs.src + '/**/less/*',
+        '!' + dirs.src + '/**/*.less',
         '!' + dirs.src + '/**/scss',
         '!' + dirs.src + '/**/scss/*',
 
