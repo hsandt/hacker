@@ -217,8 +217,10 @@ class @DialogueText extends DialogueNode
     totalTime = 0
     for lineID in @lines
       line = game.locale.getLine(lineID)
-      # natural waiting time before sending message, affine of length message
-      totalTime += 2000 + 20 * line.length
+      # natural thinking + typing waiting time before sending message, affine of length message
+      typingTime = 2000 + 20 * line.length
+      totalTime += typingTime
+      console.log "Message thinking/typing time: #{typingTime}"
       if @speaker == "other"
         setTimeout (do (line) -> -> chat.receiveMessage line), totalTime
       else if @speaker == "me"
@@ -226,7 +228,6 @@ class @DialogueText extends DialogueNode
       else
         throw new Error "Unknown speaker type #{@speaker}"
     # go to next node
-    console.log totalTime
     setTimeout (=> chat.enterDialogueNode @successor), totalTime
 
 

@@ -1,0 +1,76 @@
+{
+  "mt1": {
+    "d1": {
+      "01": "Hi! I have a mission for you. Right now.",
+      "02": "What is it?",
+      "03": "I refuse!",
+      "04": "Go to hell!",
+      "05": "Goodbye, then.",
+      "06": "I have doubts about what my employee John did yesterday.",
+      "07": "You have to find out what by hacking into our servers.",
+      "08": "You have to hack into Moogle's server and tell me what John did yesterday.",
+      "09": "Tell me when you found something.",
+      "10": "I accept.",
+      "11": "How should I start?"
+    },
+    "d2": {
+      "01": "So, have you found anything on John?",
+      "02": "Yes, John is a traitor.",
+      "03": "No, John seems to be clean.",
+      "04": "I knew it!",
+      "05": "I see...",
+      "06": "Anyway, here is your reward."
+    },
+    "t1": {
+      "01": "I went to the cinema the other day. If you could see my boss, he was just crazy!",
+      "02": "I told him I had an important meeting with an ex-collaborator."
+    }
+  },
+  "mk1": {
+    "d1": {
+      "01": "Salut maman ! J’ai besoin d’aide",
+      "02": "coucou ma chérie ! dis-moi",
+      "03": "Je viens d’emménager dans l’appartement d’Elise mais j’ai perdu le double des clés qu’elle m’a donné",
+      "04": "Je suis bloquée à la porte de l’immeuble >_<p",
+      "05": "pas de lecteur d’empreintes ?",
+      "06": "quel genre de clé ?",
+      "07": "personne d’autre pour t’ouvrir ?",
+      "08": "Si mais je ne suis pas encore enregistrée",
+      "09": "ah, dommage",
+      "10": "Non, Elise est partie pour un séminaire sur les anciennes cryptomonnaies et je tombe sur son répondeur",
+      "11": "je vois…",
+      "12": "Celles de BeSafe, la société de domotique",
+      "13": "Les fameuses clés qu’on ne perd jamais…",
+      "14": "Avec leur site je pourrais les retrouver mais je n’ai pas accès au compte d’Elise",
+      "15": "OK, je vais voir ce que je peux faire. je te rappelle si j’ai besoin",
+      "16": "quel est le nom complet d’Elise ?",
+      "17": "comment retrouve-t-on des clés BeSafe ?",
+      "18": "une idée sur les identifiants de connexion d’Elise ?",
+      "19": "Elise Geraert",
+      "20": "Ils ont un site officiel pour les géolocaliser, besafe.com, mais sans le login d’Elise pas possible",
+      "21": "Si on perd son pass on peut aussi contacter les administrateurs, mais il faut prouver qu’on est le propriétaire",
+      "22": "donc si on n’a pas le pass de l’utilisateur et qu’on n’est pas admin non plus c’est impossible d’utiliser leur système",
+      "23": "C’est ça",
+      "24": "Tu veux dire son pseudo et son pass ?",
+      "25": "Non, sinon je me serais connectée sur le site de BeSafe."
+    },
+    "d2": {
+      "01": "j’ai trouvé les clés !",
+      "02": "dans la VR meeting room de ton université",
+      "03": "Ah oui j’y suis allé pour le projet de groupe ! J’y vais ! Merci Maman !",
+      "04": "Au fait, t’as fait comment ?",
+      "05": "j’ai obtenu les droits sur le serveur de BeSafe ;)",
+      "06": "tu l’oublies toujours dans la salle de meeting ;)",
+      "07": "secret de maman ! ;)",
+      "08": "D’accord...",
+      "09": "Fais attention quand même que ça te cause pas des problèmes comme la dernière fois",
+      "10": "oui, mais cette fois c’était pour t’aider",
+      "11": "Je sais",
+      "12": "Seulement deux fois avec celle-ci !",
+      "13": "aha, c’est vrai",
+      "14": "Ah bon ^^",
+      "15": "Bon, j’y vais, à plus tard !",
+      "16": "a plus tard !"
+    }
+  }
+}

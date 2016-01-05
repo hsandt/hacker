@@ -15,7 +15,7 @@
       return game.initModules();
     });
     dataDeferred = game.loadData("data/dialoguegraphs.json");
-    localeDeferred = game.loadLocale("localize/" + lang + "/dialogues.json");
+    localeDeferred = game.loadLocale("locales/" + lang + "/dialogues.json");
     storyGraph = new StoryGraph;
     storyGraph.addNode(new StoryNode("initial", (function() {
       console.log("story start");

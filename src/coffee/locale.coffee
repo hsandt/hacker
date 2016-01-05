@@ -1,4 +1,4 @@
-class @Localize
+class @Locale
 
   constructor: ->
 
