@@ -10,6 +10,8 @@ class @GameData
       "mission-test.conclusion")
     "mission-test.conclusion": ->
       game.phone.startDialogueByName "mission-test.conclusion"
+    "mission-tutorial.conclusion": ->
+      game.phone.startDialogueByName "mission-tutorial.conclusion"
 
   constructor: () ->
 

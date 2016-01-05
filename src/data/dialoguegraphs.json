@@ -214,7 +214,7 @@
       "successor": "question2*"
     }
   },
-  "d2": {
+  "mission-tutorial.conclusion": {
     "initial": {
       "type": "choice hub",
       "choices": ["found!"]

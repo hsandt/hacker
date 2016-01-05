@@ -2,7 +2,7 @@ class @Game
 
   # domain table of URL [string]: IP [string]
   @dns =
-    "moogle.com": "256.241.23.02"
+    "besafe.com": "256.241.23.02"
 
   apps: {}
 
@@ -16,11 +16,26 @@ class @Game
         ]
         new TextFile "a", "hi!"
       ]
-    "moogle": new Server "moogle.com", "256.241.23.02",
+    "besafe": new Server "besafe.com", "256.241.23.02",
       [
         new Directory "etc"
-        new Directory "home", [
-          new Directory "john"
+        new Directory "locate-e", [
+          new Directory "edvige-novik"
+          new Directory "edward-claes"
+          new Directory "edward-karlsson"
+          new Directory "edward-rolland"
+          new Directory "egino-morel"
+          new Directory "eileen-bruno"
+          new Directory "elayne-costa"
+          new Directory "elise-geraert", [
+            new TextFile "locate-car", "South Region, District 14, Area 2, Building 12 : NewLab Enterprise\nFuel : 83%\nStatus : Scratch on passenger door"
+            new TextFile "locate-key", "South Region, District 14, Area 3, Building 5 : University of Neus, VR Seminar Room", "mission-tutorial.conclusion"
+            new TextFile "locate-phone", "South Region, District 14, Area 2, Building 12 : NewLab Enterprise"
+          ]
+          new Directory "elise-giordano"
+          new Directory "elise-kieffer"
+          new Directory "eleanor-bonnet"
+          new Directory "eleanor-petridis"
         ]
         new Directory "var"
       ],

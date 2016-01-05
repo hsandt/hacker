@@ -71,6 +71,8 @@ class @Chat extends App
   #
   # @param dialogueNode [DialogueNode] node to enter
   enterDialogueNode: (dialogueNode) =>
+    if @currentDialogueNode?
+      @currentDialogueNode.onExit @
     @currentDialogueNode = dialogueNode
     # if node is null, end dialogue, else enter node
     if dialogueNode?
@@ -182,6 +184,9 @@ class @DialogueNode
   onEnter: (chat) =>
     throw new Error "onEnter is not defined for an abstract DialogueNode"
 
+  onExit: (chat) =>
+
+
 class @DialogueText extends DialogueNode
 
   # Construct a dialogue node
@@ -198,15 +203,18 @@ class @DialogueText extends DialogueNode
 
   onEnter: (chat) =>
     # for TEXT nodes, either send or receive all messages in the node, depending on the speaker
+    totalTime = 0
     for lineID in @lines
+      line = game.locale.getLine(lineID)
+#      totalTime += 2000
       if @speaker == "other"
-        chat.receiveMessage game.locale.getLine(lineID)
+        setTimeout((do (line) -> -> console.log 1; chat.receiveMessage line), totalTime)
       else if @speaker == "me"
-        chat.sendMessage game.locale.getLine(lineID)
+        setTimeout((do (line) -> -> console.log 2; chat.sendMessage line), totalTime)
       else
         throw new Error "Unknown speaker type #{@speaker}"
     # go to next node
-    chat.enterDialogueNode @successor
+    setTimeout(=> chat.enterDialogueNode @successor, totalTime)
 
 
 class @DialogueChoiceHub extends DialogueNode
@@ -222,6 +230,9 @@ class @DialogueChoiceHub extends DialogueNode
   onEnter: (chat) =>
     # for CHOICE HUB nodes, display available choices
     chat.showChoices @choices
+
+  onExit: (chat) =>
+    chat.hideMessageChoices()
 
 class @DialogueChoice extends DialogueNode
 
@@ -240,7 +251,6 @@ class @DialogueChoice extends DialogueNode
     for lineID in @lines
       chat.sendMessage game.locale.getLine(lineID)
     chat.enterDialogueNode @successor
-
 
 # Special dialogue node that calls an event function and immediately goes to the next node
 class @DialogueEvent extends DialogueNode
@@ -276,7 +286,6 @@ class @DialogueWait extends DialogueNode
     # for WAIT node, wait given time and go to next node
     console.log @waitTime
     setTimeout (=> chat.enterDialogueNode @successor), @waitTime
-
 
 class @Phone extends Chat
 
