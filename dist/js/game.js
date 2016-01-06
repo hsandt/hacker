@@ -70,7 +70,7 @@
     };
 
     Game.prototype.loadLocale = function(dialoguesFilename) {
-      this.locale = new Localize;
+      this.locale = new Locale;
       return this.locale.loadDialogueLines(game.srcPath + dialoguesFilename);
     };
 

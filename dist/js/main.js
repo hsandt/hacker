@@ -18,7 +18,6 @@
     localeDeferred = game.loadLocale("locales/" + lang + "/dialogues.json");
     storyGraph = new StoryGraph;
     storyGraph.addNode(new StoryNode("initial", (function() {
-      console.log("story start");
       game.playBGM();
       return setTimeout((function() {
         return game.phone.startDialogueByName("mission-tutorial.proposal");
