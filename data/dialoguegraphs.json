@@ -195,17 +195,6 @@
     "find1": {
       "type": "text",
       "lines": ["mk1_d1_20", "mk1_d1_21"],
-      "successor": "find2"
-    },
-    "find2": {
-      "type": "text",
-      "lines": ["mk1_d1_22"],
-      "successor": "find3",
-      "speaker": "me"
-    },
-    "find3": {
-      "type": "text",
-      "lines": ["mk1_d1_23"],
       "successor": "question2*"
     },
     "id1": {

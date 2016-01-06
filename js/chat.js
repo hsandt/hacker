@@ -235,13 +235,15 @@
     };
 
     DialogueText.prototype.onEnter = function(chat) {
-      var i, len, line, lineID, ref, totalTime;
+      var i, len, line, lineID, ref, totalTime, typingTime;
       totalTime = 0;
       ref = this.lines;
       for (i = 0, len = ref.length; i < len; i++) {
         lineID = ref[i];
         line = game.locale.getLine(lineID);
-        totalTime += 2000 + 20 * line.length;
+        typingTime = 2000 + 20 * line.length;
+        totalTime += typingTime;
+        console.log("Message thinking/typing time: " + typingTime);
         if (this.speaker === "other") {
           setTimeout((function(line) {
             return function() {
@@ -258,7 +260,6 @@
           throw new Error("Unknown speaker type " + this.speaker);
         }
       }
-      console.log(totalTime);
       return setTimeout(((function(_this) {
         return function() {
           return chat.enterDialogueNode(_this.successor);

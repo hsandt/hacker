@@ -2,14 +2,14 @@
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  this.Localize = (function() {
-    function Localize() {
+  this.Locale = (function() {
+    function Locale() {
       this.getLine = bind(this.getLine, this);
       this.buildDialogueLines = bind(this.buildDialogueLines, this);
       this.loadDialogueLines = bind(this.loadDialogueLines, this);
     }
 
-    Localize.prototype.loadDialogueLines = function(dialoguesFilename) {
+    Locale.prototype.loadDialogueLines = function(dialoguesFilename) {
       return $.getJSON(dialoguesFilename, this.buildDialogueLines).done(function() {
         return console.log("[LOAD] Loaded localized dialogue lines");
       }).fail(function() {
@@ -17,17 +17,21 @@
       });
     };
 
-    Localize.prototype.buildDialogueLines = function(data) {
+    Locale.prototype.buildDialogueLines = function(data) {
       return this.dialogueLines = data;
     };
 
-    Localize.prototype.getLine = function(lineID) {
-      var lineNo, missionID, ref, textNo;
+    Locale.prototype.getLine = function(lineID) {
+      var line, lineNo, missionID, ref, textNo;
       ref = lineID.split('_'), missionID = ref[0], textNo = ref[1], lineNo = ref[2];
-      return this.dialogueLines[missionID][textNo][lineNo];
+      line = this.dialogueLines[missionID][textNo][lineNo];
+      if (line == null) {
+        throw new Error("Locale for lineID " + lineID + " not found");
+      }
+      return line;
     };
 
-    return Localize;
+    return Locale;
 
   })();
 
