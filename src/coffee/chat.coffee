@@ -31,7 +31,14 @@ class @Chat extends App
   # [int] index of next message to receive
   nextIncomingMessageIdx: 0
 
+  # [String] "phone" or "irc" depending on chat type
   appName: "N/A"
+
+  # [bool] Is the player character typing on the phone?
+  isTyping: false
+
+  # [Message[]] queue of messqges to be sent
+  messageQueue: []
 
   constructor: ($screen, $device) ->
     super $screen, $device
@@ -54,8 +61,15 @@ class @Chat extends App
   onOpen: =>
     @device.notify "off"
 
-  onClose: =>
+    return true
 
+  onClose: =>
+    # cannot leave chat screen while typing a message automatically
+    console.log "isTyping: #{@isTyping}"
+    if @isTyping
+      return false
+
+    return true
 
 # Start a dialogue graph stored in game data, by name
   #
@@ -213,22 +227,32 @@ class @DialogueText extends DialogueNode
     "DialogueText #{@name} -> #{if @successor? then @successor.name else "END"}"
 
   onEnter: (chat) =>
-    # for TEXT nodes, either send or receive all messages in the node, depending on the speaker
+    # for TEXT nodes, either send or receive all messages in the node, depending on the sender
+    # to do this timely, create a queue of messages waiting to be sent
     totalTime = 0
     for lineID in @lines
       line = game.locale.getLine(lineID)
       # natural thinking + typing waiting time before sending message, affine of length message
-      typingTime = 2000 + 20 * line.length
-      totalTime += typingTime
-      console.log "Message thinking/typing time: #{typingTime}"
-      if @speaker == "other"
-        setTimeout (do (line) -> -> chat.receiveMessage line), totalTime
-      else if @speaker == "me"
-        setTimeout (do (line) -> -> chat.sendMessage line), totalTime
-      else
-        throw new Error "Unknown speaker type #{@speaker}"
-    # go to next node
-    setTimeout (=> chat.enterDialogueNode @successor), totalTime
+      typingTime = 1500 + 20 * line.length
+      console.log "Message thinking/typing time of #{line}: #{typingTime}"
+      chat.messageQueue.push Message(@speaker, "2027", line, typingTime)
+
+    # TODO: in Chat, add processMessage method
+
+#    if @speaker == "other"
+#      setTimeout (do (line) -> -> chat.receiveMessage line), totalTime
+#      else if @speaker == "me"
+#        # if player is not viewing this app, do not let player character type message until this is the case
+#        if game.currentAppName == @appName
+#          # let player character type automatically until message is sent (prevents closing chat window)
+#          chat.isTyping = true
+#          setTimeout (do (line) -> -> chat.sendMessage line; chat.isTyping = false), totalTime
+#        else
+#
+#      else
+#        throw new Error "Unknown speaker type #{@speaker}"
+#    # go to next node
+#    setTimeout (=> chat.enterDialogueNode @successor), totalTime
 
 
 class @DialogueChoiceHub extends DialogueNode
@@ -300,6 +324,17 @@ class @DialogueWait extends DialogueNode
     # for WAIT node, wait given time and go to next node
     console.log @waitTime
     setTimeout (=> chat.enterDialogueNode @successor), @waitTime
+
+
+# Any kind of message sent in a chat from a character to another
+class @Message
+
+  # @param sender [String] name of the sender
+  # @param date [String] day when message is sent
+  # @param content [String] message text content
+  # @param sendTime [String] thinking + typing time for that message
+  constructor: (@sender, @date, @content, @sendTime) ->
+
 
 class @Phone extends Chat
 

@@ -84,11 +84,14 @@ class @Terminal extends App
     @$promptInput.on "blur.autofocus", =>
       @$promptInput.focus()
 
+    return true
+
   # Leave focus and unbind forced focus rule
   onClose: =>
     @$promptInput.off "blur.autofocus"
     @$promptInput.blur()
 
+    return true
 
   ### INPUT/OUTPUT ###
 
