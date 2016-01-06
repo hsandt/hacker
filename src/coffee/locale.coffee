@@ -23,4 +23,8 @@ class @Locale
     # split lineID in format "mkX_dY_ZZ" into "mkX/dY/ZZ" the key path to access the dictionary value
     # (or _tY_ for a text file content)
     [missionID, textNo, lineNo] = lineID.split '_'
-    @dialogueLines[missionID][textNo][lineNo]
+    line = @dialogueLines[missionID][textNo][lineNo]
+    if not line?
+      throw new Error "Locale for lineID #{lineID} not found"
+    line
+
