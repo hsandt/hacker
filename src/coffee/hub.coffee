@@ -4,7 +4,7 @@ class @Hub
   dialogs: {}
 
   # state vars
-  currentAppName: 'none'  # current app name: 'none', 'terminal', 'chat', etc.
+  currentAppName: 'none'  # current app name: 'none' if none is open, 'terminal', 'chat', etc.
 
   constructor: (@$screens, @$desk) ->
     self = @

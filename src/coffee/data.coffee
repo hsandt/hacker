@@ -9,6 +9,7 @@ class @GameData
       ["mt1_t1_01", "mt1_t1_02"].map(game.locale.getLine).join('\n'),
       "mission-test.conclusion")
     "mission-test.conclusion": ->
+      # FIXME: can finish the game by reading the correct file from the beginning
       game.phone.startDialogueByName "mission-test.conclusion"
     "mission-tutorial.conclusion": ->
       game.phone.startDialogueByName "mission-tutorial.conclusion"

@@ -1,9 +1,11 @@
 # Base class for window applications inside the game
 class @App
 
-  # screen [jQuery] modular window screen element
-  # device [jQuery] hub device element
-  constructor: (@$screen, $device) ->
+  # [HubDevice] hub device
+  device: null
+
+  # $screen [jQuery] modular window screen element
+  constructor: (@$screen) ->
 
   # Called when the player focuses on this application, return boolean
   # MUST return true to propagate and have expected opening effect, false to stop propagation
