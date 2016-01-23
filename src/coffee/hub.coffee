@@ -4,7 +4,7 @@ class @Hub
   dialogs: {}
 
   # state vars
-  currentAppName: 'none'  # current app name: 'none', 'terminal', 'chat', etc.
+  currentAppName: 'none'  # current app name: 'none' if none is open, 'terminal', 'chat', etc.
 
   constructor: (@$screens, @$desk) ->
     self = @
@@ -52,16 +52,24 @@ class @Hub
   # @param appName [String]
   _onOpen: (appName) =>
     # check that there is no other app open (TODO: except notes)
-    if @currentAppName == 'none'
+    if @currentAppName != 'none'
+      console.warn "[WARNING] Trying to open app #{appName} but app #{@currentAppName} is already open"
+      return false
+
+    if game.apps[appName].onOpen()
       @currentAppName = appName
-      game.apps[appName].onOpen()
-    else
-      console.warn "[WARNING] Opening app #{appName} but app #{@currentAppName} is already open"
+      return true
+
+    return false
 
   # Callback when closing current application: set current app to 'none' and clean app state
   _onClose: =>
-    if @currentAppName != 'none'
-      game.apps[@currentAppName].onClose()
+    if @currentAppName == 'none'
+      console.warn "[WARNING] Trying to close current app but no app is currently open"
+      return false
+
+    if game.apps[@currentAppName].onClose()
       @currentAppName = 'none'
-    else
-      console.warn "[WARNING] Closing current app but no app is currently open"
+      return true
+
+    return false

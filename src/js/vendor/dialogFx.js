@@ -4,12 +4,12 @@
  *
  * Licensed under the MIT license.
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * Copyright 2014, Codrops
  * http://www.codrops.com
  */
 ;( function( window ) {
-	
+
 	'use strict';
 
 	var support = { animations : Modernizr.cssanimations },
@@ -32,7 +32,7 @@
 		};
 
 	function extend( a, b ) {
-		for( var key in b ) { 
+		for( var key in b ) {
 			if( b.hasOwnProperty( key ) ) {
 				a[key] = b[key];
 			}
@@ -86,10 +86,11 @@
 	DialogFx.prototype.open = function() {
 		if (this.isOpen) return;
 
-		classie.add( this.el, 'dialog--open' );
+        // callback on open
+        // if returns false, stop propagation (allow to prevent opening app under some circumstances)
+		if (!this.options.onOpenDialog( this )) return;
 
-		// callback on open
-		this.options.onOpenDialog( this );
+		classie.add( this.el, 'dialog--open' );
 
 		this.isOpen = true;
 	};
@@ -98,6 +99,10 @@
 	DialogFx.prototype.close = function() {
 		if (!this.isOpen) return;
 
+		// callback on close
+        // if returns false, stop propagation (allow to prevent closing app under some circumstances)
+        if (!this.options.onCloseDialog( this )) return;
+
 		var self = this;
 		classie.remove( this.el, 'dialog--open' );
 		classie.add( self.el, 'dialog--close' );
@@ -105,9 +110,6 @@
 		onEndAnimation( this.el.querySelector( '.dialog__content' ), function() {
 			classie.remove( self.el, 'dialog--close' );
 		} );
-
-		// callback on close
-		this.options.onCloseDialog( this );
 
 		this.isOpen = false;
 	};

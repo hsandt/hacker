@@ -1,41 +1,22 @@
-class @ChatDevice extends HubDevice
-
-  constructor: ($device) ->
-    super $device
-
-    @phoneAudio = new Audio
-    @phoneAudio.src = game.audioPath + 'sfx/phone_notification.mp3'
-
-    $device.addClass "notify-off"
-
-  # If active is true, show a visual cue to notify the player that something new has happened
-  # If active is false, stop showing visual cue for new events
-  notify: (state = "on") =>
-    if !(state in ["on", "off"])
-      throw new Exception "notify 'state' argument must be 'on' or 'off'"
-    antistate = if state == "on" then "off" else "on"
-
-    # change class to trigger notification style / animation
-    @$device.removeClass "notify-#{antistate}"
-    @$device.addClass "notify-#{state}"
-
-    if state == "on"
-      @phoneAudio.play()
-
-    else
-      @phoneAudio.pause()
-      @phoneAudio.currentTime = 0
-
+# Abstract base class for IRC and phone apps
 class @Chat extends App
 
   # [int] index of next message to receive
   nextIncomingMessageIdx: 0
 
+  # [String] "phone" or "irc" depending on chat type
   appName: "N/A"
 
-  constructor: ($screen, $device) ->
-    super $screen, $device
-    @device = new ChatDevice $device
+  # [bool] Is the player character typing on the phone?
+  isTyping: false
+
+  # OPTIMIZE: use Queue.js if an array is too slow (only better over 2 elements,
+  # and we have an average of 2 lines per text node)
+  # [Message[]] queue of messages to be sent
+  messageQueue: []
+
+  constructor: ($screen) ->
+    super $screen
 
     # jQuery element for the list of messages
     @$chatHistory = $screen.find ".history"
@@ -51,13 +32,20 @@ class @Chat extends App
     @dialogueGraph = null
     @currentDialogueNode = null
 
-  onOpen: =>
-    @device.notify "off"
+#  onOpen: =>
+#    @device.notify false
+#    #
+#    return true
 
   onClose: =>
+    # cannot leave chat screen while typing a message automatically
+    console.log "isTyping: #{@isTyping}"
+    if @isTyping
+      return false
 
+    return true
 
-# Start a dialogue graph stored in game data, by name
+  # Start a dialogue graph stored in game data, by name
   #
   # @param dialogueName [String] name of the dialogue stored in game data
   startDialogueByName: (dialogueName) =>
@@ -100,15 +88,24 @@ class @Chat extends App
 #      game.events[event] = true
     @enterDialogueNode choice
 
+  # Send or receive message depending on sender
+  #
+  # @param sender [String] message sender
+  sendOrReceiveMessage: (message) =>
+    if message.sender == "me"
+      sendMessage message
+    else
+      receiveMessage message
+
   # Send message choice to chat
   #
-  # @param message [String] message to send
+  # @param message [Message] message to send
   sendMessage: (message) =>
     @printMessage message, @sentMessageTemplate
 
   # Show new message received in chat history
   #
-  # @param message [String] message received
+  # @param message [Message] message received
   receiveMessage: (message) =>
     # show phone notification on hub if the player is not already viewing the phone
     if game.hub.currentAppName != @appName  # "irc" for IRC, "phone" for the phone
@@ -117,12 +114,13 @@ class @Chat extends App
 
   # Print message from character in chat
   #
-  # @param message [String] message to print
+  # @param message [Message] message to print
   # @param template [Handlebars.Template] message template corresponding to the character speaking
   printMessage: (message, template) =>
     context =
-      message: message
-      time: "2017-04-15"
+      message: message.content
+      sender: message.sender
+      time: message.date
     @$chatHistoryList.append template(context)
     @scrollToBottom()
 
@@ -149,6 +147,44 @@ class @Chat extends App
   hideMessageChoices: =>
     @$chatInputList.empty()
 
+  # Process all the messages in the queue in succession
+  processMessageQueue: =>
+    @prepareNextMessage()
+
+  # Set timer to send/receive next message in the queue if any, else enter next node
+  prepareNextMessage: =>
+    if @messageQueue.length > 0
+      # prepare to send/receive next message in the queue
+      nextMessage = @messageQueue[0]
+
+      # if message from player character and player is not viewing this app,
+      # do not let player character type message until this is the case
+      if nextMessage.sender == "me"
+        if game.hub.currentAppName == @appName
+          @isTyping = true
+        else
+          console.log "[CHAT] Chat is closed, cannot type message"
+          return
+
+      # prepare timer to send or receive future next message
+      setTimeout (=> @processNextMessage()), nextMessage.sendTime
+
+    else
+      # last message processed, go to next node (unique successor of the current text or choice node)
+      @enterDialogueNode @currentDialogueNode.successor
+
+  # Receive message passed as parameter and
+  processNextMessage: =>
+  # send or receive message just arriving now
+    message = @messageQueue.shift()
+    if message.sender == "me"
+      @sendMessage message
+      # the player character is not typing anymore and may leave the app (unless she starts writing another message now)
+      @isTyping = false
+    else
+      @receiveMessage message
+
+    @prepareNextMessage()
 
 class @DialogueGraph
 
@@ -213,22 +249,16 @@ class @DialogueText extends DialogueNode
     "DialogueText #{@name} -> #{if @successor? then @successor.name else "END"}"
 
   onEnter: (chat) =>
-    # for TEXT nodes, either send or receive all messages in the node, depending on the speaker
-    totalTime = 0
+    # for TEXT nodes, either send or receive all messages in the node, depending on the sender
+    # to do this timely, create a queue of messages waiting to be sent
     for lineID in @lines
       line = game.locale.getLine(lineID)
       # natural thinking + typing waiting time before sending message, affine of length message
-      typingTime = 2000 + 20 * line.length
-      totalTime += typingTime
-      console.log "Message thinking/typing time: #{typingTime}"
-      if @speaker == "other"
-        setTimeout (do (line) -> -> chat.receiveMessage line), totalTime
-      else if @speaker == "me"
-        setTimeout (do (line) -> -> chat.sendMessage line), totalTime
-      else
-        throw new Error "Unknown speaker type #{@speaker}"
-    # go to next node
-    setTimeout (=> chat.enterDialogueNode @successor), totalTime
+      typingTime = 1500 + 20 * line.length
+      console.log "Message thinking/typing time of #{line}: #{typingTime/1000}s"
+      chat.messageQueue.push new Message(@speaker, "2027", line, typingTime)
+
+    chat.processMessageQueue()
 
 
 class @DialogueChoiceHub extends DialogueNode
@@ -262,9 +292,15 @@ class @DialogueChoice extends DialogueNode
   onEnter: (chat) =>
     # for CHOICE node, remove choices, send choice messages and trigger associated effects
     chat.hideMessageChoices()
-    for lineID in @lines
-      chat.sendMessage game.locale.getLine(lineID)
-    chat.enterDialogueNode @successor
+    for lineID, i in @lines
+      line = game.locale.getLine(lineID)
+      # typing time is similar to text node calculation, except the 1st message is immediate
+      # (assume the player character has typed it while you were thinking which choice to make)
+      typingTime = if i == 0 then 0 else 1500 + 20 * line.length
+      console.log "Message thinking/typing time of #{line}: #{typingTime/1000}s"
+      chat.messageQueue.push new Message("me", "2027", line, typingTime)
+
+    chat.processMessageQueue()
 
 # Special dialogue node that calls an event function and immediately goes to the next node
 class @DialogueEvent extends DialogueNode
@@ -301,6 +337,60 @@ class @DialogueWait extends DialogueNode
     console.log @waitTime
     setTimeout (=> chat.enterDialogueNode @successor), @waitTime
 
+
+# Any kind of message sent in a chat from a character to another
+class @Message
+
+  # @param sender [String] name of the sender
+  # @param date [String] day when message is sent
+  # @param content [String] message text content
+  # @param sendTime [String] thinking + typing time for that message
+  constructor: (@sender, @date, @content, @sendTime) ->
+
+
 class @Phone extends Chat
 
   appName: "phone"
+
+  constructor: ($screen, $device) ->
+    super $screen
+    @device = new PhoneDevice $device
+
+  onOpen: =>
+    @device.notify false
+    #
+    return true
+
+
+class @PhoneDevice extends HubDevice
+
+  constructor: ($device) ->
+    super $device
+
+    @phoneAudio = new Audio
+    @phoneAudio.src = game.audioPath + 'sfx/phone_notification.mp3'
+
+    $device.addClass "notify-off"
+
+  # If active is true, show a visual cue to notify the player that something new has happened
+  # If active is false, stop showing visual cue for new events
+  # If notification is already in this state, though, nothing happens
+  notify: (active = true) =>
+    if @notificationActive == active
+      return
+
+    @notificationActive = active
+    state = if active then "on" else "off"
+    oppositeState = if active then "off" else "on"
+
+    # change class to trigger notification style / animation
+    @$device.removeClass "notify-#{oppositeState}"
+    @$device.addClass "notify-#{state}"
+
+    if active
+      @phoneAudio.play()
+
+    else
+      @phoneAudio.pause()
+      @phoneAudio.currentTime = 0
+
