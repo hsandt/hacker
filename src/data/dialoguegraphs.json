@@ -103,7 +103,8 @@
     "initial": {
       "type": "text",
       "lines": ["mk1_d1_01"],
-      "successor": "prop1"
+      "successor": "prop1",
+      "speaker": "mathilde"
     },
     "prop1": {
       "type": "text",
@@ -114,7 +115,8 @@
     "prop2": {
       "type": "text",
       "lines": ["mk1_d1_03", "mk1_d1_04"],
-      "successor": "question1*"
+      "successor": "question1*",
+      "speaker": "mathilde"
     },
     "question1*": {
       "type": "choice hub",
@@ -138,7 +140,8 @@
     "fingerprint1": {
       "type": "text",
       "lines": ["mk1_d1_08"],
-      "successor": "fingerprint2"
+      "successor": "fingerprint2",
+      "speaker": "mathilde"
     },
     "fingerprint2": {
       "type": "text",
@@ -149,7 +152,8 @@
     "people1": {
       "type": "text",
       "lines": ["mk1_d1_10"],
-      "successor": "people2"
+      "successor": "people2",
+      "speaker": "mathilde"
     },
     "people2": {
       "type": "text",
@@ -160,7 +164,8 @@
     "key1": {
       "type": "text",
       "lines": ["mk1_d1_12", "mk1_d1_13", "mk1_d1_14"],
-      "successor": "key2"
+      "successor": "key2",
+      "speaker": "mathilde"
     },
     "key2": {
       "type": "text",
@@ -190,17 +195,20 @@
     "name1": {
       "type": "text",
       "lines": ["mk1_d1_19"],
-      "successor": "question2*"
+      "successor": "question2*",
+      "speaker": "mathilde"
     },
     "find1": {
       "type": "text",
       "lines": ["mk1_d1_20", "mk1_d1_21"],
-      "successor": "question2*"
+      "successor": "question2*",
+      "speaker": "mathilde"
     },
     "id1": {
       "type": "text",
       "lines": ["mk1_d1_24", "mk1_d1_25"],
-      "successor": "question2*"
+      "successor": "question2*",
+      "speaker": "mathilde"
     }
   },
   "mission-tutorial.conclusion": {
@@ -216,12 +224,14 @@
     "found1": {
       "type": "text",
       "lines": ["mk1_d2_03"],
-      "successor": "how?"
+      "successor": "how?",
+      "speaker": "mathilde"
     },
     "how?": {
       "type": "text",
       "lines": ["mk1_d2_04"],
-      "successor": "how*"
+      "successor": "how*",
+      "speaker": "mathilde"
     },
     "how*": {
       "type": "choice hub",
@@ -240,12 +250,14 @@
     "secret!": {
       "type": "text",
       "lines": ["mk1_d2_07"],
-      "successor": "secret1"
+      "successor": "secret1",
+      "speaker": "mathilde"
     },
     "hacked1": {
       "type": "text",
       "lines": ["mk1_d2_08", "mk1_d2_09"],
-      "successor": "hacked2"
+      "successor": "hacked2",
+      "speaker": "mathilde"
     },
     "hacked2": {
       "type": "text",
@@ -261,7 +273,8 @@
     "always1": {
       "type": "text",
       "lines": ["mk1_d2_12"],
-      "successor": "always2"
+      "successor": "always2",
+      "speaker": "mathilde"
     },
     "always2": {
       "type": "text",
@@ -272,12 +285,14 @@
     "secret1": {
       "type": "text",
       "lines": ["mk1_d2_14"],
-      "successor": "goodbye1"
+      "successor": "goodbye1",
+      "speaker": "mathilde"
     },
     "goodbye1": {
       "type": "text",
       "lines": ["mk1_d2_15"],
-      "successor": "goodbye2"
+      "successor": "goodbye2",
+      "speaker": "mathilde"
     },
     "goodbye2": {
       "type": "text",

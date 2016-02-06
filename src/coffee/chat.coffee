@@ -117,9 +117,15 @@ class @Chat extends App
   # @param message [Message] message to print
   # @param template [Handlebars.Template] message template corresponding to the character speaking
   printMessage: (message, template) =>
+    # REFACTOR: character name localization system with tag ("mathilde" or "$C2" for more hardcore)
+    if message.sender == "me"
+#      sender = "Hannah"
+      sender = "Me"
+    else
+      sender = message.sender[0].toUpperCase() + message.sender[1..]
     context =
       message: message.content
-      sender: message.sender
+      sender: sender
       time: message.date
     @$chatHistoryList.append template(context)
     @scrollToBottom()
@@ -160,7 +166,7 @@ class @Chat extends App
       # if message from player character and player is not viewing this app,
       # do not let player character type message until this is the case
       if nextMessage.sender == "me"
-        if game.hub.currentAppName == @appName
+        if game.hub.currentAppName == @appName or true
           @isTyping = true
         else
           console.log "[CHAT] Chat is closed, cannot type message"
@@ -242,7 +248,7 @@ class @DialogueText extends DialogueNode
   # @param lines [String[]] messages to receive
   # @param successor [DialogueNode] successor node
   # @param speaker [String] speaker, either "me" or "other"
-  constructor: (name, @lines, @successor, @speaker = "other") ->
+  constructor: (name, @lines, @successor, @speaker = "me") ->
     super name, "text"
 
   toString: =>
@@ -358,7 +364,7 @@ class @Phone extends Chat
 
   onOpen: =>
     @device.notify false
-    #
+    # NEXT TODO: start typing reply if any
     return true
 
 
