@@ -1,14 +1,18 @@
 # Abstract base class for IRC and phone apps
 class @Chat extends App
 
-  # [int] index of next message to receive
-  nextIncomingMessageIdx: 0
-
-  # [String] "phone" or "irc" depending on chat type
-  appName: "N/A"
-
+  # [bool] Safety flag that is true when the first message in the queue
+  # has a timeout pending, to avoid sending the same message twice
+  isPreparingNextMessage: false
   # [bool] Is the player character typing on the phone?
   isTyping: false
+  # [bool] Should the player type a message when he/she opens the chat next time?
+  mustType: false
+
+  # [DialogueGraph] current dialogue graph
+  @dialogueGraph: null
+  # [DialogueNode] current dialogue node
+  @currentDialogueNode: null
 
   # OPTIMIZE: use Queue.js if an array is too slow (only better over 2 elements,
   # and we have an average of 2 lines per text node)
@@ -24,26 +28,22 @@ class @Chat extends App
     @$chatInput = $screen.find ".input"
     @$chatInputList = @$chatInput.find "ul"
 
-    @receivedMessageTemplate = Handlebars.compile $("#message-received-template").html()
+    @receivedMessageTemplate = Handlebars.compile($("#message-received-template").html())
     @sentMessageTemplate = Handlebars.compile $("#message-sent-template").html()
     @messageChoiceTemplate = Handlebars.compile $("#message-choice-template").html()
 
-    # [DialogueGraph] current dialogue graph
-    @dialogueGraph = null
-    @currentDialogueNode = null
-
-#  onOpen: =>
-#    @device.notify false
-#    #
-#    return true
-
-  onClose: =>
-    # cannot leave chat screen while typing a message automatically
-    console.log "isTyping: #{@isTyping}"
+  # Return true if the application can be closed now
+  checkCanClose: =>
     if @isTyping
-      return false
+      console.log "[CHAT] Cannot close #{@appName}, player character is typing"
+    return not @isTyping
 
-    return true
+  onOpen: =>
+    @device.notify false
+    if @mustType
+      # current hub app has been set to Chat subclass name,
+      # so calling @prepareNextMessage should correctly send the PC's next message now
+      @prepareNextMessage()
 
   # Start a dialogue graph stored in game data, by name
   #
@@ -147,14 +147,14 @@ class @Chat extends App
   hideMessageChoices: =>
     @$chatInputList.empty()
 
-  # Process all the messages in the queue in succession
-  processMessageQueue: =>
-    @prepareNextMessage()
-
   # Set timer to send/receive next message in the queue if any, else enter next node
   prepareNextMessage: =>
+#    console.log "[CHAT] prepareNextMessage()"
+    # set flag to avoid preparing the same message a 2nd time later
+    @isPreparingNextMessage = true
     if @messageQueue.length > 0
       # prepare to send/receive next message in the queue
+#      console.log "[CHAT] Get next message from queue"
       nextMessage = @messageQueue[0]
 
       # if message from player character and player is not viewing this app,
@@ -162,8 +162,10 @@ class @Chat extends App
       if nextMessage.sender == "me"
         if game.hub.currentAppName == @appName
           @isTyping = true
+          @mustType = false  # if chat was closed before and mustType flag was set, revert it now
         else
-          console.log "[CHAT] Chat is closed, cannot type message"
+          console.log "[CHAT] #{@appName} is closed, will type message next time chat is entered"
+          @mustType = true
           return
 
       # prepare timer to send or receive future next message
@@ -175,7 +177,9 @@ class @Chat extends App
 
   # Receive message passed as parameter and
   processNextMessage: =>
-  # send or receive message just arriving now
+    # release flag, can prepare another message from here
+    @isPreparingNextMessage = false
+    # send or receive message just arriving now
     message = @messageQueue.shift()
     if message.sender == "me"
       @sendMessage message
@@ -255,10 +259,11 @@ class @DialogueText extends DialogueNode
       line = game.locale.getLine(lineID)
       # natural thinking + typing waiting time before sending message, affine of length message
       typingTime = 1500 + 20 * line.length
-      console.log "Message thinking/typing time of #{line}: #{typingTime/1000}s"
+      console.log "Message thinking/typing time of '#{line}': #{typingTime/1000}s"
       chat.messageQueue.push new Message(@speaker, "2027", line, typingTime)
 
-    chat.processMessageQueue()
+    # process queue by starting with first message
+    chat.prepareNextMessage()
 
 
 class @DialogueChoiceHub extends DialogueNode
@@ -355,11 +360,6 @@ class @Phone extends Chat
   constructor: ($screen, $device) ->
     super $screen
     @device = new PhoneDevice $device
-
-  onOpen: =>
-    @device.notify false
-    #
-    return true
 
 
 class @PhoneDevice extends HubDevice

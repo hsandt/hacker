@@ -56,8 +56,11 @@ class @Hub
       console.warn "[WARNING] Trying to open app #{appName} but app #{@currentAppName} is already open"
       return false
 
-    if game.apps[appName].onOpen()
+    app = game.apps[appName]
+
+    if app.checkCanOpen()
       @currentAppName = appName
+      app.onOpen()  # call this after setting the new app name, it may need it
       return true
 
     return false
@@ -68,7 +71,10 @@ class @Hub
       console.warn "[WARNING] Trying to close current app but no app is currently open"
       return false
 
-    if game.apps[@currentAppName].onClose()
+    app = game.apps[@currentAppName]
+
+    if app.checkCanClose()
+      app.onClose()  # call this before resetting app name, it may need the old one
       @currentAppName = 'none'
       return true
 
