@@ -32,12 +32,13 @@ class @Chat extends App
     @sentMessageTemplate = Handlebars.compile $("#message-sent-template").html()
     @messageChoiceTemplate = Handlebars.compile $("#message-choice-template").html()
 
-  # Return true if the application can be closed now
+  # [override]
   checkCanClose: =>
     if @isTyping
       console.log "[CHAT] Cannot close #{@appName}, player character is typing"
     return not @isTyping
 
+  # [override]
   onOpen: =>
     @device.notify false
     if @mustType
@@ -92,7 +93,7 @@ class @Chat extends App
   #
   # @param sender [String] message sender
   sendOrReceiveMessage: (message) =>
-    if message.sender == "me"
+    if message.sender == "pc"
       sendMessage message
     else
       receiveMessage message
@@ -118,11 +119,12 @@ class @Chat extends App
   # @param template [Handlebars.Template] message template corresponding to the character speaking
   printMessage: (message, template) =>
     # REFACTOR: character name localization system with tag ("mathilde" or "$C2" for more hardcore)
-    if message.sender == "me"
-#      sender = "Hannah"
-      sender = "Me"
+    if message.sender == "pc"
+      # use 'pc' for any player character message, then add % in front of name
+      senderCode = "you"
     else
-      sender = message.sender[0].toUpperCase() + message.sender[1..]
+      senderCode = message.sender
+    sender = game.locale.getName(senderCode)
     context =
       message: message.content
       sender: sender
@@ -165,7 +167,7 @@ class @Chat extends App
 
       # if message from player character and player is not viewing this app,
       # do not let player character type message until this is the case
-      if nextMessage.sender == "me"
+      if nextMessage.sender == "pc"
         if game.hub.currentAppName == @appName or true
           @isTyping = true
           @mustType = false  # if chat was closed before and mustType flag was set, revert it now
@@ -187,7 +189,7 @@ class @Chat extends App
     @isPreparingNextMessage = false
     # send or receive message just arriving now
     message = @messageQueue.shift()
-    if message.sender == "me"
+    if message.sender == "pc"
       @sendMessage message
       # the player character is not typing anymore and may leave the app (unless she starts writing another message now)
       @isTyping = false
@@ -251,8 +253,8 @@ class @DialogueText extends DialogueNode
   # @param name [String] string identifier
   # @param lines [String[]] messages to receive
   # @param successor [DialogueNode] successor node
-  # @param speaker [String] speaker, either "me" or "other"
-  constructor: (name, @lines, @successor, @speaker = "me") ->
+  # @param speaker [String] speaker, either "pc" (player character) or "other"
+  constructor: (name, @lines, @successor, @speaker = "pc") ->
     super name, "text"
 
   toString: =>
@@ -309,9 +311,9 @@ class @DialogueChoice extends DialogueNode
       # (assume the player character has typed it while you were thinking which choice to make)
       typingTime = if i == 0 then 0 else 1500 + 20 * line.length
       console.log "Message thinking/typing time of #{line}: #{typingTime/1000}s"
-      chat.messageQueue.push new Message("me", "2027", line, typingTime)
+      chat.messageQueue.push new Message("pc", "2027", line, typingTime)
 
-    chat.processMessageQueue()
+    chat.prepareNextMessage()
 
 # Special dialogue node that calls an event function and immediately goes to the next node
 class @DialogueEvent extends DialogueNode
@@ -375,6 +377,7 @@ class @PhoneDevice extends HubDevice
 
     @phoneAudio = new Audio
     @phoneAudio.src = game.audioPath + 'sfx/phone_notification.mp3'
+#    @phoneAudio.loop = true
 
     $device.addClass "notify-off"
 

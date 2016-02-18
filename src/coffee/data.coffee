@@ -20,7 +20,7 @@ class @GameData
   loadDialogueGraphs: (dialogueGraphsFilename) =>
     $.getJSON(dialogueGraphsFilename, @buildDialogueGraphs)
       .done(-> console.log "[LOAD] Loaded dialogue graphs")
-      .fail(-> console.log "[LOAD] Failed loading dialogue graphs")
+      .fail(-> console.log "[ERROR] Failed loading dialogue graphs")
 
   # Build dictionary of dialogue graphs from JSON data
   #

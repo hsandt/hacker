@@ -57,25 +57,31 @@ class @Game
     @imagePath = @srcPath + 'img/'
 
   loadModules: =>
-    modulePath = game.srcPath + "modules/"
-    $.when($.get(modulePath + "hub.html"), $.get(modulePath + "phone.html"), $.get(modulePath + "terminal.html"))
-      .done ([hubHTML, ...], [phoneHTML, ...], [terminalHTML, ...]) ->
-        console.log "[LOAD] Loaded Hub, Phone, Terminal HTML"
-        $("#content").html hubHTML
-        $("#phoneContent").html phoneHTML
-        $("#terminalContent").html terminalHTML
+    modulePath = game.srcPath + 'modules/'
+    $.when(
+      $.get(modulePath + "hub.html")
+      $.get(modulePath + "phone.html")
+      $.get(modulePath + "terminal.html")
+      $.get(modulePath + "settings.html")
+    ).done ([hubHTML, ...], [phoneHTML, ...], [terminalHTML, ...], [settingsHTML, ...]) ->
+      console.log "[LOAD] Loaded Hub, Phone, Terminal HTML"
+      $("#content").html hubHTML
+      $("#phoneContent").html phoneHTML
+      $("#terminalContent").html terminalHTML
+      $("#settingsContent").html settingsHTML
 
   initModules: =>
+    console.log "[GAME] initialize modules"
     if not game?
       throw new Error "document.game has not been defined, please create a game instance with @game = new Game first."
     @hub = new Hub $("#screens"), $("#desk")
     @terminal = @apps['terminal'] = new Terminal $("#terminal-screen"), $("#terminal-device")
     @phone = @apps['phone'] = new Phone $("#phone-screen"), $("#phone-device")
-    @apps['chat'] = new App null, null
     @apps['memo'] = new App null, null
     @apps['other'] = new App null, null
     @apps['news'] = new App null, null
 #    @apps['camera'] = new App null, null
+    @settings = @apps['settings'] = new Settings $("#settings-screen"), $("#settings-device")
 
     @story = new Story
 
@@ -85,10 +91,16 @@ class @Game
     @data = new GameData
     @data.loadDialogueGraphs(game.srcPath + dialogueFilename)
 
-  # @param dialoguesFilename [String] path from src of the JSON file containing all the localized dialogue lines
-  loadLocale: (dialoguesFilename) =>
+  # @param lang [String] language code
+  loadLocale: (lang) =>
+
     @locale = new Locale
-    @locale.loadDialogueLines(game.srcPath + dialoguesFilename)
+    # bundle both deferred objects in parallel so that returned value can be reused with .done()
+    # REFACTOR: use node.js path library or similar for cleaner path joins
+    $.when(
+      @locale.loadDialogueLines(game.srcPath + "locales/#{lang}/dialogues.json")
+      @locale.loadNames(game.srcPath + "locales/#{lang}/names.json")
+    )
 
   # Return event function by name
   #
@@ -105,4 +117,5 @@ class @Game
   playBGM: () =>
     bgmAudio = new Audio
     bgmAudio.src = game.audioPath + 'bgm/' + @bgm
+    bgmAudio.loop = true
     bgmAudio.play()
