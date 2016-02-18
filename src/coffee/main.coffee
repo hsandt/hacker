@@ -3,14 +3,15 @@ $("document").ready ->
   main()
 
 main = ->
-  lang = "fr"
-
+  # create game as global (document) variable
   @game = new Game "./"
 
+  # currently app model and window are bound, so need to wait for settings
+  # window to be ready to use settings
+  # see app.coffee for refactoring ideas
   loadHTMLDeferred = game.loadModules().done ->
     game.initModules()
   dataDeferred = game.loadData "data/dialoguegraphs.json"
-  localeDeferred = game.loadLocale "locales/#{lang}/dialogues.json"
 
   # start story
   storyGraph = new StoryGraph
@@ -22,5 +23,7 @@ main = ->
   )
   storyGraph.addNode new StoryNode("to-be-continued")
 
-  $.when(loadHTMLDeferred, dataDeferred, localeDeferred).done ->
-    game.story.start storyGraph
+  $.when(loadHTMLDeferred, dataDeferred)
+    .done -> game.loadLocale(game.settings.lang)
+    .done -> game.story.start storyGraph
+
