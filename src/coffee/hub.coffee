@@ -11,11 +11,11 @@ class @Hub
 
     # add images from script to ensure path is correct
     screensImage = new Image
-    screensImage.src = game.imagePath + 'screens.png'
+    screensImage.src = game.imagePath + 'hub/screens.png'
     @$screens.prepend screensImage
 
     deskImage = new Image
-    deskImage.src = game.imagePath + 'desk.png'
+    deskImage.src = game.imagePath + 'hub/desk.png'
     @$desk.prepend deskImage
 
     # bind "open modular window" event to each monitor

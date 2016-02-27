@@ -6,38 +6,38 @@ body
   background-color: #f2f2f2
 
 #background
-  background-image: url('#{$image-path}/background.png')
+  background-image: url('#{$image-path}/hub/background.png')
   width: 2600px
   height: 1630px
   //height: 1920px
 
 #shadow1
-  background-image: url('#{$image-path}/shadow1.png')
+  background-image: url('#{$image-path}/hub/shadow1.png')
   width: 2600px
   height: 1630px
 //height: 1920px
 
 #shadow2
-  background-image: url('#{$image-path}/shadow2.png')
+  background-image: url('#{$image-path}/hub/shadow2.png')
   width: 2600px
   height: 1630px
 //height: 1920px
 
 #shadow3
-  background-image: url('#{$image-path}/shadow3.png')
+  background-image: url('#{$image-path}/hub/shadow3.png')
   width: 2600px
   height: 1630px
 //height: 1920px
 
 #shadow4
-  background-image: url('#{$image-path}/shadow4.png')
+  background-image: url('#{$image-path}/hub/shadow4.png')
   width: 2600px
   height: 1630px
 //height: 1920px
 
 #desk
-  background-image: url('#{$image-path}/desk2.png') no-repeat
-  width: 2600px
+  //background-image: url('#{$image-path}/hub/desk2.png') no-repeat
+  width: 2636px
   height: 1630px
   //height: 1080px
 //  width: 2636px
@@ -45,7 +45,7 @@ body
 //  z-index: 500
 
 #screens
-  background-image: url('#{$image-path}/screens.png') no-repeat
+  //background-image: url('#{$image-path}/hub/screens.png') no-repeat
   //+x-transform(scale(0.9, 0.9))
   width: 2636px
   height: 1700px
@@ -53,7 +53,7 @@ body
   //z-index: 500
 
   //&::after
-  //  content: url('#{$image-path}/screens.png')
+  //  content: url('#{$image-path}/hub/screens.png')
   //  +x-transform(scale(.5))
 
 #chat-device
@@ -64,15 +64,40 @@ body
     background-color: #fff8a8
 
 #phone-device
+  position: absolute
+  top: 1300px
+  left: 700px
+  width: 149px
+  height: 174px
+
   &.notify-off
-    background-image: url('#{$image-path}/phone-off.png')
+    background-image: url('#{$image-path}/hub/phone-off.png')
 
   &.notify-on
-    background-image: url('#{$image-path}/phone-on.png')
+    background-image: url('#{$image-path}/hub/phone-on.png')
 
 #memo-device
   +x-transform(skewX(30deg))
 
-#settings-device
-  background-color: red
+#terminal-device
+  position: absolute
+  top: 690px
+  left: 1000px
+  width: 815px
+  height: 455px
+  background-color: rgba(50, 50, 50, .2)
+  animation: blink 1s steps(5) infinite alternate
 
+#settings-device
+  position: absolute
+  top: 700px
+  left: 2100px
+  width: 200px
+  height: 200px
+  background-color: rgba(255, 0, 0, .2)
+
+@keyframes blink
+  from
+    background-color: rgba(50, 50, 50, .2)
+  to
+    background-color: rgba(50, 50, 50, .0)
