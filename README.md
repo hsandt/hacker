@@ -6,17 +6,21 @@ Narrative browser game made by students at Gobelins (Paris) for the class projec
 * Mode: Single player
 * Genre: Narrative, point-and-click, terminal simulation
 
-Text available in English and French, the English translation still being a draft.
+Text available in English and French. However, text in the terminal is currently hardcoded in either French or English.
+To switch to English, click on the red circle on the right of the screen to open the settings window, select English
+and Apply. From there, further text will be written in English, but previous text will remain in French.
+
 More information is available at http://longnguyenhuu.com/game-projects/cyberlepsie.
-If you are interested in the project, you can also contact us (http://longnguyenhuu.com/contact).
+
+Stay tuned for updates on the game!
 
 # Running the game
 
 ## Playing on GitHub Pages (recommended for non-developers)
 
 You can directly play the game on GitHub Pages at http://hsandt.github.io/hacker
-We push the last stable version of the game to GitHub Pages, so you may not have access to the latest features.
 
+We push the last stable version of the game to GitHub Pages, so you may not have access to the latest features.
 Note that the game will need more time to load than when playing locally.
 
 ## Playing locally
@@ -93,6 +97,9 @@ http-server .`
 Play with the mouse for most actions and use the keyboard to type in the terminal.
 We are currently improving the interface to make it more intuitive for players not familiar with computer development,
 so we will put more direct instructions and cues inside the game from now on.
+
+For now, just remember that the item on the left of the desk is a smartphone, the center screen is the terminal and
+the red circle on the right gives access to game settings (currently only localization).
 
 # Credits
 
