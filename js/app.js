@@ -3,18 +3,32 @@
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.App = (function() {
-    function App($screen, $device) {
+    App.prototype.appName = "N/A";
+
+    App.prototype.device = null;
+
+    function App($screen) {
       this.$screen = $screen;
       this.onClose = bind(this.onClose, this);
       this.onOpen = bind(this.onOpen, this);
+      this.checkCanClose = bind(this.checkCanClose, this);
+      this.checkCanOpen = bind(this.checkCanOpen, this);
     }
 
+    App.prototype.checkCanOpen = function() {
+      return true;
+    };
+
+    App.prototype.checkCanClose = function() {
+      return true;
+    };
+
     App.prototype.onOpen = function() {
-      return console.log("[APP] " + this + " onOpen");
+      return console.log("[APP: " + this.appName + "] onOpen");
     };
 
     App.prototype.onClose = function() {
-      return console.log("[APP] " + this + " onClose");
+      return console.log("[APP: " + this.appName + "] onClose");
     };
 
     return App;
@@ -22,3 +36,5 @@
   })();
 
 }).call(this);
+
+//# sourceMappingURL=app.js.map

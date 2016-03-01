@@ -3,16 +3,19 @@
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.HubDevice = (function() {
+    HubDevice.prototype.notificationActive = false;
+
     function HubDevice($device) {
       this.$device = $device;
       this.notify = bind(this.notify, this);
     }
 
-    HubDevice.prototype.notify = function(state) {
-      if (state == null) {
-        state = "on";
+    HubDevice.prototype.notify = function(active) {
+      if (active == null) {
+        active = true;
       }
-      return console.log("notify (state = " + state + ") has not been defined on device " + this);
+      this.notificationActive = active;
+      return console.log("[DEVICE] notify (state = " + state + ") has not been defined on device " + this);
     };
 
     return HubDevice;
@@ -20,3 +23,5 @@
   })();
 
 }).call(this);
+
+//# sourceMappingURL=hubdevice.js.map

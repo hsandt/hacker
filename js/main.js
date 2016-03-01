@@ -8,14 +8,12 @@
   });
 
   main = function() {
-    var dataDeferred, lang, loadHTMLDeferred, localeDeferred, storyGraph;
-    lang = "fr";
+    var dataDeferred, loadHTMLDeferred, storyGraph;
     this.game = new Game("./");
     loadHTMLDeferred = game.loadModules().done(function() {
       return game.initModules();
     });
     dataDeferred = game.loadData("data/dialoguegraphs.json");
-    localeDeferred = game.loadLocale("locales/" + lang + "/dialogues.json");
     storyGraph = new StoryGraph;
     storyGraph.addNode(new StoryNode("initial", (function() {
       game.playBGM();
@@ -24,9 +22,13 @@
       }), 2000);
     }), ["to-be-continued"]));
     storyGraph.addNode(new StoryNode("to-be-continued"));
-    return $.when(loadHTMLDeferred, dataDeferred, localeDeferred).done(function() {
+    return $.when(loadHTMLDeferred, dataDeferred).done(function() {
+      return game.loadLocale(game.settings.lang);
+    }).done(function() {
       return game.story.start(storyGraph);
     });
   };
 
 }).call(this);
+
+//# sourceMappingURL=main.js.map

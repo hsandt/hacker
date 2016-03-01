@@ -4,63 +4,39 @@
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  this.ChatDevice = (function(superClass) {
-    extend(ChatDevice, superClass);
-
-    function ChatDevice($device) {
-      this.notify = bind(this.notify, this);
-      ChatDevice.__super__.constructor.call(this, $device);
-      this.phoneAudio = new Audio;
-      this.phoneAudio.src = game.audioPath + 'sfx/phone_notification.mp3';
-      $device.addClass("notify-off");
-    }
-
-    ChatDevice.prototype.notify = function(state) {
-      var antistate;
-      if (state == null) {
-        state = "on";
-      }
-      if (!(state === "on" || state === "off")) {
-        throw new Exception("notify 'state' argument must be 'on' or 'off'");
-      }
-      antistate = state === "on" ? "off" : "on";
-      this.$device.removeClass("notify-" + antistate);
-      this.$device.addClass("notify-" + state);
-      if (state === "on") {
-        return this.phoneAudio.play();
-      } else {
-        this.phoneAudio.pause();
-        return this.phoneAudio.currentTime = 0;
-      }
-    };
-
-    return ChatDevice;
-
-  })(HubDevice);
-
   this.Chat = (function(superClass) {
     extend(Chat, superClass);
 
-    Chat.prototype.nextIncomingMessageIdx = 0;
+    Chat.prototype.isPreparingNextMessage = false;
 
-    Chat.prototype.appName = "N/A";
+    Chat.prototype.isTyping = false;
 
-    function Chat($screen, $device) {
+    Chat.prototype.mustType = false;
+
+    Chat.dialogueGraph = null;
+
+    Chat.currentDialogueNode = null;
+
+    Chat.prototype.messageQueue = [];
+
+    function Chat($screen) {
+      this.processNextMessage = bind(this.processNextMessage, this);
+      this.prepareNextMessage = bind(this.prepareNextMessage, this);
       this.hideMessageChoices = bind(this.hideMessageChoices, this);
       this.showChoices = bind(this.showChoices, this);
       this.scrollToBottom = bind(this.scrollToBottom, this);
       this.printMessage = bind(this.printMessage, this);
       this.receiveMessage = bind(this.receiveMessage, this);
       this.sendMessage = bind(this.sendMessage, this);
+      this.sendOrReceiveMessage = bind(this.sendOrReceiveMessage, this);
       this.choose = bind(this.choose, this);
       this.enterDialogueNode = bind(this.enterDialogueNode, this);
       this.enterDialogueNodeByName = bind(this.enterDialogueNodeByName, this);
       this.startDialogue = bind(this.startDialogue, this);
       this.startDialogueByName = bind(this.startDialogueByName, this);
-      this.onClose = bind(this.onClose, this);
       this.onOpen = bind(this.onOpen, this);
-      Chat.__super__.constructor.call(this, $screen, $device);
-      this.device = new ChatDevice($device);
+      this.checkCanClose = bind(this.checkCanClose, this);
+      Chat.__super__.constructor.call(this, $screen);
       this.$chatHistory = $screen.find(".history");
       this.$chatHistoryList = this.$chatHistory.find("ul");
       this.$chatInput = $screen.find(".input");
@@ -68,15 +44,21 @@
       this.receivedMessageTemplate = Handlebars.compile($("#message-received-template").html());
       this.sentMessageTemplate = Handlebars.compile($("#message-sent-template").html());
       this.messageChoiceTemplate = Handlebars.compile($("#message-choice-template").html());
-      this.dialogueGraph = null;
-      this.currentDialogueNode = null;
     }
 
-    Chat.prototype.onOpen = function() {
-      return this.device.notify("off");
+    Chat.prototype.checkCanClose = function() {
+      if (this.isTyping) {
+        console.log("[CHAT] Cannot close " + this.appName + ", player character is typing");
+      }
+      return !this.isTyping;
     };
 
-    Chat.prototype.onClose = function() {};
+    Chat.prototype.onOpen = function() {
+      this.device.notify(false);
+      if (this.mustType) {
+        return this.prepareNextMessage();
+      }
+    };
 
     Chat.prototype.startDialogueByName = function(dialogueName) {
       return this.startDialogue(game.data.dialogueGraphs[dialogueName]);
@@ -111,6 +93,14 @@
       return this.enterDialogueNode(choice);
     };
 
+    Chat.prototype.sendOrReceiveMessage = function(message) {
+      if (message.sender === "pc") {
+        return sendMessage(message);
+      } else {
+        return receiveMessage(message);
+      }
+    };
+
     Chat.prototype.sendMessage = function(message) {
       return this.printMessage(message, this.sentMessageTemplate);
     };
@@ -123,10 +113,17 @@
     };
 
     Chat.prototype.printMessage = function(message, template) {
-      var context;
+      var context, sender, senderCode;
+      if (message.sender === "pc") {
+        senderCode = "you";
+      } else {
+        senderCode = message.sender;
+      }
+      sender = game.locale.getName(senderCode);
       context = {
-        message: message,
-        time: "2017-04-15"
+        message: message.content,
+        sender: sender,
+        time: message.date
       };
       this.$chatHistoryList.append(template(context));
       return this.scrollToBottom();
@@ -159,6 +156,44 @@
 
     Chat.prototype.hideMessageChoices = function() {
       return this.$chatInputList.empty();
+    };
+
+    Chat.prototype.prepareNextMessage = function() {
+      var nextMessage;
+      this.isPreparingNextMessage = true;
+      if (this.messageQueue.length > 0) {
+        nextMessage = this.messageQueue[0];
+        if (nextMessage.sender === "pc") {
+          if (game.hub.currentAppName === this.appName || true) {
+            this.isTyping = true;
+            this.mustType = false;
+          } else {
+            console.log("[CHAT] " + this.appName + " is closed, will type message next time chat is entered");
+            this.mustType = true;
+            return;
+          }
+        }
+        return setTimeout(((function(_this) {
+          return function() {
+            return _this.processNextMessage();
+          };
+        })(this)), nextMessage.sendTime);
+      } else {
+        return this.enterDialogueNode(this.currentDialogueNode.successor);
+      }
+    };
+
+    Chat.prototype.processNextMessage = function() {
+      var message;
+      this.isPreparingNextMessage = false;
+      message = this.messageQueue.shift();
+      if (message.sender === "pc") {
+        this.sendMessage(message);
+        this.isTyping = false;
+      } else {
+        this.receiveMessage(message);
+      }
+      return this.prepareNextMessage();
     };
 
     return Chat;
@@ -224,7 +259,7 @@
     function DialogueText(name, lines, successor, speaker) {
       this.lines = lines;
       this.successor = successor;
-      this.speaker = speaker != null ? speaker : "other";
+      this.speaker = speaker != null ? speaker : "pc";
       this.onEnter = bind(this.onEnter, this);
       this.toString = bind(this.toString, this);
       DialogueText.__super__.constructor.call(this, name, "text");
@@ -235,36 +270,16 @@
     };
 
     DialogueText.prototype.onEnter = function(chat) {
-      var i, len, line, lineID, ref, totalTime, typingTime;
-      totalTime = 0;
+      var j, len, line, lineID, ref, typingTime;
       ref = this.lines;
-      for (i = 0, len = ref.length; i < len; i++) {
-        lineID = ref[i];
+      for (j = 0, len = ref.length; j < len; j++) {
+        lineID = ref[j];
         line = game.locale.getLine(lineID);
-        typingTime = 2000 + 20 * line.length;
-        totalTime += typingTime;
-        console.log("Message thinking/typing time: " + typingTime);
-        if (this.speaker === "other") {
-          setTimeout((function(line) {
-            return function() {
-              return chat.receiveMessage(line);
-            };
-          })(line), totalTime);
-        } else if (this.speaker === "me") {
-          setTimeout((function(line) {
-            return function() {
-              return chat.sendMessage(line);
-            };
-          })(line), totalTime);
-        } else {
-          throw new Error("Unknown speaker type " + this.speaker);
-        }
+        typingTime = 1500 + 20 * line.length;
+        console.log("Message thinking/typing time of '" + line + "': " + (typingTime / 1000) + "s");
+        chat.messageQueue.push(new Message(this.speaker, "2027", line, typingTime));
       }
-      return setTimeout(((function(_this) {
-        return function() {
-          return chat.enterDialogueNode(_this.successor);
-        };
-      })(this)), totalTime);
+      return chat.prepareNextMessage();
     };
 
     return DialogueText;
@@ -316,14 +331,17 @@
     };
 
     DialogueChoice.prototype.onEnter = function(chat) {
-      var i, len, lineID, ref;
+      var i, j, len, line, lineID, ref, typingTime;
       chat.hideMessageChoices();
       ref = this.lines;
-      for (i = 0, len = ref.length; i < len; i++) {
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
         lineID = ref[i];
-        chat.sendMessage(game.locale.getLine(lineID));
+        line = game.locale.getLine(lineID);
+        typingTime = i === 0 ? 0 : 1500 + 20 * line.length;
+        console.log("Message thinking/typing time of " + line + ": " + (typingTime / 1000) + "s");
+        chat.messageQueue.push(new Message("pc", "2027", line, typingTime));
       }
-      return chat.enterDialogueNode(this.successor);
+      return chat.prepareNextMessage();
     };
 
     return DialogueChoice;
@@ -382,17 +400,68 @@
 
   })(DialogueNode);
 
+  this.Message = (function() {
+    function Message(sender1, date, content, sendTime) {
+      this.sender = sender1;
+      this.date = date;
+      this.content = content;
+      this.sendTime = sendTime;
+    }
+
+    return Message;
+
+  })();
+
   this.Phone = (function(superClass) {
     extend(Phone, superClass);
 
-    function Phone() {
-      return Phone.__super__.constructor.apply(this, arguments);
-    }
-
     Phone.prototype.appName = "phone";
+
+    function Phone($screen, $device) {
+      Phone.__super__.constructor.call(this, $screen);
+      this.device = new PhoneDevice($device);
+    }
 
     return Phone;
 
   })(Chat);
 
+  this.PhoneDevice = (function(superClass) {
+    extend(PhoneDevice, superClass);
+
+    function PhoneDevice($device) {
+      this.notify = bind(this.notify, this);
+      PhoneDevice.__super__.constructor.call(this, $device);
+      this.phoneAudio = new Audio;
+      this.phoneAudio.src = game.audioPath + 'sfx/phone_notification.mp3';
+      $device.addClass("notify-off");
+    }
+
+    PhoneDevice.prototype.notify = function(active) {
+      var oppositeState, state;
+      if (active == null) {
+        active = true;
+      }
+      if (this.notificationActive === active) {
+        return;
+      }
+      this.notificationActive = active;
+      state = active ? "on" : "off";
+      oppositeState = active ? "off" : "on";
+      this.$device.removeClass("notify-" + oppositeState);
+      this.$device.addClass("notify-" + state);
+      if (active) {
+        return this.phoneAudio.play();
+      } else {
+        this.phoneAudio.pause();
+        return this.phoneAudio.currentTime = 0;
+      }
+    };
+
+    return PhoneDevice;
+
+  })(HubDevice);
+
 }).call(this);
+
+//# sourceMappingURL=chat.js.map

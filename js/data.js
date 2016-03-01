@@ -28,7 +28,7 @@
       return $.getJSON(dialogueGraphsFilename, this.buildDialogueGraphs).done(function() {
         return console.log("[LOAD] Loaded dialogue graphs");
       }).fail(function() {
-        return console.log("[LOAD] Failed loading dialogue graphs");
+        return console.log("[ERROR] Failed loading dialogue graphs");
       });
     };
 
@@ -145,3 +145,5 @@
    */
 
 }).call(this);
+
+//# sourceMappingURL=data.js.map

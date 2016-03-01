@@ -103,18 +103,20 @@
     "initial": {
       "type": "text",
       "lines": ["mk1_d1_01"],
-      "successor": "prop1"
+      "successor": "prop1",
+      "speaker": "daughter"
     },
     "prop1": {
       "type": "text",
       "lines": ["mk1_d1_02"],
       "successor": "prop2",
-      "speaker": "me"
+      "speaker": "pc"
     },
     "prop2": {
       "type": "text",
       "lines": ["mk1_d1_03", "mk1_d1_04"],
-      "successor": "question1*"
+      "successor": "question1*",
+      "speaker": "daughter"
     },
     "question1*": {
       "type": "choice hub",
@@ -138,35 +140,38 @@
     "fingerprint1": {
       "type": "text",
       "lines": ["mk1_d1_08"],
-      "successor": "fingerprint2"
+      "successor": "fingerprint2",
+      "speaker": "daughter"
     },
     "fingerprint2": {
       "type": "text",
       "lines": ["mk1_d1_09"],
       "successor": "question1*",
-      "speaker": "me"
+      "speaker": "pc"
     },
     "people1": {
       "type": "text",
       "lines": ["mk1_d1_10"],
-      "successor": "people2"
+      "successor": "people2",
+      "speaker": "daughter"
     },
     "people2": {
       "type": "text",
       "lines": ["mk1_d1_11"],
       "successor": "question1*",
-      "speaker": "me"
+      "speaker": "pc"
     },
     "key1": {
       "type": "text",
       "lines": ["mk1_d1_12", "mk1_d1_13", "mk1_d1_14"],
-      "successor": "key2"
+      "successor": "key2",
+      "speaker": "daughter"
     },
     "key2": {
       "type": "text",
       "lines": ["mk1_d1_15"],
       "successor": "question2*",
-      "speaker": "me"
+      "speaker": "pc"
     },
     "question2*": {
       "type": "choice hub",
@@ -190,17 +195,20 @@
     "name1": {
       "type": "text",
       "lines": ["mk1_d1_19"],
-      "successor": "question2*"
+      "successor": "question2*",
+      "speaker": "daughter"
     },
     "find1": {
       "type": "text",
       "lines": ["mk1_d1_20", "mk1_d1_21"],
-      "successor": "question2*"
+      "successor": "question2*",
+      "speaker": "daughter"
     },
     "id1": {
       "type": "text",
       "lines": ["mk1_d1_24", "mk1_d1_25"],
-      "successor": "question2*"
+      "successor": "question2*",
+      "speaker": "daughter"
     }
   },
   "mission-tutorial.conclusion": {
@@ -216,12 +224,14 @@
     "found1": {
       "type": "text",
       "lines": ["mk1_d2_03"],
-      "successor": "how?"
+      "successor": "how?",
+      "speaker": "daughter"
     },
     "how?": {
       "type": "text",
       "lines": ["mk1_d2_04"],
-      "successor": "how*"
+      "successor": "how*",
+      "speaker": "daughter"
     },
     "how*": {
       "type": "choice hub",
@@ -240,18 +250,20 @@
     "secret!": {
       "type": "text",
       "lines": ["mk1_d2_07"],
-      "successor": "secret1"
+      "successor": "secret1",
+      "speaker": "daughter"
     },
     "hacked1": {
       "type": "text",
       "lines": ["mk1_d2_08", "mk1_d2_09"],
-      "successor": "hacked2"
+      "successor": "hacked2",
+      "speaker": "daughter"
     },
     "hacked2": {
       "type": "text",
       "lines": ["mk1_d2_10"],
       "successor": "hacked3",
-      "speaker": "me"
+      "speaker": "pc"
     },
     "hacked3": {
       "type": "text",
@@ -261,29 +273,32 @@
     "always1": {
       "type": "text",
       "lines": ["mk1_d2_12"],
-      "successor": "always2"
+      "successor": "always2",
+      "speaker": "daughter"
     },
     "always2": {
       "type": "text",
       "lines": ["mk1_d2_13"],
       "successor": "goodbye1",
-      "speaker": "me"
+      "speaker": "pc"
     },
     "secret1": {
       "type": "text",
       "lines": ["mk1_d2_14"],
-      "successor": "goodbye1"
+      "successor": "goodbye1",
+      "speaker": "daughter"
     },
     "goodbye1": {
       "type": "text",
       "lines": ["mk1_d2_15"],
-      "successor": "goodbye2"
+      "successor": "goodbye2",
+      "speaker": "daughter"
     },
     "goodbye2": {
       "type": "text",
       "lines": ["mk1_d2_16"],
       "successor": null,
-      "speaker": "me"
+      "speaker": "pc"
     }
   }
 }

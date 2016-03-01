@@ -37,30 +37,33 @@
 
     Game.prototype.loadModules = function() {
       var modulePath;
-      modulePath = game.srcPath + "modules/";
-      return $.when($.get(modulePath + "hub.html"), $.get(modulePath + "phone.html"), $.get(modulePath + "terminal.html")).done(function(arg, arg1, arg2) {
-        var hubHTML, phoneHTML, terminalHTML;
+      modulePath = game.srcPath + 'modules/';
+      return $.when($.get(modulePath + "hub.html"), $.get(modulePath + "phone.html"), $.get(modulePath + "terminal.html"), $.get(modulePath + "settings.html")).done(function(arg, arg1, arg2, arg3) {
+        var hubHTML, phoneHTML, settingsHTML, terminalHTML;
         hubHTML = arg[0];
         phoneHTML = arg1[0];
         terminalHTML = arg2[0];
+        settingsHTML = arg3[0];
         console.log("[LOAD] Loaded Hub, Phone, Terminal HTML");
         $("#content").html(hubHTML);
         $("#phoneContent").html(phoneHTML);
-        return $("#terminalContent").html(terminalHTML);
+        $("#terminalContent").html(terminalHTML);
+        return $("#settingsContent").html(settingsHTML);
       });
     };
 
     Game.prototype.initModules = function() {
+      console.log("[GAME] initialize modules");
       if (typeof game === "undefined" || game === null) {
         throw new Error("document.game has not been defined, please create a game instance with @game = new Game first.");
       }
       this.hub = new Hub($("#screens"), $("#desk"));
       this.terminal = this.apps['terminal'] = new Terminal($("#terminal-screen"), $("#terminal-device"));
       this.phone = this.apps['phone'] = new Phone($("#phone-screen"), $("#phone-device"));
-      this.apps['chat'] = new App(null, null);
       this.apps['memo'] = new App(null, null);
       this.apps['other'] = new App(null, null);
       this.apps['news'] = new App(null, null);
+      this.settings = this.apps['settings'] = new Settings($("#settings-screen"), $("#settings-device"));
       return this.story = new Story;
     };
 
@@ -69,9 +72,9 @@
       return this.data.loadDialogueGraphs(game.srcPath + dialogueFilename);
     };
 
-    Game.prototype.loadLocale = function(dialoguesFilename) {
+    Game.prototype.loadLocale = function(lang) {
       this.locale = new Locale;
-      return this.locale.loadDialogueLines(game.srcPath + dialoguesFilename);
+      return $.when(this.locale.loadDialogueLines(game.srcPath + ("locales/" + lang + "/dialogues.json")), this.locale.loadNames(game.srcPath + ("locales/" + lang + "/names.json")));
     };
 
     Game.prototype.getEvent = function(name) {
@@ -86,6 +89,7 @@
       var bgmAudio;
       bgmAudio = new Audio;
       bgmAudio.src = game.audioPath + 'bgm/' + this.bgm;
+      bgmAudio.loop = true;
       return bgmAudio.play();
     };
 
@@ -94,3 +98,5 @@
   })();
 
 }).call(this);
+
+//# sourceMappingURL=game.js.map
