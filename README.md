@@ -10,8 +10,6 @@ Text available in English and French, the English translation still being a draf
 More information is available at http://longnguyenhuu.com/game-projects/cyberlepsie.
 If you are interested in the project, you can also contact us (http://longnguyenhuu.com/contact).
 
-How to play Cyberlepsie
-
 # Running the game
 
 ## Playing on GitHub Pages (recommended for non-developers)
