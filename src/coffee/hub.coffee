@@ -18,14 +18,14 @@ class @Hub
     deskImage.src = game.imagePath + 'hub/desk.png'
     @$desk.prepend deskImage
 
-    # bind "open modular window" event to each monitor
+    # bind "open modular window" event to each monitocr
     dlgtrigger = $('[data-dialog]')
     for element, i in dlgtrigger.toArray()
     #      console.log(i)
         dialogAppName = element.getAttribute 'data-dialog'
-        $dialog = $('#' + dialogAppName + 'Dialog')[0]
+        dialog = $('#' + dialogAppName + 'Dialog')[0]
         # REFACTOR: let DialogFx have name member and use that instead of currentAppName + do()
-        dialogFx = self.dialogs[dialogAppName] = new DialogFx $dialog,
+        dialogFx = self.dialogs[dialogAppName] = new DialogFx dialog,
           onOpenDialog: do (dialogAppName) -> (dialog) -> self._onOpen(dialogAppName)
           onCloseDialog: (dialog) -> self._onClose()
 

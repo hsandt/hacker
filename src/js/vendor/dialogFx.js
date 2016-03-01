@@ -51,15 +51,20 @@
 
 	DialogFx.prototype.options = {
 		// callbacks
-		onOpenDialog : function() { return false; },
-		onCloseDialog : function() { return false; }
-	}
+		onOpenDialog: function() { return false; },
+		onCloseDialog: function() { return false; }
+	};
 
 	DialogFx.prototype._initEvents = function() {
 		var self = this;
 
-		// close action
-		this.ctrlClose.addEventListener( 'click', this.close.bind(this) );
+		// attach close action to close button, if present
+        if (this.ctrlClose !== null) {
+		    this.ctrlClose.addEventListener( 'click', this.close.bind(this) );
+        } else {
+            console.log(this.el.id + " has no close button. Please add a [data-dialog-close] element " +
+                "inside appContent or in hub dialog__content.");
+        }
 
 		// esc key closes dialog
 		document.addEventListener( 'keydown', function( ev ) {
@@ -69,8 +74,9 @@
 			}
 		} );
 
+        // click outside the window to close it (overlay is behind current window)
 		this.el.querySelector( '.dialog__overlay' ).addEventListener( 'click', this.close.bind(this) );
-	}
+	};
 
 	/* Modified by hsandt */
 	DialogFx.prototype.toggle = function() {

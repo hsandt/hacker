@@ -922,6 +922,11 @@ body {
   font: 14px/20px Verdana;
   padding: 40px 0; }
 
+.parallax-layer {
+  pointer-events: none; }
+  .parallax-layer button {
+    pointer-events: auto; }
+
 /*! sass-mixins - v0.11.0 - 2014-10-20 */
                                         /**
 * @description
@@ -1486,37 +1491,35 @@ body {
   background-color: #f2f2f2; }
 
 #background {
-  background-image: url("../../img/background.png");
+  background-image: url("../../img/hub/background.png");
   width: 2600px;
   height: 1630px; }
 
 #shadow1 {
-  background-image: url("../../img/shadow1.png");
+  background-image: url("../../img/hub/shadow1.png");
   width: 2600px;
   height: 1630px; }
 
 #shadow2 {
-  background-image: url("../../img/shadow2.png");
+  background-image: url("../../img/hub/shadow2.png");
   width: 2600px;
   height: 1630px; }
 
 #shadow3 {
-  background-image: url("../../img/shadow3.png");
+  background-image: url("../../img/hub/shadow3.png");
   width: 2600px;
   height: 1630px; }
 
 #shadow4 {
-  background-image: url("../../img/shadow4.png");
+  background-image: url("../../img/hub/shadow4.png");
   width: 2600px;
   height: 1630px; }
 
 #desk {
-  background-image: url("../../img/desk2.png") no-repeat;
-  width: 2600px;
+  width: 2636px;
   height: 1630px; }
 
 #screens {
-  background-image: url("../../img/screens.png") no-repeat;
   width: 2636px;
   height: 1700px; }
 
@@ -1525,21 +1528,59 @@ body {
 #chat-device.notify-on {
   background-color: #fff8a8; }
 
-#phone-device.notify-off {
-  background-image: url("../../img/phone-off.png"); }
-#phone-device.notify-on {
-  background-image: url("../../img/phone-on.png"); }
+#phone-device {
+  position: absolute;
+  top: 1300px;
+  left: 700px;
+  width: 149px;
+  height: 174px; }
+  #phone-device.notify-off {
+    background: url("../../img/hub/phone-off.png") no-repeat; }
+  #phone-device.notify-on {
+    background: url("../../img/hub/phone-on.png") no-repeat; }
 
 #memo-device {
   -webkit-transform: skewX(30deg);
   -ms-transform: skewX(30deg);
   transform: skewX(30deg); }
 
+#terminal-device {
+  position: absolute;
+  top: 690px;
+  left: 1000px;
+  width: 815px;
+  height: 455px;
+  animation: blink-gray 1s linear infinite alternate; }
+
+#settings-device {
+  position: absolute;
+  top: 773px;
+  left: 2188px;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  animation: blink-red 1s linear infinite alternate; }
+
+@keyframes blink-gray {
+  from {
+    background-color: rgba(50, 50, 50, 0.2); }
+  to {
+    background-color: rgba(50, 50, 50, 0); } }
+@keyframes blink-red {
+  from {
+    background-color: rgba(255, 0, 0, 0.2); }
+  to {
+    background-color: rgba(255, 0, 0, 0); } }
+@keyframes blink-blue {
+  from {
+    background-color: rgba(0, 0, 255, 0.2); }
+  to {
+    background-color: rgba(0, 0, 255, 0); } }
 ul {
   list-style-type: none; }
 
 .phone-screen {
-  background-image: url("../../img/screen-phone.png");
+  background: url("../../img/app/screen-phone.png") no-repeat;
   margin: 0 auto;
   width: 363px;
   color: black;
@@ -1559,6 +1600,16 @@ ul {
   .phone-screen .input {
     height: 156px;
     padding: 0 20px; }
+  .phone-screen .close {
+    background: url("../../img/app/close-button.png") no-repeat;
+    position: absolute;
+    top: -15px;
+    right: -10px;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer; }
 
 .message-data {
   margin-bottom: 10px;
@@ -1594,13 +1645,12 @@ span.message-data-time {
   margin-left: -10px; }
 
 .my-message {
-  background-image: url("../../img/screen-phone-bg1.png"); }
+  background-image: url("../../img/app/screen-phone-bg1.png"); }
 
 .other-message {
-  background-image: url("../../img/screen-phone-bg2.png"); }
+  background-image: url("../../img/app/screen-phone-bg2.png"); }
 
 .other-message:after {
-  border-bottom-color: none;
   left: 93%; }
 
 .avatar {
@@ -1646,7 +1696,7 @@ li.message-choice {
   user-select: none; }
 
 .terminal-screen {
-  background-image: url("../../img/screen-terminal.png");
+  background: url("../../img/app/screen-terminal.png") no-repeat;
   font: 14px/20px "Inconsolata", "Courier New";
   font-weight: bold;
   padding: 80px 70px;
@@ -1671,5 +1721,40 @@ li.message-choice {
     .terminal-screen .prompt form input[type="submit"] {
       border: none;
       background-color: #f2f2f2; }
+  .terminal-screen .close {
+    background: url("../../img/app/close-button.png") no-repeat;
+    position: absolute;
+    top: 5px;
+    right: 0px;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer; }
+
+ul {
+  list-style-type: none; }
+
+.settings-screen {
+  background: url("../../img/app/screen-settings.png") no-repeat;
+  margin: 0 auto;
+  width: 541px;
+  height: 323px;
+  padding: 50px; }
+  .settings-screen #settings-panel {
+    padding: 20px; }
+    .settings-screen #settings-panel section[title="locale"] {
+      padding: 10px;
+      height: 150px; }
+  .settings-screen .close {
+    background: url("../../img/app/close-button.png") no-repeat;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer; }
 
 /*# sourceMappingURL=main.css.map */

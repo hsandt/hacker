@@ -26,7 +26,7 @@
             <button data-dialog="terminal" class="trigger" style="height: 100%; width: 100%; opacity: 0;"></button>
         </div>
         <div id="settings-device">
-            <button data-dialog="settings" class="trigger" style="height: 100%; width: 100%; opacity: 0.5;"></button>
+            <button data-dialog="settings" class="trigger" style="height: 100%; width: 100%; opacity: 0;"></button>
         </div>
 
         <!-- 998 x 198 -->
@@ -40,7 +40,7 @@
         <div id="memo-device" style="position:absolute; top:78.5%; left:67%; width: 10%; height: 17%; ">
             <!--<button data-dialog="memo" class="trigger" style="height: 100%; width: 100%; opacity: 0;">main</button>>-->
         </div>
-        <div id="phone-device" style="position:absolute; top:79%; left:23.5%; width: 5.7%; height: 10.7%;">
+        <div id="phone-device">
             <button data-dialog="phone" class="trigger" style="height: 100%; width: 100%; opacity: 0;"></button>
         </div>
     </div>
@@ -50,7 +50,6 @@
     <div class="dialog__overlay"></div>
     <div class="dialog__content">
         <div id="terminalContent"></div>
-        <button class="action" data-dialog-close>Close</button>
     </div>
 </div>
 <!--<div id="cameraDialog" class="dialog">-->
@@ -63,7 +62,6 @@
     <div class="dialog__overlay"></div>
     <div class="dialog__content">
         <div id="phoneContent"></div>
-        <button class="action" data-dialog-close>Close</button>
     </div>
 </div>
 <div id="memoDialog" class="dialog">
@@ -88,7 +86,7 @@
 <div id="otherDialog" class="dialog">
     <div class="dialog__overlay"></div>
     <div class="dialog__content">
-        other<br/>
+        other<br>
         <button class="action" data-dialog-close>Close</button>
     </div>
 </div>
@@ -96,6 +94,5 @@
     <div class="dialog__overlay"></div>
     <div class="dialog__content">
         <div id="settingsContent"></div>
-        <button class="action" data-dialog-close>Close</button>
     </div>
 </div>

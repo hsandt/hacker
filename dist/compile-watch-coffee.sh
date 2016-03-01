@@ -1,1 +1,1 @@
-coffee -o js/ -cw coffee/
+coffee -o js/ --map -cw coffee/

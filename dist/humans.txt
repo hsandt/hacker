@@ -3,7 +3,9 @@
 
 # TEAM
 
-    <name> -- <role> -- <twitter>
+    Médéric Hénin    -- Story, Game Design, UI Design, Programming
+    Long Nguyen Huu  -- Story, Game Design, UI Design, Programming -- @n_huulong
+    Thimothée Marnat -- Story, Game Design, UI Design, Graphics
 
 # THANKS
 

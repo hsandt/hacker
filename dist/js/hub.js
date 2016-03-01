@@ -15,10 +15,10 @@
       this._onOpen = bind(this._onOpen, this);
       self = this;
       screensImage = new Image;
-      screensImage.src = game.imagePath + 'screens.png';
+      screensImage.src = game.imagePath + 'hub/screens.png';
       this.$screens.prepend(screensImage);
       deskImage = new Image;
-      deskImage.src = game.imagePath + 'desk.png';
+      deskImage.src = game.imagePath + 'hub/desk.png';
       this.$desk.prepend(deskImage);
       dlgtrigger = $('[data-dialog]');
       ref = dlgtrigger.toArray();
@@ -48,21 +48,33 @@
     }
 
     Hub.prototype._onOpen = function(appName) {
-      if (this.currentAppName === 'none') {
-        this.currentAppName = appName;
-        return game.apps[appName].onOpen();
-      } else {
-        return console.warn("[WARNING] Opening app " + appName + " but app " + this.currentAppName + " is already open");
+      var app;
+      if (this.currentAppName !== 'none') {
+        console.warn("[WARNING] Trying to open app " + appName + " but app " + this.currentAppName + " is already open");
+        return false;
       }
+      app = game.apps[appName];
+      if (app.checkCanOpen()) {
+        this.currentAppName = appName;
+        app.onOpen();
+        return true;
+      }
+      return false;
     };
 
     Hub.prototype._onClose = function() {
-      if (this.currentAppName !== 'none') {
-        game.apps[this.currentAppName].onClose();
-        return this.currentAppName = 'none';
-      } else {
-        return console.warn("[WARNING] Closing current app but no app is currently open");
+      var app;
+      if (this.currentAppName === 'none') {
+        console.warn("[WARNING] Trying to close current app but no app is currently open");
+        return false;
       }
+      app = game.apps[this.currentAppName];
+      if (app.checkCanClose()) {
+        app.onClose();
+        this.currentAppName = 'none';
+        return true;
+      }
+      return false;
     };
 
     return Hub;
@@ -70,3 +82,5 @@
   })();
 
 }).call(this);
+
+//# sourceMappingURL=hub.js.map

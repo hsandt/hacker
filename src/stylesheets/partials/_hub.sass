@@ -71,10 +71,10 @@ body
   height: 174px
 
   &.notify-off
-    background-image: url('#{$image-path}/hub/phone-off.png')
+    background: url('#{$image-path}/hub/phone-off.png') no-repeat
 
   &.notify-on
-    background-image: url('#{$image-path}/hub/phone-on.png')
+    background: url('#{$image-path}/hub/phone-on.png') no-repeat
 
 #memo-device
   +x-transform(skewX(30deg))
@@ -85,19 +85,27 @@ body
   left: 1000px
   width: 815px
   height: 455px
-  background-color: rgba(50, 50, 50, .2)
-  animation: blink 1s steps(5) infinite alternate
+  //background-color: rgba(50, 50, 50, .2)
+  animation: blink-gray 1s linear infinite alternate
 
 #settings-device
   position: absolute
-  top: 700px
-  left: 2100px
-  width: 200px
-  height: 200px
-  background-color: rgba(255, 0, 0, .2)
+  top: 773px
+  left: 2188px
+  width: 68px
+  height: 68px
+  //background-color: rgba(255, 0, 0, .2)
+  border-radius: 50%
+  animation: blink-red 1s linear infinite alternate
 
-@keyframes blink
-  from
-    background-color: rgba(50, 50, 50, .2)
-  to
-    background-color: rgba(50, 50, 50, .0)
+// prepare keyframes generate, then generate keyframes for different colors
+=blink-keyframes($name, $r, $g, $b)
+  @keyframes #{$name}
+    from
+      background-color: rgba($r, $g, $b, .2)
+    to
+      background-color: rgba($r, $g, $b, .0)
+
++blink-keyframes(blink-gray, 50, 50, 50)
++blink-keyframes(blink-red, 255, 0, 0)
++blink-keyframes(blink-blue, 0, 0, 255)

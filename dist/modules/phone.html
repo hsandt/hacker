@@ -18,7 +18,7 @@
         <!--<button>Send</button>-->
     </div>
 
-    <!--<div><button class="action" data-dialog-close>Close</button></div>-->
+    <div class="close" data-dialog-close></div>
 
 </div>
 
@@ -26,7 +26,8 @@
 <script id="message-sent-template" type="text/x-handlebars-template">
     <li>
         <div class="message-data">
-            <span class="message-data-name"><i class="fa fa-circle online"></i> Me</span>
+            <span class="message-data-name"><i class="fa fa-circle online"></i> {{sender}}</span>
+            &nbsp; &nbsp;
             <span class="message-data-time">{{time}}</span>
         </div>
         <div class="message my-message">
@@ -39,7 +40,7 @@
     <li class="clearfix">
         <div class="message-data align-right">
             <span class="message-data-time">{{time}}</span> &nbsp; &nbsp;
-            <span class="message-data-name">Mathilde</span> <i class="fa fa-circle me"></i>
+            <span class="message-data-name">{{sender}}</span> <i class="fa fa-circle me"></i>
         </div>
         <div class="message other-message float-right">
             {{message}}
