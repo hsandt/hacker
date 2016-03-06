@@ -17,13 +17,13 @@
       "14": "Avec leur site je pourrais les retrouver mais je n’ai pas accès au compte d’Elise",
       "15": "OK, je vais voir ce que je peux faire. je te rappelle si j’ai besoin",
       "16": "quel est le nom complet d’Elise ?",
-      "17": "comment retrouve-t-on des clés BeSafe ?",
-      "18": "une idée sur les identifiants de connexion d’Elise ?",
+      "17": "quelle est l'adresse du site de BeSafe ?",
+      "18": "comment marche BeSafe ?",
       "19": "Elise Geraert",
-      "20": "Ils ont un site officiel pour les géolocaliser, besafe.com",
-      "21": "Mais je n'ai pas le mot de passe d'Elise pour accéder à son compte",
-      "24": "Tu veux dire son pseudo et son pass ?",
-      "25": "Non, sinon je me serais connectée sur le site de BeSafe."
+      "20": "besafe.com",
+      "21": "Tu dois pouvoir t'y connecter de chez toi",
+      "24": "Ils ont un service de géolocalisation en ligne pour retrouver les objets perdus",
+      "25": "Pour chaque utilisateur enregistré, ils mettent à jour la position de l'objet régulièrement"
     },
     "d2": {
       "01": "j’ai trouvé les clés !",
