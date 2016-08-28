@@ -1,6 +1,6 @@
-# list of event functions to call, identified by a string
-eventCallbacks =
-  "accept mission": (missionTitle) ->
+// list of event functions to call, identified by a string
+let eventCallbacks = {
+    "accept mission": missionTitle => {},
 
-  "mission01.": 46
- 
+    "mission01.": 46
+};

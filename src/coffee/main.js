@@ -1,29 +1,31 @@
-$("document").ready ->
-  console.log "[DOCUMENT] Ready"
-  main()
+$("document").ready(function() {
+    console.log("[DOCUMENT] Ready");
+    return main();
+});
 
-main = ->
-  # create game as global (document) variable
-  @game = new Game "./"
+function main () {
+    // create game as global (document) variable
+    this.game = new Game("./");
 
-  # currently app model and window are bound, so need to wait for settings
-  # window to be ready to use settings
-  # see app.coffee for refactoring ideas
-  loadHTMLDeferred = game.loadModules().done ->
-    game.initModules()
-  dataDeferred = game.loadData "data/dialoguegraphs.json"
+    // currently app model and window are bound, so need to wait for settings
+    // window to be ready to use settings
+    // see app.coffee for refactoring ideas
+    let loadHTMLDeferred = game.loadModules().done(() => game.initModules());
+    let dataDeferred = game.loadData("data/dialoguegraphs.json");
 
-  # start story
-  storyGraph = new StoryGraph
-  storyGraph.addNode new StoryNode("initial",
-    (->
-      game.playBGM()
-      setTimeout((-> game.phone.startDialogueByName "mission-tutorial.proposal"), 2000)),
-    ["to-be-continued"]
-  )
-  storyGraph.addNode new StoryNode("to-be-continued")
+    // start story
+    let storyGraph = new StoryGraph();
+    storyGraph.addNode(new StoryNode("initial",
+        (function() {
+            game.playBGM();
+            return setTimeout((() => game.phone.startDialogueByName("mission-tutorial.proposal")), 2000);}),
+        ["to-be-continued"]
+        )
+    );
+    storyGraph.addNode(new StoryNode("to-be-continued"));
 
-  $.when(loadHTMLDeferred, dataDeferred)
-    .done -> game.loadLocale(game.settings.lang)
-    .done -> game.story.start storyGraph
+    return $.when(loadHTMLDeferred, dataDeferred)
+        .done(() => game.loadLocale(game.settings.lang))
+        .done(() => game.story.start(storyGraph));
+}
 

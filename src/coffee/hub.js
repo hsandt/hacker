@@ -1,81 +1,96 @@
-class @Hub
+export let Hub = class Hub {
 
-  # [String: DialogFx] dictionary of dialogs, one per app
-  dialogs: {}
+    constructor($screens, $desk) {
+        this.$screens = $screens;
+        this.$desk = $desk;
 
-  # state vars
-  currentAppName: 'none'  # current app name: 'none' if none is open, 'terminal', 'chat', etc.
+        // [String: DialogFx] dictionary of dialogs, one per app
+        this.dialogs = {};
 
-  constructor: (@$screens, @$desk) ->
-    self = @
+        // state vars
+        this.currentAppName = 'none';  // current app name: 'none' if none is open, 'terminal', 'chat', etc.
 
-    # add images from script to ensure path is correct
-    screensImage = new Image
-    screensImage.src = game.imagePath + 'hub/screens.png'
-    @$screens.prepend screensImage
+        // add images from script to ensure path is correct
+        let screensImage = new Image();
+        screensImage.src = game.imagePath + 'hub/screens.png';
+        this.$screens.prepend(screensImage);
 
-    deskImage = new Image
-    deskImage.src = game.imagePath + 'hub/desk.png'
-    @$desk.prepend deskImage
+        let deskImage = new Image();
+        deskImage.src = game.imagePath + 'hub/desk.png';
+        this.$desk.prepend(deskImage);
 
-    # bind "open modular window" event to each monitocr
-    dlgtrigger = $('[data-dialog]')
-    for element, i in dlgtrigger.toArray()
-    #      console.log(i)
-        dialogAppName = element.getAttribute 'data-dialog'
-        dialog = $('#' + dialogAppName + 'Dialog')[0]
-        # REFACTOR: let DialogFx have name member and use that instead of currentAppName + do()
-        dialogFx = self.dialogs[dialogAppName] = new DialogFx dialog,
-          onOpenDialog: do (dialogAppName) -> (dialog) -> self._onOpen(dialogAppName)
-          onCloseDialog: (dialog) -> self._onClose()
+        // bind "open modular window" event to each monitocr
+        let dlgtrigger = $('[data-dialog]');
+        let iterable = dlgtrigger.toArray();
+        for (let i = 0; i < iterable.length; i++) {
+            //      console.log(i)
+            let element = iterable[i];
+            let dialogAppName = element.getAttribute('data-dialog');
+            let dialog = $(`#${dialogAppName}Dialog`)[0];
+            // REFACTOR: let DialogFx have name member and use that instead of currentAppName + do()
+            let dialogFx = self.dialogs[dialogAppName] = new DialogFx(dialog, {
+                // IMPROVE: in ES6, maybe no need to pass local vars, they may be transferred like "this" (check out)
+                    onOpenDialog: (dialogAppName => dialog => this._onOpen(dialogAppName))(dialogAppName),
+                    onCloseDialog(dialog) { return this._onClose(); }
+                }
+            );
 
-        # on click, display app window and open app (focus, etc.)
-        $(element).click do (dialogFx) -> -> dialogFx.open()
+            // on click, display app window and open app (focus, etc.)
+            $(element).click((dialogFx => () => dialogFx.open())(dialogFx));
+        }
 
-#    dlgtrigger.each ((i, element) ->
-#        $.proxy ->
-#    #      console.log(i)
-#          dialogAppName = element.getAttribute 'data-dialog'
-#          somedialog = $('#' + dialogAppName + 'Dialog')[0]
-#          _this.dialogs[dialogAppName] = new DialogFx somedialog
-#          # on click, display app window and open app (focus, etc.)
-#          $(element).click -> _this.open dialogAppName)
+//    dlgtrigger.each ((i, element) ->
+//        $.proxy ->
+//    #      console.log(i)
+//          dialogAppName = element.getAttribute 'data-dialog'
+//          somedialog = $('#' + dialogAppName + 'Dialog')[0]
+//          _this.dialogs[dialogAppName] = new DialogFx somedialog
+//          # on click, display app window and open app (focus, etc.)
+//          $(element).click -> _this.open dialogAppName)
 
-    # activate parallax from mouse
-    $('#parallax .parallax-layer')
-    .parallax
-      mouseport: $('#parallax')
+        // activate parallax from mouse
+        $('#parallax .parallax-layer')
+            .parallax({
+                mouseport: $('#parallax')});
+    }
 
 
-  # Callback when opening application by name: update current app and setup app state
-  #
-  # @param appName [String]
-  _onOpen: (appName) =>
-    # check that there is no other app open (TODO: except notes)
-    if @currentAppName != 'none'
-      console.warn "[WARNING] Trying to open app #{appName} but app #{@currentAppName} is already open"
-      return false
+    // Callback when opening application by name: update current app and setup app state
+    //
+    // @param appName [String]
+    _onOpen(appName) {
+        // check that there is no other app open (TODO: except notes)
+        if (this.currentAppName !== 'none') {
+            console.warn(`[WARNING] Trying to open app ${appName} but app ${this.currentAppName} is already open`);
+            return false;
+        }
 
-    app = game.apps[appName]
+        let app = game.apps[appName];
 
-    if app.checkCanOpen()
-      @currentAppName = appName
-      app.onOpen()  # call this after setting the new app name, it may need it
-      return true
+        if (app.checkCanOpen()) {
+            this.currentAppName = appName;
+            app.onOpen();  // call this after setting the new app name, it may need it
+            return true;
+        }
 
-    return false
+        return false;
+    }
 
-  # Callback when closing current application: set current app to 'none' and clean app state
-  _onClose: =>
-    if @currentAppName == 'none'
-      console.warn "[WARNING] Trying to close current app but no app is currently open"
-      return false
+    // Callback when closing current application: set current app to 'none' and clean app state
+    _onClose() {
+        if (this.currentAppName === 'none') {
+            console.warn("[WARNING] Trying to close current app but no app is currently open");
+            return false;
+        }
 
-    app = game.apps[@currentAppName]
+        let app = game.apps[this.currentAppName];
 
-    if app.checkCanClose()
-      app.onClose()  # call this before resetting app name, it may need the old one
-      @currentAppName = 'none'
-      return true
+        if (app.checkCanClose()) {
+            app.onClose();  // call this before resetting app name, it may need the old one
+            this.currentAppName = 'none';
+            return true;
+        }
 
-    return false
+        return false;
+    }
+};
