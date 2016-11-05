@@ -39,125 +39,54 @@ let CommandToken = {
 
 
 
-  export let Terminal = class Terminal extends App {
-
-      openedOnce = false;
-
-      // Construct terminal from div container
-      //
-      // $screen [jQuery] jQuery element for the terminal-screen div
-      constructor($screen, $device) {
-          super($screen, $device);
-          this.device = new TerminalDevice($device);
-
-          this.interpreter = new CommandInterpreter(this);
-
-          this.output = [];  // [String[]] output lines, including commands entered by the player
-          this.$output = $screen.find(".output");
-
-          this.history = [""];  // [String[]] command history, as a reversed queue, with last buffer as 1st element
-          this.historyIndex = 0;  // [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
-          this.$promptInput = $screen.find(".prompt-input");
-
-          this.connectionStack = [];  // [Server[]] stack of servers through which you connected, last is current server
-          this.directoryStack = [];  // [Directory[]] stack of directories corresponding to path to working directory
-
-          // connect terminal to local server (will also set working dir to its root)
-          this.connect(game.servers["local"]);
-
-          // bind up/down arrow press to history navigation
-          this.$promptInput.keydown(event => {
-                  switch (event.which) {
-                      case Keycode.UP:
-                          this.navigateHistory(1);
-                          return false;  // stop propagation
-                      case Keycode.DOWN:
-                          this.navigateHistory(-1);
-                          return false;
-                  }
-              }
-          );  // stop propagation
-
-          // replace normal submit behavior for prompt
-          $screen.find(".prompt-submit").click(() => this.enterCommand(this.$promptInput.val()));
-      }
-
-      // Current server get property
-      getPropertyCurrentServer() { return this.connectionStack[this.connectionStack.length - 1]; }
-
-      // Current directory get property
-      getPropertyCurrentDirectory() { return this.directoryStack[this.directoryStack.length - 1]; }
-  };
-
-
-
-
 export let Terminal = class Terminal extends App {
 
-    openedOnce = false;
+  openedOnce = false;
 
-    // Construct terminal from div container
-    //
-    // $screen [jQuery] jQuery element for the terminal-screen div
-    constructor($screen, $device) {
-        super($screen, $device);
-        this.onOpen = this.onOpen.bind(this);
-        this.onClose = this.onClose.bind(this);
-        this.navigateHistory = this.navigateHistory.bind(this);
-        this.print = this.print.bind(this);
-        this.printHTML = this.printHTML.bind(this);
-        this.scrollToBottom = this.scrollToBottom.bind(this);
-        this.printText = this.printText.bind(this);
-        this.connect = this.connect.bind(this);
-        this.enterCommand = this.enterCommand.bind(this);
-        this.clearCommand = this.clearCommand.bind(this);
-        this.helpCommand = this.helpCommand.bind(this);
-        this.lsCommand = this.lsCommand.bind(this);
-        this.cdCommand = this.cdCommand.bind(this);
-        this.catCommand = this.catCommand.bind(this);
-        this.connectCommand = this.connectCommand.bind(this);
-        this.device = new TerminalDevice($device);
+  // Construct terminal from div container
+  //
+  // $screen [jQuery] jQuery element for the terminal-screen div
+  constructor($screen, $device) {
+      super($screen, $device);
+      this.device = new TerminalDevice($device);
 
-        this.interpreter = new CommandInterpreter(this);
+      this.interpreter = new CommandInterpreter(this);
 
-        this.output = [];  // [String[]] output lines, including commands entered by the player
-        this.$output = $screen.find(".output");
+      this.output = [];  // [String[]] output lines, including commands entered by the player
+      this.$output = $screen.find(".output");
 
-        this.history = [""];  // [String[]] command history, as a reversed queue, with last buffer as 1st element
-        this.historyIndex = 0;  // [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
-        this.$promptInput = $screen.find(".prompt-input");
+      this.history = [""];  // [String[]] command history, as a reversed queue, with last buffer as 1st element
+      this.historyIndex = 0;  // [int] current index of command-line history, 0 for current buffer, 1 for previous command, etc.
+      this.$promptInput = $screen.find(".prompt-input");
 
-        this.connectionStack = [];  // [Server[]] stack of servers through which you connected, last is current server
-        this.directoryStack = [];  // [Directory[]] stack of directories corresponding to path to working directory
+      this.connectionStack = [];  // [Server[]] stack of servers through which you connected, last is current server
+      this.directoryStack = [];  // [Directory[]] stack of directories corresponding to path to working directory
 
-        // connect terminal to local server (will also set working dir to its root)
-        this.connect(game.servers["local"]);
+      // connect terminal to local server (will also set working dir to its root)
+      this.connect(game.servers["local"]);
 
-        // bind up/down arrow press to history navigation
-        this.$promptInput.keydown(event => {
-                switch (event.which) {
-                    case Keycode.UP:
-                        this.navigateHistory(1);
-                        return false;  // stop propagation
-                    case Keycode.DOWN:
-                        this.navigateHistory(-1);
-                        return false;
-                }
-            }
-        );  // stop propagation
+      // bind up/down arrow press to history navigation
+      this.$promptInput.keydown(event => {
+              switch (event.which) {
+                  case Keycode.UP:
+                      this.navigateHistory(1);
+                      return false;  // stop propagation
+                  case Keycode.DOWN:
+                      this.navigateHistory(-1);
+                      return false;
+              }
+          }
+      );  // stop propagation
 
-        // replace normal submit behavior for prompt
-        $screen.find(".prompt-submit").click(() => this.enterCommand(this.$promptInput.val()));
-    }
+      // replace normal submit behavior for prompt
+      $screen.find(".prompt-submit").click(() => this.enterCommand(this.$promptInput.val()));
+  }
 
-    // Current server get property
-    getPropertyCurrentServer() { return this.connectionStack[this.connectionStack.length - 1]; }
+  // Current server get property
+  getPropertyCurrentServer() { return this.connectionStack[this.connectionStack.length - 1]; }
 
-    // Current directory get property
-    getPropertyCurrentDirectory() { return this.directoryStack[this.directoryStack.length - 1]; }
-
-
-
+  // Current directory get property
+  getPropertyCurrentDirectory() { return this.directoryStack[this.directoryStack.length - 1]; }
 
     /* OPEN/CLOSE */
 

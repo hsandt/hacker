@@ -18,7 +18,7 @@ export default class {
 
     // Return true if the application can be opened now
     checkCanOpen() {
-        return true;
+        return true; 
     }
 
     // Return true if the application can be closed now

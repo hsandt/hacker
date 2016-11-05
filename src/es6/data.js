@@ -1,7 +1,9 @@
 export class GameData {
 
-    missions =
-    {"mission01": new Mission("mission01", (function() {}), (function() {}))};
+    // GameData is a singleton, so keep the data as instance and not static for now
+
+    // default attributes require babel-plugin-transform-class-properties
+    missions = {"mission01": new Mission("mission01", (function() {}), (function() {}))};
 
     eventFunctions = {
         ["mission-test.start"]() {
