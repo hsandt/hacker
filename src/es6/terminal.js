@@ -1,3 +1,6 @@
+import {Server} from "./server";
+import {Keycode} from "./enum";
+
 export class TerminalDevice extends HubDevice {
 
   // If active is true, show a visual cue to notify the player that something new has happened
