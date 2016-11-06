@@ -1,3 +1,10 @@
+# split a subtree into a branch locally from dist folder
 git subtree split --prefix dist -b gh-pages
+# push the local branch to GitHub Pages
 git push -f origin gh-pages:gh-pages
+# delete the temporary branch (optional, can be reused later)
 git branch -D gh-pages
+
+# PREFERRED METHOD (call it once to update GitHub Pages)
+# combination of previous steps, directly push dist folder to GitHub Pages branch without creating local branch
+git subtree push --prefix dist origin gh-pages
