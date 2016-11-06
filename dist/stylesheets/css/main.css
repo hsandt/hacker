@@ -657,9 +657,9 @@ td {
  *
  * @dependency helper-gradient-angle
  * @param direction {'to bottom'|'to right'|'to top'|'to left'|<degree>}
- * @param fallback {color}
- * @param from {color}
- * @param to {color}
+ *┬á@param fallback {color}
+ *┬á@param from {color}
+ *┬á@param to {color}
  * @default 'to bottom', #ccc, #ccc, #aaa
  *
  * @returns
@@ -1229,9 +1229,9 @@ body {
  *
  * @dependency helper-gradient-angle
  * @param direction {'to bottom'|'to right'|'to top'|'to left'|<degree>}
- * @param fallback {color}
- * @param from {color}
- * @param to {color}
+ *┬á@param fallback {color}
+ *┬á@param from {color}
+ *┬á@param to {color}
  * @default 'to bottom', #ccc, #ccc, #aaa
  *
  * @returns

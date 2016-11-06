@@ -117,7 +117,7 @@ gulp.task('clean', function (done) {
 gulp.task('copy', [
     'copy:.htaccess',
     'copy:index.html',
-    'copy:jquery',
+    // 'copy:jquery',
     'copy:license',
     'copy:main.css',
     'copy:misc',
@@ -136,11 +136,12 @@ gulp.task('copy:index.html', function () {
                .pipe(gulp.dest(dirs.dist));
 });
 
-gulp.task('copy:jquery', function () {
-    return gulp.src(['node_modules/jquery/dist/jquery.min.js'])
-               .pipe(plugins.rename('jquery-' + pkg.devDependencies.jquery + '.min.js'))
-               .pipe(gulp.dest(dirs.dist + '/js/vendor'));
-});
+// use predefined version of jquery in root vendor folder
+// gulp.task('copy:jquery', function () {
+//     return gulp.src(['node_modules/jquery/dist/jquery.min.js'])
+//                .pipe(plugins.rename('jquery-' + pkg.devDependencies.jquery + '.min.js'))
+//                .pipe(gulp.dest(dirs.dist + '/js/vendor'));
+// });
 
 gulp.task('copy:license', function () {
     return gulp.src('LICENSE.txt')
@@ -222,6 +223,10 @@ gulp.task('archive', function (done) {
         'archive:zip',
     done);
 });
+
+// TODO: add operations:
+// - remove debug (console.log)
+// - apply webpack-babel
 
 gulp.task('build', function (done) {
     runSequence(
