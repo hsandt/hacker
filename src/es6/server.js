@@ -1,3 +1,5 @@
+import Game from './game'
+
 // Server simulation
 export class Server {
 
@@ -16,7 +18,7 @@ export class Server {
 
     // Return server in game data with given url
     static getByURL(url) {
-        return this.getByIP(Game.dns[url]);
+        return this.getByIP(game.dns[url]);
     }
 
     // Return server in game data with given ip
@@ -55,7 +57,7 @@ export class Server {
 };
 
 
-let FileSystem$1 = class FileSystem {
+export class FileSystem {
 
     // @param root [File] filesystem root directory
     constructor(root) {
@@ -64,17 +66,17 @@ let FileSystem$1 = class FileSystem {
 };
 
 // File or directory (file in the UNIX sense)
-export { FileSystem$1 as FileSystem };
-let File$1 = class File {};
+export class File {};
 
 
-export { File$1 as File };
-let Directory$1 = class Directory extends File {
+export class Directory extends File {
 
     // @param name [String] name of the directory
     // @param children [File[]] list of children files / directories
-    constructor(name, t_children = []) {
+    constructor(name, children = []) {
+        super()  // optional, but removes "this not allowed before super" error in Babel if using preset es2015
         this.name = name;
+        this.children = children;
     }
 
     // Return list of children directories
@@ -154,18 +156,17 @@ let Directory$1 = class Directory extends File {
 };
 
 // Non-directory file
-export { Directory$1 as Directory };
-let RegularFile$1 = class RegularFile extends File {};
+export class RegularFile extends File {};
 
 
 // Text file, assumed extension .txt
-export { RegularFile$1 as RegularFile };
-export let TextFile = class TextFile extends RegularFile {
+export class TextFile extends RegularFile {
 
     // @param name [String] name of the file (without extension)
     // @param content [String] text content
     // @param onReadEvent [String] name of the event called when the file is read by the player in the terminal
     constructor(name, content, onReadEvent = null) {
+        super()
         this.name = name;
         this.content = content;
         this.onReadEvent = onReadEvent;
@@ -178,7 +179,7 @@ export let TextFile = class TextFile extends RegularFile {
 };
 
 
-export let DatabaseSim = class DatabaseSim {
+export class DatabaseSim {
 
     // Construct database with tables
     constructor(tables = []) {
@@ -187,7 +188,7 @@ export let DatabaseSim = class DatabaseSim {
 };
 
 
-export let Table = class Table {
+export class Table {
 
     // Construct table from row entries
     constructor(rows = []) {

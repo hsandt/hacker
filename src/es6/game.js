@@ -1,9 +1,18 @@
+import App from './app'
+import { Story } from './story'
+import Hub from './hub'
+import { Terminal } from './terminal'
+import Locale from './locale'
+import { Phone } from './chat'
+import Settings from './settings'
+import { GameData } from './data'
+import { User } from './models'
+import { Server, Directory, TextFile, DatabaseSim, Table } from './server'
+
 export default class {
 
     // domain table of URL [string]: IP [string]
-    static get_dns () {
-        return {"besafe.com": "256.241.23.02"};
-    }
+    dns = {"besafe.com": "256.241.23.02"};
 
     apps = {};
 
@@ -49,27 +58,20 @@ export default class {
             [
                 new DatabaseSim([
                     new Table("user_table",
-                        {0: new Google.User(0, "john", "dd6x5few961few68fq4wd6", "California")})
+                        {0: new User(0, "john", "dd6x5few961few68fq4wd6", "California")})
                 ])
             ])
     };
 
     // @param srcPath [String] relative path to src folder from main HTML page, ending with '/'
     constructor(srcPath) {
-        this.loadModules = this.loadModules.bind(this);
-        this.initModules = this.initModules.bind(this);
-        this.loadData = this.loadData.bind(this);
-        this.loadLocale = this.loadLocale.bind(this);
-        this.getEvent = this.getEvent.bind(this);
-        this.triggerEvent = this.triggerEvent.bind(this);
-        this.playBGM = this.playBGM.bind(this);
         this.srcPath = srcPath;
-        this.audioPath = this.srcPath + 'audio/';
-        this.imagePath = this.srcPath + 'img/';
+        this.audioPath = srcPath + 'audio/';
+        this.imagePath = srcPath + 'img/';
     }
 
     loadModules() {
-        let modulePath = game.srcPath + 'modules/';
+        let modulePath = this.srcPath + 'modules/';
         return $.when(
             $.get(modulePath + "hub.html"),
             $.get(modulePath + "phone.html"),

@@ -1,5 +1,8 @@
-import {Server} from "./server";
+import App from "./app";
+import {Server, TextFile} from "./server";
 import {Keycode} from "./enum";
+import HubDevice from "./hubdevice";
+import { TerminalSyntaxError } from './error'
 
 export class TerminalDevice extends HubDevice {
 
@@ -39,7 +42,7 @@ let CommandToken = {
 
 
 
-export let Terminal = class Terminal extends App {
+export class Terminal extends App {
 
   openedOnce = false;
 
@@ -83,10 +86,10 @@ export let Terminal = class Terminal extends App {
   }
 
   // Current server get property
-  getPropertyCurrentServer() { return this.connectionStack[this.connectionStack.length - 1]; }
+  get currentServer() { return this.connectionStack[this.connectionStack.length - 1]; }
 
   // Current directory get property
-  getPropertyCurrentDirectory() { return this.directoryStack[this.directoryStack.length - 1]; }
+  get currentDirectory() { return this.directoryStack[this.directoryStack.length - 1]; }
 
     /* OPEN/CLOSE */
 
@@ -204,9 +207,17 @@ export let Terminal = class Terminal extends App {
         try {
             var syntaxTree = this.interpreter.parse(commandLine);
         } catch (error) {
-            this.print(error.message);
-            this.scrollToBottom();
-            return;
+            if (error instanceof TerminalSyntaxError) {
+                // normal in-game error, the player typed something wrong
+                this.print(error.message);  // clean in-game message
+                this.scrollToBottom();
+                return;  // leave, we don't interpret the command
+            } else {
+                // unexpected error from the game program
+                this.print(error.message);  // clean in-game message (actually fun to see real program error in the game)
+                this.scrollToBottom();
+                throw error;  // allows to debug in console even if message is also displayed in game terminal
+            }
         }
 
         try {
@@ -214,10 +225,13 @@ export let Terminal = class Terminal extends App {
             // so that the child process can print to output, open another interpreter inside, etc.
             this.interpreter.execute(syntaxTree, this);
         } catch (error) {
-            this.print(error.message);
+            // execute should only throw actual errors if any
+            this.print(error.message);  // clean in-game message
+            this.scrollToBottom();
+            throw error;  // allows to debug in console even if message is also displayed in game terminal
         }
 
-        return this.scrollToBottom();
+        this.scrollToBottom();
     }
 
 
@@ -287,7 +301,7 @@ export let Terminal = class Terminal extends App {
     catCommand(filename) {
         if (filename == null) {
             // unix cat open stream for free input, but we do not need this in the game
-            throw new SyntaxError("The cat command requires 1 argument: the name of a text (.txt) file");
+            throw new TerminalSyntaxError("The cat command requires 1 argument: the name of a text (.txt) file");
         }
 
         if (filename.slice(-4) === ".txt") {
@@ -308,7 +322,7 @@ export let Terminal = class Terminal extends App {
     // @param address [String] domain URL or IP address
     connectCommand(address) {
         if (address == null) {
-            throw new SyntaxError("The connect command requires 1 argument: the domain URL or IP");
+            throw new TerminalSyntaxError("The connect command requires 1 argument: the domain URL or IP");
         }
         let server = Server.find(address);
         if (server == null) {
@@ -323,19 +337,10 @@ export let Terminal = class Terminal extends App {
 
 // Class responsible for syntax analysis (parsing) and execution
 // of the command-lines in the terminal
-let CommandInterpreter$1 = class CommandInterpreter {
+class CommandInterpreter {
 
     // @param terminal [Terminal] terminal receiving the commands
     constructor(terminal) {
-        this.parse = this.parse.bind(this);
-        this.execute = this.execute.bind(this);
-        this.void = this.void.bind(this);
-        this.clear = this.clear.bind(this);
-        this.help = this.help.bind(this);
-        this.ls = this.ls.bind(this);
-        this.cd = this.cd.bind(this);
-        this.cat = this.cat.bind(this);
-        this.connect = this.connect.bind(this);
         this.terminal = terminal;
     }
 
@@ -352,7 +357,7 @@ let CommandInterpreter$1 = class CommandInterpreter {
             return new SyntaxTree([CommandToken.void, []]);
         }
         if (!(command in CommandToken)) {
-            throw SyntaxError(`${command}: command not found`);
+            throw new TerminalSyntaxError(`${command}: command not found`);
         }
         return new SyntaxTree([CommandToken[command], commandArgs]);
     }
@@ -405,8 +410,6 @@ let CommandInterpreter$1 = class CommandInterpreter {
         return this.terminal.connectCommand(args[0]);
     }
 };
-export { CommandInterpreter$1 as CommandInterpreter };
-
 
 
 export class SyntaxTree {

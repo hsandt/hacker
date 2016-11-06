@@ -2,6 +2,12 @@ var fs = require('fs');
 var path = require('path');
 
 var gulp = require('gulp');
+var glob = require("glob");
+var babel = require("gulp-babel");
+var webpack = require("webpack");
+
+// debug
+var gutil = require('gulp-util');
 
 // Load all gulp plugins automatically
 // and attach them to the `plugins` object
@@ -13,6 +19,50 @@ var runSequence = require('run-sequence');
 
 var pkg = require('./package.json');
 var dirs = pkg['h5bp-configs'].directories;
+
+// REFACTOR: send directly all output to dist and debug there
+
+// gulp.task('babel:es6', function () {
+//     gutil.log('src: ' + dirs.src);
+//     return gulp.src(dirs.src + '/es6/*.js')
+//         .pipe(babel())
+//         .pipe(gulp.dest(dirs.src + '/js'));
+// });
+
+// Webpack: bundle all files in one to allow CommonJS exports used by Babel module conversion plugin
+
+gulp.task("build:webpack-babel", function(callback) {
+    // run webpack
+    webpack({
+        entry: {
+            preload: glob.sync("./src/es6/*.js")
+        },
+        output: {
+            path: __dirname + '/src/js',
+            filename: 'bundle.js',
+        },
+        module: {
+            loaders: [
+                {
+                    include: path.resolve(__dirname, 'src/es6'),
+                    test: /\.js$/,
+                    // exclude: /(node_modules|bower_components)/,
+                    loader: 'babel', // 'babel-loader' is also a valid name to reference
+                    query: {
+                        plugins: ["transform-es2015-modules-commonjs", "transform-class-properties"]
+                    }
+                }
+            ]
+        },
+        devtool: "source-map"
+    }, function(err, stats) {
+        if(err) throw new gutil.PluginError("webpack", err);
+        gutil.log("[webpack]", stats.toString({
+            // output options
+        }));
+        callback();
+    });
+});
 
 // ---------------------------------------------------------------------
 // | Helper tasks                                                      |
@@ -123,9 +173,9 @@ gulp.task('copy:misc', function () {
         '!' + dirs.src + '/css/main.css',
         '!' + dirs.src + '/index.html',
 
-        // Exclude dev files to compile (coffee + map and sass)
-        '!' + dirs.src + '/coffee',
-        '!' + dirs.src + '/coffee/*',
+        // Exclude dev files to compile (es6 + map and sass)
+        '!' + dirs.src + '/es6',
+        '!' + dirs.src + '/es6/*',
         '!' + dirs.src + '/js/*.js.map',
         '!' + dirs.src + '/stylesheets/main.sass',
         '!' + dirs.src + '/stylesheets/partials',

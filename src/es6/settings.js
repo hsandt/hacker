@@ -1,3 +1,5 @@
+import App from './app'
+
 // Game settings
 export default class extends App {
 

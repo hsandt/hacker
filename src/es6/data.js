@@ -1,3 +1,6 @@
+import {DialogueGraph, DialogueText, DialogueChoiceHub, DialogueChoice, DialogueEvent, DialogueWait} from "./chat";
+import Mission from "./mission";
+
 export class GameData {
 
     // GameData is a singleton, so keep the data as instance and not static for now
@@ -21,11 +24,12 @@ export class GameData {
     };
 
     constructor() {
+        // this.buildDialogueGraphs = this.buildDialogueGraphs.bind(this);
     }
 
     // @param dialogueFilename [String] path of the JSON file containing all dialogues
     loadDialogueGraphs(dialogueGraphsFilename) {
-        return $.getJSON(dialogueGraphsFilename, this.buildDialogueGraphs)
+        return $.getJSON(dialogueGraphsFilename, data => this.buildDialogueGraphs(data))
             .done(() => console.log("[LOAD] Loaded dialogue graphs"))
             .fail(() => console.log("[ERROR] Failed loading dialogue graphs"));
     }
@@ -36,11 +40,15 @@ export class GameData {
     buildDialogueGraphs(data) {
 //    console.log "[CALL] buildDialogueGraphs"
         this.dialogueGraphs = {};
-        for (let [dialogueName, dialogueData] of data) {
+        // REFACTOR: use https://esdiscuss.org/topic/es6-iteration-over-object-values to help if too hard to type
+        // REFACTOR: ES6 offers for of for maps, but need conversion from object to map
+        for (let dialogueName of Object.keys(data)) {
+            let dialogueData = data[dialogueName];
             this.dialogueGraphs[dialogueName] = new DialogueGraph(dialogueName);
             // first pass: fill dialogue by identifying successors and choices with name only
             // events have already been defined so you can link them already
-            for (let [nodeName, nodeData] of dialogueData) {
+            for (let nodeName of Object.keys(dialogueData)) {
+                let nodeData = dialogueData[nodeName];
                 switch (nodeData.type) {
                     case "text":
                         var node = new DialogueText(nodeName, nodeData.lines, nodeData.successor, nodeData.speaker);
@@ -64,15 +72,16 @@ export class GameData {
             }
             // second pass: link node with successor/choices by name, since now all nodes have been defined
             // this requires more computation during building process but ensures all names are resolved
-            for (let [nodeName, node] of this.dialogueGraphs[dialogueName].nodes) {
-                if (node.type === "text" || node.type === "choice" || node.type === "event" || node.type === "wait" && (node.successor != null)) {
+            for (let nodeName of Object.keys(this.dialogueGraphs[dialogueName].nodes)) {
+                node = this.dialogueGraphs[dialogueName].nodes[nodeName]
+                if (['text', 'choice', 'event', 'wait'].includes(node.type) && node.successor != null) {
                     let successor = this.dialogueGraphs[dialogueName].getNode(node.successor);
                     if (successor == null) {
                         throw new Error(`Successor ${node.successor} not found in dialogue ${dialogueName}`);
                     }
                     node.successor = successor;  // from String to DialogueNode
                 } else if (node.type === "choice hub") {
-                    for (let [choiceName, i] in node.choices) {
+                    for (let [i, choiceName] of node.choices.entries()) {
                         let choice =  this.dialogueGraphs[dialogueName].getNode(choiceName);
                         if (choice == null) {
                             throw new Error(`Choice ${choiceName} not found in dialogue ${dialogueName}`);

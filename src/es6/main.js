@@ -1,3 +1,6 @@
+import Game from './game'
+import { StoryGraph, StoryNode } from './story'
+
 $("document").ready(function() {
     console.log("[DOCUMENT] Ready");
     return main();
@@ -5,7 +8,7 @@ $("document").ready(function() {
 
 function main () {
     // create game as global (document) variable
-    this.game = new Game("./");
+    window.game = new Game("./");
 
     // currently app model and window are bound, so need to wait for settings
     // window to be ready to use settings

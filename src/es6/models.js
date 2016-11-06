@@ -1,10 +1,6 @@
 // Model classes used in fictive web applications
 
-// TODO: fix ES6 or completely remove this class
-
-export default Google = {};
-
-this.Google.User = class User {
+export class User {
 
     constructor(id, name, password, state) {
         this.id = id;

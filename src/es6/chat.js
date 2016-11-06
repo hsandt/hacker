@@ -1,3 +1,6 @@
+import App from "./app"
+import HubDevice from "./hubdevice"
+
 // Abstract base class for IRC and phone apps
 export class Chat extends App {
 

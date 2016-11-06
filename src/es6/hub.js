@@ -1,4 +1,4 @@
-export let Hub = class Hub {
+export default class {
 
     constructor($screens, $desk) {
         this.$screens = $screens;
@@ -28,10 +28,11 @@ export let Hub = class Hub {
             let dialogAppName = element.getAttribute('data-dialog');
             let dialog = $(`#${dialogAppName}Dialog`)[0];
             // REFACTOR: let DialogFx have name member and use that instead of currentAppName + do()
-            let dialogFx = self.dialogs[dialogAppName] = new DialogFx(dialog, {
+            let dialogFx = this.dialogs[dialogAppName] = new DialogFx(dialog, {
                 // IMPROVE: in ES6, maybe no need to pass local vars, they may be transferred like "this" (check out)
-                    onOpenDialog: (dialogAppName => dialog => this._onOpen(dialogAppName))(dialogAppName),
-                    onCloseDialog(dialog) { return this._onClose(); }
+                //     onOpenDialog: (dialogAppName => dialog => this._onOpen(dialogAppName))(dialogAppName),
+                    onOpenDialog: dialog => this._onOpen(dialogAppName),
+                    onCloseDialog: dialog => this._onClose()
                 }
             );
 

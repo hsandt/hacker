@@ -1,26 +1,20 @@
 export default class {
 
     constructor() {
-        this.loadDialogueLines = this.loadDialogueLines.bind(this);
-        this.loadNames = this.loadNames.bind(this);
-        this.buildDialogueLines = this.buildDialogueLines.bind(this);
-        this.buildNames = this.buildNames.bind(this);
-        this.getLine = this.getLine.bind(this);
-        this.getName = this.getName.bind(this);
         this.dialogueLines = null;
         this.dialogueNames = null;
     }
 
     // @param dialoguesFilename [String] path of the JSON file containing all the localized dialogue lines
     loadDialogueLines(filepath) {
-        return $.getJSON(filepath, this.buildDialogueLines)
+        return $.getJSON(filepath, data => this.buildDialogueLines(data))
             .done(() => console.log("[LOAD] Loaded localized dialogue lines"))
             .fail(() => console.log("[ERROR] Failed loading localized dialogue lines"));
     }
 
     // @param dialoguesFilename [String] path of the JSON file containing all the localized dialogue lines
     loadNames(filepath) {
-        return $.getJSON(filepath, this.buildNames)
+        return $.getJSON(filepath, data => this.buildNames(data))
             .done(() => console.log("[LOAD] Loaded localized names"))
             .fail(() => console.log("[ERROR] Failed loading localized names"));
     }
@@ -30,7 +24,7 @@ export default class {
     // @param data [dictionary] dictionary of dialogue lines
     buildDialogueLines(data) {
 //    console.log "[CALL] buildDialogueLines"
-        return this.dialogueLines = data;
+        this.dialogueLines = data;
     }
 
     // Build dictionary of names from JSON data
