@@ -1,0 +1,5 @@
+{
+//    "presets": ["es2015"],
+//    "plugins": ["transform-class-properties"]
+      "plugins": ["transform-es2015-modules-commonjs", "transform-class-properties"]
+}

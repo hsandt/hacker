@@ -12,6 +12,7 @@
 **/.tmp/
 **/.sass-cache
 **/test-results.xml
+npm-debug.log
 
 # Local configuration file (sdk path, etc)
 # ############################################
@@ -88,14 +89,14 @@ web/node_modules/
 archive
 #node_modules
 
-# No need for dist until production
+# Exceptionally DON'T ignore dist so that you can git-subtree push it to GitHub Pages
 #/dist/
 
-# Ignore JS files compiled with CoffeeScript
+# Ignore JS files compiled with Babel
 /src/js/*.js
-/test/integration/js/*.js
-# or ignore at least JS maps only used for debug
 /src/js/*.js.map
+
+# Ignore old Coffee script map files
 /test/integration/js/*.js.map
 
 # Ignore CSS files generated from SASS
